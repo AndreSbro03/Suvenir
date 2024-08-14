@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:gallery_tok/gallery.dart';
+import 'package:gallery_tok/globals.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'package:flutter/services.dart';
 
 void main() {
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive, overlays: []);
+  
   runApp(const MyApp());
 }
 
@@ -42,10 +46,11 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
   }
 
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF181818),
+      backgroundColor: primaryColor,
       body: Center(
         child: ElevatedButton(onPressed: () => getImages(), child: const Text("Open Gallery")),
       ),
@@ -53,9 +58,11 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void getImages() {
+    /// Here we request the permission to use the medias. Note that on newer devices this function always return false.
+    /// TODO: use the permission packet instead of PhotoManager
     PhotoManager.requestPermissionExtend().then(
       (PermissionState state) {
-        if (state.isAuth) {
+        if (state.hasAccess || state.isAuth) {
           Navigator.of(context).push(MaterialPageRoute(builder: (_) => const Gallery()));
         }
       }

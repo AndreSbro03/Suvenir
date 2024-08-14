@@ -1,25 +1,32 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:gallery_tok/media_info.dart';
+import 'package:photo_manager/photo_manager.dart';
 import 'package:photo_view/photo_view.dart';
 
 class ImageView extends StatelessWidget {
-  const ImageView({super.key, required this.imageFile});
+  const ImageView({super.key, required this.image});
 
-  final Future<File?> imageFile;
+  final AssetEntity image;
 
   @override
   Widget build(BuildContext context) {
-    return 
-       FutureBuilder<File>(
-        future: imageFile.then((value) => value!), 
-        builder: (_, snapshot) {
-          final file = snapshot.data;
-          if (file == null) return Container();
-          return PhotoView(
-            imageProvider: FileImage(file),
-          );
-        } 
-    );
-  }
+    final Future<File?> imageFile = image.file;
+    return Stack(
+        children: [
+        FutureBuilder<File>(
+          future: imageFile.then((value) => value!), 
+          builder: (_, snapshot) {
+            final file = snapshot.data;
+            if (file == null) return Container();
+            return PhotoView(
+              imageProvider: FileImage(file),
+            );
+          } 
+        ),
+        MediaInfo(media: image)
+        ]
+      );
+    }
 }
