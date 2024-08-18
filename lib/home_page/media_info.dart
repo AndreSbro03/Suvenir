@@ -23,7 +23,7 @@ class MediaInfo extends StatelessWidget {
     return Align(
       alignment: Alignment.bottomLeft,
       child: Container(
-        color: const Color.fromARGB(96, 0, 0, 0),
+        color: const Color(0x5F000000),
         height: _height,
         width: _width,
         child: Padding(

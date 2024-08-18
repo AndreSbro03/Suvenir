@@ -30,6 +30,10 @@ android {
         versionName = flutter.versionName
     }
 
+    buildscript {
+        ext.kotlin_version = '1.9.23' //use latest
+    }
+
     buildTypes {
         release {
             // TODO: Add your own signing config for the release build.

@@ -1,14 +1,16 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:gallery_tok/media_info.dart';
+import 'package:gallery_tok/globals.dart';
+import 'package:gallery_tok/home_page/media_info.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoView extends StatefulWidget {
-  const VideoView({super.key, required this.video});
+  const VideoView({super.key, required this.video, required this.pauseVideo});
 
   final AssetEntity video;
+  final Wrapper<bool> pauseVideo;
 
   @override
   State<VideoView> createState() => _VideoViewState();
@@ -24,11 +26,11 @@ class _VideoViewState extends State<VideoView> {
     videoFile = widget.video.file;
     final video = await videoFile;
     _videoPlayerController = VideoPlayerController.file(video!)
-      ..setLooping(true)
       ..play()
+      ..setLooping(true)
       ..initialize().then(
-        (_) => setState(() => initialized = true),
-      );
+      (_) => setState(() => initialized = true),
+    );
   }
 
   @override
@@ -45,6 +47,12 @@ class _VideoViewState extends State<VideoView> {
 
   @override
   Widget build(BuildContext context) {
+
+    if(widget.pauseVideo.value) { 
+      _videoPlayerController.pause();
+      widget.pauseVideo.value = false;
+    }
+
     return Stack(
       children: [
         Center(child: 

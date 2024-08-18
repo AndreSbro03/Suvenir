@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:gallery_tok/footbar.dart';
+import 'package:gallery_tok/account.dart';
+import 'package:gallery_tok/home_page/appbar.dart';
+import 'package:gallery_tok/home_page/feed.dart';
 import 'package:gallery_tok/globals.dart';
-import 'package:gallery_tok/image_view.dart';
-import 'package:gallery_tok/permission_box.dart';
-import 'package:gallery_tok/video_view.dart';
+import 'package:gallery_tok/media_manager/image.dart';
+import 'package:gallery_tok/home_page/permission_box.dart';
 import 'package:photo_manager/photo_manager.dart';
 
 class Gallery extends StatefulWidget {
@@ -14,47 +15,46 @@ class Gallery extends StatefulWidget {
 }
 
 class _GalleryState extends State<Gallery> {
-  List<AssetEntity> assets = [];
-  
+
+  late List<AssetPathEntity> paths = [];
+  List<bool> isPathValid = [];
 
   bool readyToStart = false;
-  Future<void>  _fetchAssets() async {
-    assets = await PhotoManager.getAssetListRange(start: 0, end: 10000000);
-    assets.shuffle();
-    setState(() {
-      readyToStart = true;
-    });
-  }
-
-  AssetEntity? correntAsset;
-  int corrIndx = 0;
-  Future<void> deleteFile() async {
-    try {
-        correntAsset!.file.then(
-          (file) {
-            //print(file!.path.toString());
-            //TODO: utilizzare un cestino in modo che l'utente possa recuperare i file eliminati per sbaglio
-            file!.delete();
-            assets.removeAt(corrIndx);
-            setState(() {});
-          }
-        );
-    } catch (e) {
-      // Error in getting access to the file.
-      print("Error while deliting file");
-    }
-  }
-
   bool askPermissionDeleting = false;
+  bool pauseVideo = false;
+
   void showPermissionBox(){
     setState(() {
       askPermissionDeleting = !askPermissionDeleting;
     });
   }
 
+  void applySettings(){
+    setState(() {
+      readyToStart = false;
+    });
+    _getMedia();
+  }
+
+  void _getPaths() async{
+    // Get all the paths on the users phone
+    paths.addAll(await PhotoManager.getAssetPathList());
+    isPathValid = List<bool>.generate(paths.length, (i) => true);
+    _getMedia();
+  }
+
+  void _getMedia() async {
+    assets = [];
+    await SbroImage.fetchAssets(Wrapper(assets), paths, isPathValid);
+    print("Loaded all photos!");
+    setState(() {
+       readyToStart = true;
+    });
+  }
+
   @override
   void initState() {
-    _fetchAssets();
+    _getPaths();
     super.initState();
   }
   
@@ -75,52 +75,33 @@ class _GalleryState extends State<Gallery> {
         backgroundColor: primaryColor,
         body: Stack(
           children: [
-            Column(
-              children: [              
-                SizedBox(
-                  height: getHeight(context) - Footbar.fbHight,
-                  child: readyToStart ? 
-                    PageView.builder(
-                      scrollDirection: Axis.vertical,
-                      itemBuilder: (_, index) {
-
-                        corrIndx = index;
-                        correntAsset = assets[index];
-
-                        if(assets[index].type == AssetType.video) {
-                          return VideoView(video: assets[index]);
-                        }
-                        else { 
-                          return ImageView( image: assets[index]);
-                        }
-                      }
-                    ) 
-                    :
-                    const Center(child: CircularProgressIndicator())
-
-                ),
-                Footbar(deleteMedia: () => showPermissionBox()),  
-              ]
+            Feed(
+              readyToStart: readyToStart, 
+              pauseVideo: Wrapper(pauseVideo),
+              showPermissionBox: showPermissionBox, 
+              gotoAccount: () {
+                setState(() {
+                 pauseVideo = true;
+                });                               
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const Account())
+                );
+              },                          
             ),
-            if(true) const SafeArea(
-              child: Padding(
-                padding: EdgeInsets.only(top: 10, left: 20),
-                child: Text(
-                  "SbroApp",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    fontSize: 30,
-                    ),
-                ),
-              ),
+        
+            /// Title and Settings Icon
+            SbroAppBar(
+              paths: paths, 
+              isPathValid: Wrapper(isPathValid), 
+              applySettings: applySettings,                              
             ),
-
+        
             if(askPermissionDeleting) PremissionBox(
               context: context, 
               f1: () {
                 showPermissionBox();
-                deleteFile();
+                SbroImage.deleteFile(Wrapper(assets), corrIndx!);
+                setState(() {});
               }, 
               f2: (){
                 showPermissionBox();
