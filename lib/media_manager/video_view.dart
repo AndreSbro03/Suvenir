@@ -77,7 +77,7 @@ class _VideoViewState extends State<VideoView> {
             icon: Icon(
                 _videoPlayerController.value.isPlaying ? null : Icons.play_arrow,
                 size: 60,
-                color: Colors.white,
+                color: contrColor,
               ),
           )
         ),

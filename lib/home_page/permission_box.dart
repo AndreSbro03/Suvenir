@@ -22,7 +22,7 @@ class PremissionBox extends StatelessWidget {
               width: w,
               height: h,
               decoration: BoxDecoration(
-                color: primaryColor,
+                color: backgroundColor,
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all( color: Colors.amber, width: 2.0,)
               ),
@@ -37,7 +37,7 @@ class PremissionBox extends StatelessWidget {
                       "Do you really want to delete this photo?",
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        color: Colors.white,
+                        color: contrColor,
                         fontSize: 20,
                         ),
                       ),

@@ -49,11 +49,15 @@ class _GalleryState extends State<Gallery> {
     print("Loaded all photos!");
     setState(() {
        readyToStart = true;
+       if(assets.isNotEmpty) corrIndx = 0;
     });
   }
 
   @override
   void initState() {
+    SbroDatabase.instance.getAllMedia().then(
+      (list) => likedIds.addAll(list)
+    );
     _getPaths();
     super.initState();
   }
@@ -72,7 +76,7 @@ class _GalleryState extends State<Gallery> {
       }),
 
       child: Scaffold(
-        backgroundColor: primaryColor,
+        backgroundColor: backgroundColor,
         body: Stack(
           children: [
             Feed(

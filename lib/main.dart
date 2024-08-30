@@ -8,8 +8,9 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/services.dart';
 
 void main() {
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive, overlays: []);
-  
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [SystemUiOverlay.top]);
+
+
   runApp(const MyApp());
 }
 
@@ -49,7 +50,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: primaryColor,
+      backgroundColor: backgroundColor,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,

@@ -13,33 +13,33 @@ class _AccountState extends State<Account> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: backgroundColor,
+      appBar: AppBar(
+        foregroundColor: contrColor,
+        backgroundColor: primaryColor,
+        title: const Text(
+          "Account",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: contrColor,
+            fontSize: 30,
+          ),
+        ),
+      ),
       body: SafeArea(
-        child: Column(
-          
+        child: Column(      
           children: [
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
-              child: Text(
-                "Account",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                  fontSize: 30,
-                ),
-              ),
-            ),
-
             IntrinsicHeight(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  IconButton(icon: const Icon(Icons.favorite_outline), onPressed: () {},),
-                  IconButton(icon: const Icon(Icons.delete_outline), onPressed: () {},),
+                  IconButton(icon: const Icon(Icons.favorite_outline, color: contrColor,), onPressed: () {},),
+                  IconButton(icon: const Icon(Icons.delete_outline, color: contrColor,), onPressed: () {},),
                 ]
               ),
             ),
             const Divider(
-              color: Colors.black,
+              color: contrColor,
             ),
             Expanded(
               child: PageView(

@@ -39,12 +39,13 @@ class _FeedState extends State<Feed> {
           height: getHeight(context) - Footbar.fbHight,
           child: widget.readyToStart ? 
             PageView.builder(
-              onPageChanged: (_) => setState(() {}),
+              onPageChanged: (newIdx) {
+                corrIndx = newIdx;
+                setState(() {});
+              },
               scrollDirection: Axis.vertical,
               itemCount: assets.length,
               itemBuilder: (_, index) {
-
-                corrIndx = index;
 
                 if(assets[index].type == AssetType.video) {
                   return VideoView(video: assets[index], pauseVideo: widget.pauseVideo,);
@@ -67,10 +68,12 @@ class _FeedState extends State<Feed> {
                 if(isMediaLiked()){
                   print("Sto rimuovendo");
                   likedIds.remove(id);
+                  SbroDatabase.instance.removeMedia(int.parse(id));
                 }
                 else {
                   print("Sto aggiungiendo");
                   likedIds.add(id);
+                  SbroDatabase.instance.addMedia(int.parse(id), DateTime.now());
                 }
               });
             }

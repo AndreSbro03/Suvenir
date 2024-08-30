@@ -29,7 +29,7 @@ class SbroAppBar extends StatelessWidget {
               "SbroApp",
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: contrColor,
                 fontSize: 30,
                 ),
             ),

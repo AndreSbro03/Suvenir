@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gallery_tok/globals.dart';
 
 class Footbar extends StatelessWidget {
   const Footbar({
@@ -27,7 +28,7 @@ class Footbar extends StatelessWidget {
         child: Container(
           width: MediaQuery.sizeOf(context).width,
           height: Footbar.fbHight,
-          color: const Color.fromARGB(255, 56, 56, 56),
+          color: thirdColor,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
