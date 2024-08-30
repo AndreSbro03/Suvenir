@@ -1,6 +1,6 @@
-# gallery_tok
+# Suvenir
 
-A new Flutter project.
+An app like TikTok but for your gallery :).
 
 ## Getting Started
 
