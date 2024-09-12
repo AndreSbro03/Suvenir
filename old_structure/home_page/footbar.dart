@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gallery_tok/globals.dart';
+import 'package:gallery_tok/libraries/globals.dart';
 
 class Footbar extends StatelessWidget {
   const Footbar({

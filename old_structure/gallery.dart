@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gallery_tok/account.dart';
 import 'package:gallery_tok/home_page/appbar.dart';
 import 'package:gallery_tok/home_page/feed.dart';
-import 'package:gallery_tok/globals.dart';
+import 'package:gallery_tok/libraries/globals.dart';
 import 'package:gallery_tok/media_manager/image.dart';
 import 'package:gallery_tok/home_page/permission_box.dart';
 import 'package:photo_manager/photo_manager.dart';

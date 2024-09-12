@@ -1,4 +1,4 @@
-import 'package:gallery_tok/globals.dart';
+import 'package:gallery_tok/libraries/globals.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:sqflite/sqflite.dart';
@@ -6,7 +6,11 @@ import 'package:sqflite/sqflite.dart';
 class SbroImage {
 
   /// @brief Get the media from user phone @param paths exept the one that are false in @param is PathValid 
-  static Future<void> fetchAssets( Wrapper<List<AssetEntity>> assets, List<AssetPathEntity> paths, List<bool> isPathValid) async {
+  static Future<void> fetchAssets( 
+      Wrapper<List<AssetEntity>> assets, 
+      List<AssetPathEntity> paths, 
+      List<bool> isPathValid
+    ) async {
     
     List<Future?> out = [];
     

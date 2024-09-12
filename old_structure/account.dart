@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gallery_tok/globals.dart';
+import 'package:gallery_tok/libraries/globals.dart';
 import 'package:photo_manager/photo_manager.dart';
 
 class Account extends StatefulWidget {
@@ -10,6 +10,19 @@ class Account extends StatefulWidget {
 }
 
 class _AccountState extends State<Account> {
+
+  void _getAllMedia() {
+
+    // Take all the media ids form the database
+
+    // Convert them into a list of AssetEntity
+
+
+  }
+
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,7 +73,12 @@ class _AccountState extends State<Account> {
                         
                         builder: (_, AsyncSnapshot snapshot) {
                           if(snapshot.hasData) {
-                            return Image.memory(snapshot.data);
+                            return GestureDetector(
+                              child: Image.memory(snapshot.data),
+                              onTap: () {
+                                
+                              },
+                              );
                           }
                           return Center(child: SizedBox(
                             height: getHeight(context) * 0.5,

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gallery_tok/globals.dart';
+import 'package:gallery_tok/libraries/globals.dart';
 import 'package:photo_manager/photo_manager.dart';
 
 class MediaInfo extends StatelessWidget {

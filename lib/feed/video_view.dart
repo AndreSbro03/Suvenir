@@ -1,16 +1,14 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:gallery_tok/globals.dart';
-import 'package:gallery_tok/home_page/media_info.dart';
+import 'package:gallery_tok/libraries/globals.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoView extends StatefulWidget {
-  const VideoView({super.key, required this.video, required this.pauseVideo});
+  const VideoView({super.key, required this.video});
 
   final AssetEntity video;
-  final Wrapper<bool> pauseVideo;
 
   @override
   State<VideoView> createState() => _VideoViewState();
@@ -23,14 +21,13 @@ class _VideoViewState extends State<VideoView> {
   bool initialized = false;
 
   _initVideo() async {
-    videoFile = widget.video.file;
-    final video = await videoFile;
-    _videoPlayerController = VideoPlayerController.file(video!)
+    final videoFile = await widget.video.file;
+    _videoPlayerController = VideoPlayerController.file(videoFile!)
       ..play()
       ..setLooping(true)
       ..initialize().then(
-      (_) => setState(() => initialized = true),
-    );
+      (_) => setState(() => initialized = true));
+    vpController = _videoPlayerController;
   }
 
   @override
@@ -48,41 +45,32 @@ class _VideoViewState extends State<VideoView> {
   @override
   Widget build(BuildContext context) {
 
-    if(widget.pauseVideo.value) { 
-      _videoPlayerController.pause();
-      widget.pauseVideo.value = false;
-    }
-
-    return Stack(
+    return  initialized ? Stack(
       children: [
         Center(child: 
-          initialized
-          ? 
           AspectRatio(
             aspectRatio: _videoPlayerController.value.aspectRatio,
             child: VideoPlayer(_videoPlayerController),
           )
-          :  
-          const CircularProgressIndicator(),
         ),
-        if(initialized) Center(
+        Center(
           child: IconButton(
             onPressed: () {
-              setState(() {
-                _videoPlayerController.value.isPlaying
-                      ? _videoPlayerController.pause()
-                      : _videoPlayerController.play();
-                });
-              },
+            setState(() {
+              _videoPlayerController.value.isPlaying
+                    ? _videoPlayerController.pause()
+                    : _videoPlayerController.play();
+              });
+            },
             icon: Icon(
-                _videoPlayerController.value.isPlaying ? null : Icons.play_arrow,
-                size: 60,
-                color: contrColor,
-              ),
+              _videoPlayerController.value.isPlaying ? null : Icons.play_arrow,
+              size: kIconSize * 3.0,
+              color: kContrColor,
+            ),
           )
         ),
-        MediaInfo(media: widget.video)
       ]
-    );
+    ) :
+    const Center(child: CircularProgressIndicator());  
   }
 }

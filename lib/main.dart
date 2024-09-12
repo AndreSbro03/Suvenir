@@ -1,15 +1,17 @@
-import 'dart:io';
-
-import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:gallery_tok/gallery.dart';
-import 'package:gallery_tok/globals.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:flutter/services.dart';
+import 'package:gallery_tok/appbar.dart';
+import 'package:gallery_tok/feed/feed.dart';
+import 'package:gallery_tok/footbar.dart';
+import 'package:gallery_tok/libraries/globals.dart';
+import 'package:gallery_tok/libraries/image.dart';
+import 'package:gallery_tok/libraries/permission.dart';
+import 'package:gallery_tok/settings.dart';
+import 'package:photo_manager/photo_manager.dart';
 
+/// Here we setup the application and require the gallery permission.
+/// Once the user has provide that we start the feed. 
 void main() {
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [SystemUiOverlay.top]);
-
+  //SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [SystemUiOverlay.top]);
 
   runApp(const MyApp());
 }
@@ -20,13 +22,10 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
-      home: const MyHomePage(),
+      //theme: ThemeData(),
+      home: MyHomePage(),
     );
   }
 }
@@ -40,9 +39,48 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
+  bool readyToGo = false;
+
+  void _getMediaFromGallery() async {
+    switch (await SbroPermission.getGalleryAccess()) {
+
+      case PermissionsTypes.granted:
+          // I need to upload all media first
+          await SbroImage.fetchAssets();
+          corrIndx = 0;
+          print("Loaded all images");
+
+          setState(() {
+            originalAssets.addAll(assets);
+            // The app is ready to go
+            readyToGo = true;
+          });
+        break;
+
+      case PermissionsTypes.permanentlyDenied: 
+          // TODO: pop a warning box saying "Go to settings and give the needed ..."
+          print("Permission to gallery is permanentlyDenied");
+        break;
+          
+      default:
+        // TODO: maybe add a warnig banner here to
+        _getMediaFromGallery();
+    }
+  }
+
+  _getPathList() async {
+    Settings.validPathsMap = { for (var e in await PhotoManager.getAssetPathList()) e.name : true };
+  }
+
   @override
+  /// Code that will be run everytime we come back to this page.
   initState(){
-    getPermissions();
+    /// Make sure only runs once
+    if(initializeApp){
+      _getMediaFromGallery();
+      _getPathList();
+      initializeApp = false;
+    }
     super.initState();
   }
 
@@ -50,47 +88,34 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: backgroundColor,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
+      backgroundColor: kBackgroundColor,
+      body: Stack(
         children: [
-          ElevatedButton(
-            onPressed: () {
-              getPermissions();
-            }, 
-            child: const Text("Request authorization")),
-          Padding(
-            padding: EdgeInsets.symmetric(vertical: 25.0, horizontal: getWidth(context) * 0.1 ),
-            child: const Text(
-              "Go to settings and provide multimedia and storage authorization to proceed", 
-              style: TextStyle(color: Colors.white), textAlign: TextAlign.center,),
+          /// Level 0: (background) 
+          ///   The feed once the permission are granted and the medias are loaded.
+          ///   Circular progress indicator instead.
+          readyToGo ? 
+            const Feed() :
+            const Center(child: CircularProgressIndicator()) ,
+
+          /// Level 1: (Appbar and Footbar)
+          const Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              /// Appbar:
+              ///   consist in the app title and the settings IconButton.
+              SbroAppBar(),
+       
+              /// Footbar:
+              ///   consist in a list of icons.
+              Footbar(),
+            ],
           )
+
+          /// Level 2: (Warnings Box)
+
         ],
       ),
     );
-  }
-
-  void getPermissions() async {
-    /// Here we request the permission to use the medias. Note that on newer devices this function always return false.
-    /// TODO: use the permission packet instead of PhotoManager
-   
-    if (Platform.isAndroid) {
-      final androidInfo = await DeviceInfoPlugin().androidInfo;
-      if (androidInfo.version.sdkInt <= 32) {
-        if (await Permission.storage.request().isGranted){
-          Navigator.of(context).push(MaterialPageRoute(builder: (_) => const Gallery()));
-        }
-      }
-      else if
-      (
-        await Permission.photos.request().isGranted &&
-        await Permission.videos.request().isGranted &&
-        await Permission.manageExternalStorage.request().isGranted // Needed to delete medias
-      ) 
-      {
-        Navigator.of(context).push(MaterialPageRoute(builder: (_) => const Gallery()));
-      }
-    }
   }
 }

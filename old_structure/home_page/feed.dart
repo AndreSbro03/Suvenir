@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gallery_tok/home_page/footbar.dart';
-import 'package:gallery_tok/globals.dart';
+import 'package:gallery_tok/libraries/globals.dart';
 import 'package:gallery_tok/media_manager/image.dart';
 import 'package:gallery_tok/media_manager/image_view.dart';
 import 'package:gallery_tok/media_manager/video_view.dart';

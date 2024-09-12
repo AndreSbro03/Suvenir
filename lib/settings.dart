@@ -1,78 +1,111 @@
 import 'package:flutter/material.dart';
-import 'package:gallery_tok/globals.dart';
-import 'package:photo_manager/photo_manager.dart';
+import 'package:gallery_tok/feed/feed.dart';
+import 'package:gallery_tok/libraries/globals.dart';
+import 'package:gallery_tok/libraries/image.dart';
 
+/// Welcome to the app settings page. Here for now you can only chose what folders do you 
+/// want to see in the app.
 class Settings extends StatefulWidget {
-  const Settings({super.key, required this.paths, required this.isChecked, required this.apply});
+  const Settings({super.key});
 
-  final List<AssetPathEntity> paths;
-  final Wrapper<List<bool>> isChecked;
-  final Function apply;
+  static Map<String, bool> validPathsMap = {};
 
   @override
   State<Settings> createState() => _SettingsState();
 }
 
 class _SettingsState extends State<Settings> {
-  
+
   @override
   Widget build(BuildContext context) {
+
+    double rapidButtonsZoneHeight = getHeight(context) * 0.1;
+
     return Scaffold(
       appBar: AppBar(
-        title:  const Text("Select Folders"),
+        title:  const Text("Select Folders", style: kSubTitleStyle,),
+        backgroundColor: kBackgroundColor,
+        foregroundColor: kContrColor,
       ),
-      backgroundColor: Colors.white,
+      backgroundColor: kBackgroundColor,
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+
+            /// Fast selection buttons
+
             SizedBox(
-              height: getHeight(context) * 0.1,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  ElevatedButton(
-                    child: const Text("Select All"),
-                    onPressed: () {
-                      setState(() {
-                        for(int i = 0; i < widget.isChecked.value.length; ++i){
-                          if(!widget.isChecked.value[i]) widget.isChecked.value[i] = true;
-                        }
-                      });
-                    }
-                  ),
-                  ElevatedButton(
-                    child: const Text("Deselect All"),
-                    onPressed: (){
-                      setState(() {
-                        for(int i = 0; i < widget.isChecked.value.length; ++i){
-                          if(widget.isChecked.value[i]) widget.isChecked.value[i] = false;
-                        }
-                      });
-                    },
-                  ),
-                ],
+              height: rapidButtonsZoneHeight,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    
+                    /// Select All button
+                    GestureDetectorTextButton(
+                      w: getWidth(context) * 0.3, 
+                      h: getHeight(context), 
+                      text: const Text("Select All", style: kNormalStyle,), 
+                      color: kPrimaryColor,
+                      onTap: () {
+                        print("Fattooooooooooooooooooooooooooooooooo");
+                        setState(() {
+                          Settings.validPathsMap.forEach((K, _) {
+                            Settings.validPathsMap[K] = true;
+                          });
+                        });
+                      },
+                    ), 
+
+                    /// Deselect All button
+                    GestureDetectorTextButton(
+                      w: getWidth(context) * 0.3, 
+                      h: getHeight(context), 
+                      text: const Text("Deselect All", style: kNormalStyle,), 
+                      color: kPrimaryColor,
+                      onTap: () {
+                        setState(() {
+                          Settings.validPathsMap.forEach((K, _) {
+                            Settings.validPathsMap[K] = false;
+                          });
+                        });
+                      },
+                    ), 
+                
+                  ],
+                ),
               ),
             ),
+
+            /// Folders list
+            
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 30.0),
                 child: ListView.builder(
-                  itemCount: widget.paths.length,
+                  itemCount: Settings.validPathsMap.length,
                   /*prototypeItem: ListTile(
                     title: Text(widget.paths.first.name),
                   ),*/
                   itemBuilder: (_, index) {
+                    String corrPath = Settings.validPathsMap.keys.elementAt(index);
+                    bool isCheck = Settings.validPathsMap[corrPath]!;
                     return Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         SizedBox(
                           width: getWidth(context) * 0.70,
-                          child: Text(widget.paths[index].name)
+                          child: Text(corrPath , style: kNormalStyle,)
                         ),                        
-                        Checkbox(value: widget.isChecked.value[index], onChanged: (_) {
+                        Checkbox(
+                          value: isCheck, 
+                          checkColor: kContrColor,
+                          activeColor: kSecondaryColor,
+                          onChanged: (_) {
                             setState(() {
-                              widget.isChecked.value[index] = !widget.isChecked.value[index];
+                                Settings.validPathsMap[corrPath] = !isCheck;
                             });
                           }
                         ),                                          
@@ -82,35 +115,66 @@ class _SettingsState extends State<Settings> {
                   ),
               ),
             ),
+
+            /// Apply button
+
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 15.0),
-              child: GestureDetector(
-                onTap: () {
-                  widget.apply();
+              child: GestureDetectorTextButton(
+                w: getWidth(context) * 0.8,
+                h: getHeight(context) * 0.07,
+                text: const Text( "Apply", style: kSubTitleStyle,),
+                color: kPrimaryColor,
+                onTap: (){
+                  /// I use Feed.modIdxUpdate * 2 so I'm sure that all the medias until the next update in the feed
+                  /// are going to be valid medias. (Feed.modIdxUpdate + 1 whould be sufficent)
+                  assets.clear();
+                  assets.addAll(originalAssets);
+                  assets.shuffle();
+                  print("${assets.length} --->${originalAssets.length}");
+                  SbroImage.updateAssets(0, Feed.modIdxUpdate * 2);
+                  feedController.jumpToPage(0);
                   Navigator.of(context).pop();
                 },
-                child: Container(
-                  height: getHeight(context) * 0.07,
-                  width: getWidth(context) * 0.8,
-                  decoration: BoxDecoration(
-                    color: Colors.deepPurple,
-                    borderRadius: BorderRadius.circular(40),
-                    //border: Border.all( color: Colors.amber, width: 2.0,)
-                  ),
-                  child:  const Center(
-                    child: Text(
-                      "Apply",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 25,
-                      ),
-                    ),
-                  ),
-                ),
               ),
             )
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class GestureDetectorTextButton extends StatelessWidget {
+  const GestureDetectorTextButton({
+    super.key, 
+    required this.w, 
+    required this.h, 
+    required this.text, 
+    required this.color, 
+    required this.onTap,
+  });
+
+  final double w;
+  final double h;
+  final Text text;
+  final Color color; 
+  final GestureTapCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: h,
+        width: w,
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(40),
+          //border: Border.all( color: Colors.amber, width: 2.0,)
+        ),
+        child: Center(
+          child: text,
         ),
       ),
     );
