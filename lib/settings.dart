@@ -126,14 +126,23 @@ class _SettingsState extends State<Settings> {
                 text: const Text( "Apply", style: kSubTitleStyle,),
                 color: kPrimaryColor,
                 onTap: (){
-                  /// I use Feed.modIdxUpdate * 2 so I'm sure that all the medias until the next update in the feed
-                  /// are going to be valid medias. (Feed.modIdxUpdate + 1 whould be sufficent)
+
+                  /// Create new feed
                   assets.clear();
                   assets.addAll(originalAssets);
                   assets.shuffle();
-                  print("${assets.length} --->${originalAssets.length}");
-                  SbroImage.updateAssets(0, Feed.modIdxUpdate * 2);
+
+                  /// Make sure the first @Feed.numNextUpdate medias are valid. @-1 is becouse we want to check even the
+                  /// current media. The 0 one.
+                  SbroImage.updateAssets(-1, Feed.numNextUpdate);
+
+                  /// Notify the feed that the assets are beign modified
+                  Feed.realoadFeed.value = true;
+
+                  /// Return to the first media of the feed
                   feedController.jumpToPage(0);
+
+                  /// Retrun to feed
                   Navigator.of(context).pop();
                 },
               ),

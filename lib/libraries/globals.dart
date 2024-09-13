@@ -25,7 +25,6 @@ const Color kIconColor = kContrColor;
 
 List<AssetEntity?> originalAssets = [];
 List<AssetEntity?> assets = [];
-int? assetsCount;
 int? corrIndx;
 
 bool initializeApp = true;

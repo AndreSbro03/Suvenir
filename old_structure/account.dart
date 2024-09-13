@@ -17,7 +17,6 @@ class _AccountState extends State<Account> {
 
     // Convert them into a list of AssetEntity
 
-
   }
 
 

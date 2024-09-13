@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gallery_tok/feed/feed.dart';
 import 'package:gallery_tok/libraries/globals.dart';
 import 'package:gallery_tok/settings.dart';
 import 'package:photo_manager/photo_manager.dart';
@@ -9,8 +10,8 @@ class SbroImage {
   static const int scrollDurationMilliseconds = 500;
  
   static Future<void> fetchAssets() async {
-    assetsCount =  await PhotoManager.getAssetCount();
-    assets.addAll(await PhotoManager.getAssetListRange(start: 0, end: assetsCount!));
+    int assetsCount =  await PhotoManager.getAssetCount();
+    assets.addAll(await PhotoManager.getAssetListRange(start: 0, end: assetsCount));
     assets.shuffle();
   }
 
@@ -74,12 +75,15 @@ class SbroImage {
 
   /// Guarantee that the next @numNextUpdate medias are all valid medias
   static void updateAssets(index, numNextUpdate) {
+    bool modified = false;
     for(int i = index + 1; i < assets.length && i < (index + numNextUpdate);) {
       String name = SbroImage.getAssetFolder(assets[i]);
       if(!(Settings.validPathsMap[name] ?? true)){
         assets.removeAt(i);
+        modified = true;
       }
       else i++;
     }
+    if(modified) Feed.realoadFeed.value = true;
   }
 }

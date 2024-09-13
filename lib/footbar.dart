@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:gallery_tok/account.dart';
+import 'package:gallery_tok/feed/feed.dart';
 import 'package:gallery_tok/libraries/globals.dart';
 import 'package:gallery_tok/libraries/image.dart';
 
@@ -35,10 +37,20 @@ class Footbar extends StatelessWidget {
                   if(corrIndx != null) SbroImage.shareMedia(assets[corrIndx!]);
                 },      
               ),
-              // Dashboard Button
+              // Account Button
               IconButton(
                 icon: const Icon(Icons.account_circle_outlined, size: kIconSize, color: kIconColor,), 
-                onPressed: () {},
+                onPressed: () {
+                  if(vpController != null){
+                    vpController!.pause();
+                  }
+                  /// TODO: do this shaisse better
+                  /// Notify the feed to put the pause icon
+                  Feed.realoadFeed.value = true;
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const Account())
+                  );
+                },
               ),
               // Delete Button
               IconButton(

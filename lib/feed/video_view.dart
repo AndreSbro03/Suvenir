@@ -27,6 +27,7 @@ class _VideoViewState extends State<VideoView> {
       ..setLooping(true)
       ..initialize().then(
       (_) => setState(() => initialized = true));
+    /// Copy the video player into the global one so everywhere we can controll the current video
     vpController = _videoPlayerController;
   }
 

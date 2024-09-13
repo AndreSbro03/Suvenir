@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gallery_tok/feed/feed.dart';
 import 'package:gallery_tok/libraries/globals.dart';
 import 'package:gallery_tok/settings.dart';
 
@@ -27,7 +28,9 @@ class SbroAppBar extends StatelessWidget {
                 /// If a video is going we stop it before going to the settings
                 if(vpController != null) vpController!.pause();
 
-                // TODO: notify the feed page that the video is being paused so it can show the play icon
+                /// Notify the feed to reload so we can show the Play icon in the video
+                /// TODO: do this shaisse better
+                Feed.realoadFeed.value = true;
 
                 Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const Settings(
