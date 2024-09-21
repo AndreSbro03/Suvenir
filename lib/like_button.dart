@@ -7,7 +7,9 @@ import 'package:photo_manager/photo_manager.dart';
 /// and recalculate the function isMediaLiked becouse it means that the feed has been scrolled and
 /// the image is changes. I used setState to update the button on other conditions.
 class LikeButton extends StatefulWidget {
-  const LikeButton({super.key});
+  const LikeButton({super.key, this.assetsList});
+
+  final List<AssetEntity?>? assetsList;
 
   static ValueNotifier<bool> reloadLikeButton = ValueNotifier<bool>(false);
 
@@ -19,15 +21,18 @@ class _LikeButtonState extends State<LikeButton> {
 
   bool isLiked = false;
   bool isReadyToLike = false;
+  List<AssetEntity?> assetsList = [];
+  
 
   void isMediaLiked() async{
       isReadyToLike = false;
-      isLiked = await likedMedias.existMedia((corrIndx != null) ? assets[corrIndx!] : null);
+      isLiked = await likedMedias.existMedia((corrIndx != null) ? assetsList[corrIndx!] : null);
       setState(() { isReadyToLike = true;});
   }
 
   @override 
   void initState() {
+    assetsList = (widget.assetsList != null) ? widget.assetsList! : assets;
     isMediaLiked();
     super.initState();
   }

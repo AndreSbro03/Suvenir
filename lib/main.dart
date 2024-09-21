@@ -91,7 +91,7 @@ class _MyHomePageState extends State<MyHomePage> {
         const Center(child: SizedBox(
           width: 50,
           height: 50,
-          child: const CircularProgressIndicator()
+          child: CircularProgressIndicator()
         ));
   }
 }

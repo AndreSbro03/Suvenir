@@ -8,11 +8,10 @@ import 'package:photo_manager/photo_manager.dart';
 class HomePage extends StatelessWidget {
   const HomePage({super.key, required this.assetsList});
 
-  final List<AssetEntity?> assetsList;
+  final List<AssetEntity?>? assetsList;
 
   @override
   Widget build(BuildContext context) {
-    assets = assetsList;
     return Scaffold(
       backgroundColor: kBackgroundColor,
       body: Stack(

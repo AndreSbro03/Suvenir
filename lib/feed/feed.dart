@@ -8,10 +8,10 @@ import 'package:photo_manager/photo_manager.dart';
 
 class Feed extends StatelessWidget {
   const Feed(
-    {super.key, required this.assetsList,}
+    {super.key, this.assetsList,}
   );
 
-  final List<AssetEntity?> assetsList;
+  final List<AssetEntity?>? assetsList;
 
   /// Every @modIdxUpdate medias the feed check if the next @numNextUpdate medias are valid. (Not in forbidden folders)
   static int modIdxUpdate = 15;
@@ -21,6 +21,12 @@ class Feed extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    // If there is not a custom list passed or if the list passed is empty we go with the global one
+    bool isListGlobal = (assetsList == null);
+    if(!isListGlobal){
+      isListGlobal = assetsList!.isEmpty;
+    }
 
     return Column(
       children: [   
@@ -37,12 +43,12 @@ class Feed extends StatelessWidget {
                   controller: feedController,
                   onPageChanged: (newIdx) {
                     corrIndx = newIdx;
-                    //print(corrIndx);
+                    print(corrIndx);
                     // Here you can insert code that notify all other widget that the media is changed
                     LikeButton.reloadLikeButton.value = true;
                   },
                   scrollDirection: Axis.vertical,
-                  itemCount: assetsList.length,
+                  itemCount: (isListGlobal) ? assets.length : assetsList!.length,
                   itemBuilder: (_, index) {
                     
                     if (assets[index] == null){ 

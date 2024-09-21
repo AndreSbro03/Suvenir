@@ -5,10 +5,12 @@ import 'package:gallery_tok/libraries/globals.dart';
 import 'package:gallery_tok/libraries/image.dart';
 import 'package:gallery_tok/libraries/permission.dart';
 import 'package:gallery_tok/like_button.dart';
+import 'package:photo_manager/photo_manager.dart';
 
 class Footbar extends StatelessWidget {
-  const Footbar({super.key});
+  const Footbar({super.key, this.assetsList});
 
+  final List<AssetEntity?>? assetsList;
   static const fbHight = 60.0;
 
   @override
@@ -24,7 +26,7 @@ class Footbar extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               // Like Button
-              const LikeButton(),
+              LikeButton(assetsList: assetsList,),
               
               // Share Button
               IconButton(

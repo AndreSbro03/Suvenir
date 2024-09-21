@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gallery_tok/feed/feed.dart';
 import 'package:gallery_tok/homepage.dart';
 import 'package:gallery_tok/libraries/globals.dart';
 import 'package:gallery_tok/libraries/image.dart';
