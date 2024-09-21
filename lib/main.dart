@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gallery_tok/appbar.dart';
-import 'package:gallery_tok/feed/feed.dart';
-import 'package:gallery_tok/footbar.dart';
+import 'package:gallery_tok/homepage.dart';
 import 'package:gallery_tok/libraries/globals.dart';
 import 'package:gallery_tok/libraries/image.dart';
 import 'package:gallery_tok/libraries/permission.dart';
@@ -70,6 +68,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   _getPathList() async {
     Settings.validPathsMap = { for (var e in await PhotoManager.getAssetPathList()) e.name : true };
+    print("Getting paths: ");
+    print(Settings.validPathsMap.keys);
   }
 
   @override
@@ -84,38 +84,14 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
   }
 
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: kBackgroundColor,
-      body: Stack(
-        children: [
-          /// Level 0: (background) 
-          ///   The feed once the permission are granted and the medias are loaded.
-          ///   Circular progress indicator instead.
-          readyToGo ? 
-            const Feed() :
-            const Center(child: CircularProgressIndicator()) ,
-
-          /// Level 1: (Appbar and Footbar)
-          const Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              /// Appbar:
-              ///   consist in the app title and the settings IconButton.
-              SbroAppBar(),
-       
-              /// Footbar:
-              ///   consist in a list of icons.
-              Footbar(),
-            ],
-          )
-
-          /// Level 2: (Warnings Box)
-
-        ],
-      ),
-    );
+    return readyToGo ? 
+        HomePage(assetsList: assets,) :
+        const Center(child: SizedBox(
+          width: 50,
+          height: 50,
+          child: const CircularProgressIndicator()
+        ));
   }
 }

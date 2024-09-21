@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:gallery_tok/feed/feed.dart';
+import 'package:gallery_tok/libraries/db.dart';
 import 'package:gallery_tok/libraries/globals.dart';
 import 'package:gallery_tok/settings.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:share_plus/share_plus.dart';
 
-class SbroImage {
+class SbroImage{
 
   static const int scrollDurationMilliseconds = 500;
  
@@ -15,8 +16,19 @@ class SbroImage {
     assets.shuffle();
   }
 
-  static String getAssetPath(AssetEntity? asset) {
+  static Future<String> getAssetAbsolutePath(AssetEntity? asset) async{
     if(asset != null){
+      // return "${asset.relativePath!}/${asset.title!}";
+      return asset.file.then((file) => file!.path);
+    }
+    return "";
+  }
+
+  static String getAssetRelativePath(AssetEntity? asset) {
+    if(asset != null){
+      if(asset.relativePath!.endsWith('/')){
+        return "${asset.relativePath!}${asset.title!}";
+      }
       return "${asset.relativePath!}/${asset.title!}";
     }
     return "";
@@ -56,8 +68,8 @@ class SbroImage {
       return;
     }
 
-    String corrPath = getAssetPath(asset);
-    //print(corrPath);
+    String corrPath = await getAssetAbsolutePath(asset);
+    print(corrPath);
     final result = await Share.shareXFiles([XFile(corrPath)]);
                       
     if(result.status == ShareResultStatus.success) print("File condiviso con successo");
@@ -70,20 +82,37 @@ class SbroImage {
       print("Trying to get the folder of an unavailable asset!");
       return "";
     }
-    return asset.relativePath!.split('/').last;
+    /// if the path is "Store/0/User/Picture/image.png" we take only "Picture"
+    List<String> path = getAssetRelativePath(asset).split('/');
+    print(path);
+    /// Removed the name of the file
+    path.removeLast();
+    /// Returned the last folder
+    return path.last;
   }
 
   /// Guarantee that the next @numNextUpdate medias are all valid medias
   static void updateAssets(index, numNextUpdate) {
     bool modified = false;
     for(int i = index + 1; i < assets.length && i < (index + numNextUpdate);) {
-      String name = SbroImage.getAssetFolder(assets[i]);
-      if(!(Settings.validPathsMap[name] ?? true)){
+      String folderName = SbroImage.getAssetFolder(assets[i]);
+      print(folderName);
+      print(Settings.validPathsMap[folderName]);
+      if(!(Settings.validPathsMap[folderName] ?? true)){
         assets.removeAt(i);
         modified = true;
       }
       else i++;
     }
     if(modified) Feed.realoadFeed.value = true;
+  }
+
+  static Future<List<AssetEntity?>> getAllAssesInDatabase(MediaDatabase db) async {
+    List<int> mediaIds = await db.readAllMediaIds();
+    List<AssetEntity?> out = [];
+    for (int id in mediaIds) {
+      out.add(await AssetEntity.fromId(id.toString()));
+    }
+    return out;
   }
 }

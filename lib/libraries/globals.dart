@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:gallery_tok/libraries/db.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:video_player/video_player.dart';
-//import 'package:photo_manager/photo_manager.dart';
 
 const String appName = "SbroApp";
 const TextStyle kTitleStyle = TextStyle( 
@@ -34,11 +34,7 @@ VideoPlayerController? vpController;
 
 bool deleteImageForReal = false;
 
-/*
-bool immersive = true;
-List<String> likedIds = [];
-List<String> trashIds = [];
-*/
+MediaDatabase likedMedias = MediaDatabase(tableName: "liked");
 
 double getWidth(context) {
   return MediaQuery.sizeOf(context).width;
@@ -46,9 +42,4 @@ double getWidth(context) {
 
 double getHeight(context) {
   return MediaQuery.sizeOf(context).height;
-}
-
-class Wrapper<T> {
-  T value;
-  Wrapper(this.value);
 }

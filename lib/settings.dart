@@ -50,7 +50,6 @@ class _SettingsState extends State<Settings> {
                       text: const Text("Select All", style: kNormalStyle,), 
                       color: kPrimaryColor,
                       onTap: () {
-                        print("Fattooooooooooooooooooooooooooooooooo");
                         setState(() {
                           Settings.validPathsMap.forEach((K, _) {
                             Settings.validPathsMap[K] = true;
@@ -127,6 +126,10 @@ class _SettingsState extends State<Settings> {
                 color: kPrimaryColor,
                 onTap: (){
 
+                  /// Return to the first media of the feed
+                  feedController.jumpToPage(0);
+                  corrIndx = 0;
+
                   /// Create new feed
                   assets.clear();
                   assets.addAll(originalAssets);
@@ -135,12 +138,10 @@ class _SettingsState extends State<Settings> {
                   /// Make sure the first @Feed.numNextUpdate medias are valid. @-1 is becouse we want to check even the
                   /// current media. The 0 one.
                   SbroImage.updateAssets(-1, Feed.numNextUpdate);
+                  print(assets.length);
 
                   /// Notify the feed that the assets are beign modified
-                  Feed.realoadFeed.value = true;
-
-                  /// Return to the first media of the feed
-                  feedController.jumpToPage(0);
+                  Feed.realoadFeed.value = true;                  
 
                   /// Retrun to feed
                   Navigator.of(context).pop();

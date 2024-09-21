@@ -3,14 +3,15 @@ import 'package:gallery_tok/libraries/globals.dart';
 import 'package:gallery_tok/feed/image_view.dart';
 import 'package:gallery_tok/feed/video_view.dart';
 import 'package:gallery_tok/libraries/image.dart';
+import 'package:gallery_tok/like_button.dart';
 import 'package:photo_manager/photo_manager.dart';
 
-class Feed extends StatefulWidget {
+class Feed extends StatelessWidget {
   const Feed(
-    {super.key, this.assetsList,}
+    {super.key, required this.assetsList,}
   );
 
-  final List<AssetEntity>? assetsList;
+  final List<AssetEntity?> assetsList;
 
   /// Every @modIdxUpdate medias the feed check if the next @numNextUpdate medias are valid. (Not in forbidden folders)
   static int modIdxUpdate = 15;
@@ -19,19 +20,7 @@ class Feed extends StatefulWidget {
 
 
   @override
-  State<Feed> createState() => _FeedState();
-}
-
-class _FeedState extends State<Feed> {
-
-  @override
   Widget build(BuildContext context) {
-    
-    // If there is not a custom list passed or if the list passed is empty we go with the global one
-    bool isListGlobal = (widget.assetsList == null);
-    if(!isListGlobal){
-      isListGlobal = widget.assetsList!.isEmpty;
-    }
 
     return Column(
       children: [   
@@ -41,18 +30,19 @@ class _FeedState extends State<Feed> {
           child: 
           /// Here we make sure that if the assets list is modified we reload all the Feed
             ValueListenableBuilder(
-              valueListenable: Feed.realoadFeed, 
+              valueListenable: realoadFeed, 
               builder: (BuildContext context, bool value, Widget? child) {
-                Feed.realoadFeed.value = false;
+                realoadFeed.value = false;
                 return PageView.builder(
                   controller: feedController,
                   onPageChanged: (newIdx) {
                     corrIndx = newIdx;
-                    print(corrIndx);
+                    //print(corrIndx);
                     // Here you can insert code that notify all other widget that the media is changed
+                    LikeButton.reloadLikeButton.value = true;
                   },
                   scrollDirection: Axis.vertical,
-                  itemCount: (isListGlobal) ? assets.length : widget.assetsList!.length,
+                  itemCount: assetsList.length,
                   itemBuilder: (_, index) {
                     
                     if (assets[index] == null){ 
@@ -61,11 +51,11 @@ class _FeedState extends State<Feed> {
                     else {      
                 
                       /// Update next @Feed.numNextUpdate medias
-                      if(index % Feed.modIdxUpdate == 0) {
-                        SbroImage.updateAssets(index, Feed.numNextUpdate);
+                      if(index % modIdxUpdate == 0) {
+                        SbroImage.updateAssets(index, numNextUpdate);
                       }
                 
-                      AssetEntity ae = isListGlobal ? assets[index]! : widget.assetsList![index];
+                      AssetEntity ae = isListGlobal ? assets[index]! : assetsList![index]!;
                 
                       if(ae.type == AssetType.video) {
                         return VideoView(video: ae);
