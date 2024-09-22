@@ -127,7 +127,7 @@ class _SettingsState extends State<Settings> {
                 onTap: (){
 
                   /// Return to the first media of the feed
-                  feedController.jumpToPage(0);
+                  homeFeedController.jumpToPage(0);
                   corrIndx = 0;
 
                   /// Create new feed

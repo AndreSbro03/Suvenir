@@ -3,15 +3,19 @@ import 'package:gallery_tok/libraries/globals.dart';
 import 'package:gallery_tok/feed/image_view.dart';
 import 'package:gallery_tok/feed/video_view.dart';
 import 'package:gallery_tok/libraries/image.dart';
-import 'package:gallery_tok/like_button.dart';
+import 'package:gallery_tok/bars/like_button.dart';
 import 'package:photo_manager/photo_manager.dart';
 
 class Feed extends StatelessWidget {
   const Feed(
-    {super.key, this.assetsList,}
+    {super.key, this.assetsList, this.startingIdx = 0, required this.feedController,}
   );
 
   final List<AssetEntity?>? assetsList;
+  final int startingIdx;
+  final PageController? feedController;
+
+
 
   /// Every @modIdxUpdate medias the feed check if the next @numNextUpdate medias are valid. (Not in forbidden folders)
   static int modIdxUpdate = 15;
@@ -22,6 +26,8 @@ class Feed extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
+    print("[INFO] Feed starting index is set to: $startingIdx");
+    
     // If there is not a custom list passed or if the list passed is empty we go with the global one
     bool isListGlobal = (assetsList == null);
     if(!isListGlobal){

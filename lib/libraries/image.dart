@@ -34,10 +34,10 @@ class SbroImage{
     return "";
   }
 
-  static void moveToTrash() {
+  static void moveToTrash(PageController currPageContr) {
 
     assets[corrIndx!] = null;
-    feedController.nextPage(duration: const Duration(milliseconds: scrollDurationMilliseconds), curve: Curves.easeInOut);
+    currPageContr.nextPage(duration: const Duration(milliseconds: scrollDurationMilliseconds), curve: Curves.easeInOut);
 
     // TODO
   }
@@ -84,7 +84,8 @@ class SbroImage{
     }
     /// if the path is "Store/0/User/Picture/image.png" we take only "Picture"
     List<String> path = getAssetRelativePath(asset).split('/');
-    print(path);
+    //print(path);
+
     /// Removed the name of the file
     path.removeLast();
     /// Returned the last folder
@@ -96,8 +97,8 @@ class SbroImage{
     bool modified = false;
     for(int i = index + 1; i < assets.length && i < (index + numNextUpdate);) {
       String folderName = SbroImage.getAssetFolder(assets[i]);
-      print(folderName);
-      print(Settings.validPathsMap[folderName]);
+      //print(folderName);
+      //print(Settings.validPathsMap[folderName]);
       if(!(Settings.validPathsMap[folderName] ?? true)){
         assets.removeAt(i);
         modified = true;

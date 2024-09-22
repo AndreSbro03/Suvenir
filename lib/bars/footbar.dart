@@ -4,7 +4,7 @@ import 'package:gallery_tok/feed/feed.dart';
 import 'package:gallery_tok/libraries/globals.dart';
 import 'package:gallery_tok/libraries/image.dart';
 import 'package:gallery_tok/libraries/permission.dart';
-import 'package:gallery_tok/like_button.dart';
+import 'package:gallery_tok/bars/like_button.dart';
 import 'package:photo_manager/photo_manager.dart';
 
 class Footbar extends StatelessWidget {
@@ -36,6 +36,17 @@ class Footbar extends StatelessWidget {
                   if(corrIndx != null) SbroImage.shareMedia(assets[corrIndx!]);
                 },      
               ),
+              // Home Button
+              IconButton(
+                icon: Icon(
+                  /// If assetsList is null that means that we are in the home page
+                  (assetsList == null) ? Icons.home_rounded : Icons.home_outlined, 
+                  size: kIconSize, color: kIconColor,), 
+                onPressed: () {
+                  print("[INFO] Retourning to the HomePage!");
+                  Navigator.of(context).popUntil((route) => route.isFirst);
+                },      
+              ),
               // Account Button
               IconButton(
                 icon: const Icon(Icons.account_circle_outlined, size: kIconSize, color: kIconColor,), 
@@ -55,8 +66,7 @@ class Footbar extends StatelessWidget {
               IconButton(
                 icon: const Icon(Icons.delete_outline, size: kIconSize, color: kIconColor,), 
                 onPressed: () {
-                  //likedMedias.drop();
-                  SbroImage.moveToTrash();
+                  //SbroImage.moveToTrash();
                   /// Per ora lo rimuoviamo direttamente. 
                   /// In futuro questa funzione verrà chiamata solo dalla pagina del cestino.
                   if(corrIndx != null && deleteImageForReal) SbroImage.deleteAsset(assets[corrIndx!]);

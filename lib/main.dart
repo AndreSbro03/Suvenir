@@ -46,7 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
           // I need to upload all media first
           await SbroImage.fetchAssets();
           corrIndx = 0;
-          print("Loaded all images");
+          print("[INFO] Loaded all images!");
 
           setState(() {
             originalAssets.addAll(assets);
@@ -68,8 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   _getPathList() async {
     Settings.validPathsMap = { for (var e in await PhotoManager.getAssetPathList()) e.name : true };
-    print("Getting paths: ");
-    print(Settings.validPathsMap.keys);
+    print("[INFO] Getting paths: ${Settings.validPathsMap.keys}");
   }
 
   @override
@@ -87,7 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return readyToGo ? 
-        HomePage(assetsList: assets,) :
+        HomePage(feedController: homeFeedController,) :
         const Center(child: SizedBox(
           width: 50,
           height: 50,

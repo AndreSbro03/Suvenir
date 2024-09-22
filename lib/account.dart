@@ -82,9 +82,13 @@ class _AccountState extends State<Account> {
                             return GestureDetector(
                               child: Image.memory(snapshot.data),
                               onTap: () {
+                                corrIndx = 0;
+                                PageController pc = PageController(initialPage: index);
+                                
                                 Navigator.of(context).push(
-                                  MaterialPageRoute(builder: (_) => HomePage(assetsList: likedAssets))
+                                  MaterialPageRoute(builder: (_) => HomePage(assetsList: likedAssets,startingIdx: index, feedController: pc,))
                                 );
+                                
                               },
                               );
                           }

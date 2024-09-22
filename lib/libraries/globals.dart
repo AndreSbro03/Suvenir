@@ -29,7 +29,7 @@ int? corrIndx;
 
 bool initializeApp = true;
 
-PageController feedController = PageController();
+PageController homeFeedController = PageController();
 VideoPlayerController? vpController;
 
 bool deleteImageForReal = false;
