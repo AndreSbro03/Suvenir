@@ -1,13 +1,10 @@
 import 'package:photo_manager/photo_manager.dart';
 import 'package:sqflite/sqflite.dart';
 
-class MediaDatabase {
-  static Database? _database;
-  String tableName = "images";
+class TrashDatabase {
+  Database? _database;
+  static const String tableName = "trashed";
 
-  MediaDatabase({required this.tableName});
-
-  //Database db;
   Future<Database> get database async{
     if(_database != null) return _database!;
 
@@ -27,6 +24,8 @@ class MediaDatabase {
 
   Future _createDB(Database db, int version) async {
     const idType = 'INTEGER PRIMARY KEY';
+    const date = '';
+    const stringType = '';
 
     await db.execute('''
     CREATE TABLE $tableName ( 
@@ -90,5 +89,4 @@ class MediaDatabase {
     final Database db = await database;
     db.delete(tableName);
   }
-
 }

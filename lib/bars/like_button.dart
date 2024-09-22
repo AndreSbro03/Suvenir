@@ -53,7 +53,7 @@ class _LikeButtonState extends State<LikeButton> {
         const Icon(Icons.favorite_outline, size: kIconSize, color: kIconColor,),
         onPressed: () {
           if(isReadyToLike){
-            AssetEntity? currAsset = assets[corrIndx!];
+            AssetEntity? currAsset = assetsList[corrIndx!];
             if(isLiked) {
               likedMedias.removeMedia(currAsset);
             }

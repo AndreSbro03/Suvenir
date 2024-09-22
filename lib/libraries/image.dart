@@ -1,15 +1,18 @@
-import 'package:flutter/material.dart';
+import 'dart:io';
 import 'package:gallery_tok/feed/feed.dart';
-import 'package:gallery_tok/libraries/db.dart';
+import 'package:gallery_tok/db/likedDb.dart';
 import 'package:gallery_tok/libraries/globals.dart';
+import 'package:gallery_tok/libraries/permission.dart';
 import 'package:gallery_tok/settings.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:share_plus/share_plus.dart';
 
 class SbroImage{
 
-  static const int scrollDurationMilliseconds = 500;
- 
+
+  static const String trashPath = "$appName.trash/";
+
   static Future<void> fetchAssets() async {
     int assetsCount =  await PhotoManager.getAssetCount();
     assets.addAll(await PhotoManager.getAssetListRange(start: 0, end: assetsCount));
@@ -34,12 +37,24 @@ class SbroImage{
     return "";
   }
 
-  static void moveToTrash(PageController currPageContr) {
+  static void moveToTrash(AssetEntity asset) async {
 
-    assets[corrIndx!] = null;
-    currPageContr.nextPage(duration: const Duration(milliseconds: scrollDurationMilliseconds), curve: Curves.easeInOut);
+    if(await SbroPermission.isStoragePermissionGranted()){
 
-    // TODO
+      String? oldPath = await getAssetAbsolutePath(asset);
+      
+      /// Move the asset
+      AssetEntity? out = await moveAsset(asset, trashPath);
+      if(out == null){
+        print("[ERR] Something went wrong moving asset ${asset.title}");
+        return;
+      }
+
+      /// Add the asset to the database
+      /// database add {'id' = out.id, 'date' = now, 'oldPath' = oldPath}
+
+    }
+
   }
 
   static Future<void> deleteAsset(AssetEntity? asset) async {
@@ -62,7 +77,7 @@ class SbroImage{
     }
   }
 
-  static Future<void> shareMedia(AssetEntity? asset) async {
+  static Future<void> shareAsset(AssetEntity? asset) async {
     if(asset == null) {
       print("Trying to share an unavailable asset!");
       return;
@@ -108,7 +123,7 @@ class SbroImage{
     if(modified) Feed.realoadFeed.value = true;
   }
 
-  static Future<List<AssetEntity?>> getAllAssesInDatabase(MediaDatabase db) async {
+  static Future<List<AssetEntity?>> getAllAssesInDatabase(LikedDatabase db) async {
     List<int> mediaIds = await db.readAllMediaIds();
     List<AssetEntity?> out = [];
     for (int id in mediaIds) {
@@ -116,4 +131,78 @@ class SbroImage{
     }
     return out;
   }
+
+  static Future<AssetEntity?> moveAsset(AssetEntity? asset, String newPath) async {
+
+    if(asset == null) {
+      print("[WARN] The file passed was null, ignoring!");
+      return null;
+    }
+
+    File? fl = await asset.file;
+    
+    if(fl == null) {
+      print("[WARN] The file passed was null, ignoring!");
+      return null;
+    }
+
+    AssetEntity? out;
+    /// Move the Media to a specific folder in the memory
+    switch (asset.type) {
+ 
+      case AssetType.image:
+        out = await PhotoManager.editor.saveImageWithPath(
+          await getAssetAbsolutePath(asset), 
+          title: asset.title!,
+          relativePath: newPath
+        );
+        break;
+
+      case AssetType.video:
+        out = await PhotoManager.editor.saveVideo(
+          await asset.file.then((file) => file!), 
+          title: asset.title!,
+          relativePath: newPath
+        );
+        break;
+
+      case AssetType.audio:
+      case AssetType.other:
+        print("[WAR] This file type is not supported yet!");
+        break;
+    }
+    
+
+    return out;
+
+    /*
+    Move to app folder (Photo manager can't see them after)
+    final newDir = await getDirectory(newPath);
+
+    try {
+      await fl.rename(newDir);
+    }
+    on FileSystemException catch (e) {
+      // if rename fails, copy the source file and then delete it
+      final File newFile = await fl.copy("$newDir/${asset.title}");
+      await fl.delete();
+    }
+    */
+  }
+
+  static Future<String> getDirectory(String dirName) async {
+    String appDir = await getExternalStorageDirectory().then( (dir) => dir!.path);
+
+    if(await Directory("$appDir/$dirName").exists()){
+      print("[INFO] Directory $appDir/$dirName already exists!");
+      return "$appDir/$dirName";
+    }
+
+    // TODO: the following wont work on IOS
+    String newDir = await Directory("$appDir/$dirName").create(recursive: true).then( (dir) => dir.path);
+    print("[INFO] Directory: $newDir");
+    return newDir;
+  }
+
+
 }

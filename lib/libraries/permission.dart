@@ -72,4 +72,23 @@ class SbroPermission {
     }
 
   }
+
+  static Future<bool> isStoragePermissionGranted() async {
+    switch (await SbroPermission.getStoragePermission()) {
+
+      case PermissionsTypes.granted:
+          // I need to upload all media first
+          return true;       
+
+      case PermissionsTypes.permanentlyDenied: 
+          // TODO: pop a warning box saying "Go to settings and give the needed ..."
+          print("Permission to storage is permanentlyDenied");
+          return false;
+          
+      default:
+        // TODO: maybe add a warnig banner here to
+        print("Permission to storage is denied");
+        return false;
+    }
+  }
 }

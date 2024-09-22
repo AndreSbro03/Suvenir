@@ -15,12 +15,11 @@ class Feed extends StatelessWidget {
   final int startingIdx;
   final PageController? feedController;
 
-
-
   /// Every @modIdxUpdate medias the feed check if the next @numNextUpdate medias are valid. (Not in forbidden folders)
   static int modIdxUpdate = 15;
   static int numNextUpdate = modIdxUpdate + 5;
   static ValueNotifier<bool> realoadFeed = ValueNotifier<bool>(false);
+  static const int scrollDurationMilliseconds = 500;
 
 
   @override

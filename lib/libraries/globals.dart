@@ -34,7 +34,7 @@ VideoPlayerController? vpController;
 
 bool deleteImageForReal = false;
 
-MediaDatabase likedMedias = MediaDatabase(tableName: "liked");
+LikedDatabase likedMedias = LikedDatabase();
 
 double getWidth(context) {
   return MediaQuery.sizeOf(context).width;

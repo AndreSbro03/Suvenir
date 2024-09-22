@@ -3,7 +3,6 @@ import 'package:gallery_tok/account.dart';
 import 'package:gallery_tok/feed/feed.dart';
 import 'package:gallery_tok/libraries/globals.dart';
 import 'package:gallery_tok/libraries/image.dart';
-import 'package:gallery_tok/libraries/permission.dart';
 import 'package:gallery_tok/bars/like_button.dart';
 import 'package:photo_manager/photo_manager.dart';
 
@@ -15,6 +14,9 @@ class Footbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    List<AssetEntity?> _assetsList = (assetsList == null) ? assets : assetsList!;
+
     return Align(
         alignment: FractionalOffset.bottomCenter,
         child: Container(
@@ -33,7 +35,7 @@ class Footbar extends StatelessWidget {
                 icon: const Icon(Icons.share_outlined, size: kIconSize, color: kIconColor,), 
                 onPressed: () async {
                   //if(!(await _getStorageAccess())) return;
-                  if(corrIndx != null) SbroImage.shareMedia(assets[corrIndx!]);
+                  if(corrIndx != null) SbroImage.shareAsset(_assetsList[corrIndx!]);
                 },      
               ),
               // Home Button
@@ -66,10 +68,13 @@ class Footbar extends StatelessWidget {
               IconButton(
                 icon: const Icon(Icons.delete_outline, size: kIconSize, color: kIconColor,), 
                 onPressed: () {
-                  //SbroImage.moveToTrash();
+                  SbroImage.moveToTrash(_assetsList[corrIndx!]!);
+                  /// Update the homePageFeed
+                  _assetsList[corrIndx!] = null;
+                  homeFeedController.nextPage(duration: const Duration(milliseconds: Feed.scrollDurationMilliseconds), curve: Curves.easeInOut);
                   /// Per ora lo rimuoviamo direttamente. 
                   /// In futuro questa funzione verrà chiamata solo dalla pagina del cestino.
-                  if(corrIndx != null && deleteImageForReal) SbroImage.deleteAsset(assets[corrIndx!]);
+                  if(corrIndx != null && deleteImageForReal) SbroImage.deleteAsset(_assetsList[corrIndx!]);
                 },
               ),
             ],
@@ -78,23 +83,5 @@ class Footbar extends StatelessWidget {
     );
   }
 
-   Future<bool> _getStorageAccess() async {
-    switch (await SbroPermission.getStoragePermission()) {
-
-      case PermissionsTypes.granted:
-          // I need to upload all media first
-          return true;       
-
-      case PermissionsTypes.permanentlyDenied: 
-          // TODO: pop a warning box saying "Go to settings and give the needed ..."
-          print("Permission to storage is permanentlyDenied");
-          return false;
-          
-      default:
-        // TODO: maybe add a warnig banner here to
-        _getStorageAccess();
-        return false;
-    }
-  }
 }
 
