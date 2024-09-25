@@ -14,11 +14,14 @@ class Account extends StatefulWidget {
 class _AccountState extends State<Account> {
 
   List<AssetEntity?> likedAssets = [];
+  List<AssetEntity?> trahedAssets = [];
+  
   bool readyToGo = false;
 
-  void _loadAssets()async {
+  void _loadAssets() async {
     readyToGo = false;
-    likedAssets = await SbroImage.getAllAssesInDatabase(likedMedias);
+      likedAssets = await SbroImage.getAllAssesInDatabase(likeAssetsDb);
+      trahedAssets = await SbroImage.getAllAssesInDatabase(trashAssetsDb);
     readyToGo = true;
     setState(() {});
   }
@@ -55,7 +58,7 @@ class _AccountState extends State<Account> {
                 children: [
                   Text("Total medias found on device: ${originalAssets.length}", style: kNormalStyle,),
                   Text("Total medias liked: ${likedAssets.length}", style: kNormalStyle,),
-                  const Text("Total medias in the trash: ${69420}", style: kNormalStyle,),
+                  Text("Total medias in the trash: ${trahedAssets.length}", style: kNormalStyle,),
                 ],
               ),
             ),
@@ -66,52 +69,11 @@ class _AccountState extends State<Account> {
                   children: [
                     
                     /// Liked medias
-                    GridView.builder(
-                      itemCount: likedAssets.length,
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3, // number of items in each row
-                        mainAxisSpacing: 8.0, // spacing between rows
-                        crossAxisSpacing: 8.0, // spacing between columns
-                      ),
-                      itemBuilder: (_, index) {
-                        return FutureBuilder(
-                        future: likedAssets[index]!.thumbnailData,
-                        
-                        builder: (_, AsyncSnapshot snapshot) {
-                          if(snapshot.hasData) {
-                            return GestureDetector(
-                              child: Image.memory(snapshot.data),
-                              onTap: () {
-                                corrIndx = 0;
-                                PageController pc = PageController(initialPage: index);
-                                
-                                Navigator.of(context).push(
-                                  MaterialPageRoute(builder: (_) => HomePage(assetsList: likedAssets,startingIdx: index, feedController: pc,))
-                                );
-                                
-                              },
-                              );
-                          }
-                          return Center(child: SizedBox(
-                            height: getHeight(context) * 0.5,
-                            width: getWidth(context) * 0.5,
-                            child: const CircularProgressIndicator()));
-                        });
-                      }
-                    ),
+                    AssetsGrid(assetsList: likedAssets),
 
                     /// Trash medias
-                    GridView.builder(
-                      itemCount: 15,
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3, // number of items in each row
-                        mainAxisSpacing: 8.0, // spacing between rows
-                        crossAxisSpacing: 8.0, // spacing between columns
-                      ),
-                      itemBuilder: (_, index) {
-                        return Container(color: Colors.green,);
-                      },
-                    )
+                    AssetsGrid(assetsList: trahedAssets, isTrashFeed: true,),
+                    
                   ],
                 ),
               ) 
@@ -121,6 +83,58 @@ class _AccountState extends State<Account> {
           ]
         )
       )
+    );
+  }
+}
+
+class AssetsGrid extends StatelessWidget {
+  const AssetsGrid({
+    super.key,
+    required this.assetsList,
+    this.isTrashFeed = false,
+  });
+
+  final List<AssetEntity?> assetsList;
+  final bool isTrashFeed;
+
+  @override
+  Widget build(BuildContext context) {
+    return GridView.builder(
+      itemCount: assetsList.length,
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3, // number of items in each row
+        mainAxisSpacing: 8.0, // spacing between rows
+        crossAxisSpacing: 8.0, // spacing between columns
+      ),
+      itemBuilder: (_, index) {
+        return FutureBuilder(
+        future: assetsList[index]!.thumbnailData,
+        
+        builder: (_, AsyncSnapshot snapshot) {
+          if(snapshot.hasData) {
+            return GestureDetector(
+              child: Image.memory(snapshot.data),
+              onTap: () {
+                corrIndx = 0;
+                PageController pc = PageController(initialPage: index);
+                
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => HomePage(
+                    assetsList: assetsList, 
+                    feedController: pc, 
+                    isTrashFeed: isTrashFeed,
+                  ))
+                );
+                
+              },
+              );
+          }
+          return Center(child: SizedBox(
+            height: getHeight(context) * 0.5,
+            width: getWidth(context) * 0.5,
+            child: const CircularProgressIndicator()));
+        });
+      }
     );
   }
 }

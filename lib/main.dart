@@ -68,6 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   _getPathList() async {
     Settings.validPathsMap = { for (var e in await PhotoManager.getAssetPathList()) e.name : true };
+    Settings.validPathsMap.remove(SbroImage.trashPath);
     print("[INFO] Getting paths: ${Settings.validPathsMap.keys}");
   }
 

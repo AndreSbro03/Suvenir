@@ -135,9 +135,8 @@ class _SettingsState extends State<Settings> {
                   assets.addAll(originalAssets);
                   assets.shuffle();
 
-                  /// Make sure the first @Feed.numNextUpdate medias are valid. @-1 is becouse we want to check even the
-                  /// current media. The 0 one.
-                  SbroImage.updateAssets(-1, Feed.numNextUpdate);
+                  /// Make sure the first @Feed.numNextUpdate medias are valid.
+                  SbroImage.updateAssets(0, Feed.numNextUpdate);
                   print(assets.length);
 
                   /// Notify the feed that the assets are beign modified

@@ -1,17 +1,16 @@
 import 'dart:io';
+import 'package:gallery_tok/db/assets_db.dart';
+import 'package:gallery_tok/db/trash_db.dart';
 import 'package:gallery_tok/feed/feed.dart';
-import 'package:gallery_tok/db/likedDb.dart';
 import 'package:gallery_tok/libraries/globals.dart';
 import 'package:gallery_tok/libraries/permission.dart';
 import 'package:gallery_tok/settings.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:share_plus/share_plus.dart';
 
 class SbroImage{
 
-
-  static const String trashPath = "$appName.trash/";
+  static const String trashPath = "$appName.trash";
 
   static Future<void> fetchAssets() async {
     int assetsCount =  await PhotoManager.getAssetCount();
@@ -52,9 +51,15 @@ class SbroImage{
 
       /// Add the asset to the database
       /// database add {'id' = out.id, 'date' = now, 'oldPath' = oldPath}
+      TrashedAsset ta = TrashedAsset(
+        id: int.parse(out.id), 
+        date: getCorrDate(), 
+        oldPath: oldPath
+      );
+
+      trashAssetsDb.addMedia(ta);
 
     }
-
   }
 
   static Future<void> deleteAsset(AssetEntity? asset) async {
@@ -110,11 +115,12 @@ class SbroImage{
   /// Guarantee that the next @numNextUpdate medias are all valid medias
   static void updateAssets(index, numNextUpdate) {
     bool modified = false;
-    for(int i = index + 1; i < assets.length && i < (index + numNextUpdate);) {
+    for(int i = index; i < assets.length && i < (index + numNextUpdate);) {
       String folderName = SbroImage.getAssetFolder(assets[i]);
       //print(folderName);
       //print(Settings.validPathsMap[folderName]);
-      if(!(Settings.validPathsMap[folderName] ?? true)){
+      /// If the path isn't valid or is the trashed one we remove the asset
+      if(!(Settings.validPathsMap[folderName] ?? true) || folderName == trashPath){
         assets.removeAt(i);
         modified = true;
       }
@@ -123,7 +129,7 @@ class SbroImage{
     if(modified) Feed.realoadFeed.value = true;
   }
 
-  static Future<List<AssetEntity?>> getAllAssesInDatabase(LikedDatabase db) async {
+  static Future<List<AssetEntity?>> getAllAssesInDatabase(AssetsDb db) async {
     List<int> mediaIds = await db.readAllMediaIds();
     List<AssetEntity?> out = [];
     for (int id in mediaIds) {
@@ -189,20 +195,5 @@ class SbroImage{
     }
     */
   }
-
-  static Future<String> getDirectory(String dirName) async {
-    String appDir = await getExternalStorageDirectory().then( (dir) => dir!.path);
-
-    if(await Directory("$appDir/$dirName").exists()){
-      print("[INFO] Directory $appDir/$dirName already exists!");
-      return "$appDir/$dirName";
-    }
-
-    // TODO: the following wont work on IOS
-    String newDir = await Directory("$appDir/$dirName").create(recursive: true).then( (dir) => dir.path);
-    print("[INFO] Directory: $newDir");
-    return newDir;
-  }
-
 
 }

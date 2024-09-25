@@ -4,12 +4,15 @@ import 'package:gallery_tok/feed/feed.dart';
 import 'package:gallery_tok/libraries/globals.dart';
 import 'package:gallery_tok/libraries/image.dart';
 import 'package:gallery_tok/bars/like_button.dart';
+import 'package:gallery_tok/libraries/permission.dart';
 import 'package:photo_manager/photo_manager.dart';
 
 class Footbar extends StatelessWidget {
-  const Footbar({super.key, this.assetsList});
+  const Footbar({super.key, this.assetsList, this.isTrashFeed = false});
 
   final List<AssetEntity?>? assetsList;
+  final bool isTrashFeed;
+
   static const fbHight = 60.0;
 
   @override
@@ -28,7 +31,9 @@ class Footbar extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               // Like Button
-              LikeButton(assetsList: assetsList,),
+              isTrashFeed ?
+                const Text("ciao", style: kNormalStyle,) :
+                LikeButton(assetsList: assetsList,),
               
               // Share Button
               IconButton(
@@ -65,16 +70,23 @@ class Footbar extends StatelessWidget {
                 },
               ),
               // Delete Button
+              isTrashFeed ? 
+              const Text("mamma", style: kNormalStyle) :
               IconButton(
                 icon: const Icon(Icons.delete_outline, size: kIconSize, color: kIconColor,), 
-                onPressed: () {
-                  SbroImage.moveToTrash(_assetsList[corrIndx!]!);
-                  /// Update the homePageFeed
-                  _assetsList[corrIndx!] = null;
-                  homeFeedController.nextPage(duration: const Duration(milliseconds: Feed.scrollDurationMilliseconds), curve: Curves.easeInOut);
-                  /// Per ora lo rimuoviamo direttamente. 
-                  /// In futuro questa funzione verrà chiamata solo dalla pagina del cestino.
-                  if(corrIndx != null && deleteImageForReal) SbroImage.deleteAsset(_assetsList[corrIndx!]);
+                onPressed: () async {
+
+                  /// Request permission
+                  if(await SbroPermission.isStoragePermissionGranted()){
+
+                    SbroImage.moveToTrash(_assetsList[corrIndx!]!);
+                    /// Update the homePageFeed
+                    _assetsList[corrIndx!] = null;
+                    homeFeedController.nextPage(duration: const Duration(milliseconds: Feed.scrollDurationMilliseconds), curve: Curves.easeInOut);
+                  }
+                  else{
+                    print("[INFO] Permission denied");
+                  }
                 },
               ),
             ],

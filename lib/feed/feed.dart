@@ -8,11 +8,10 @@ import 'package:photo_manager/photo_manager.dart';
 
 class Feed extends StatelessWidget {
   const Feed(
-    {super.key, this.assetsList, this.startingIdx = 0, required this.feedController,}
+    {super.key, this.assetsList, required this.feedController,}
   );
 
   final List<AssetEntity?>? assetsList;
-  final int startingIdx;
   final PageController? feedController;
 
   /// Every @modIdxUpdate medias the feed check if the next @numNextUpdate medias are valid. (Not in forbidden folders)
@@ -25,13 +24,14 @@ class Feed extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    print("[INFO] Feed starting index is set to: $startingIdx");
-    
     // If there is not a custom list passed or if the list passed is empty we go with the global one
     bool isListGlobal = (assetsList == null);
     if(!isListGlobal){
       isListGlobal = assetsList!.isEmpty;
     }
+
+    /// Check if the first images are valid
+    SbroImage.updateAssets(0, numNextUpdate);                      
 
     return Column(
       children: [   
@@ -57,12 +57,12 @@ class Feed extends StatelessWidget {
                   itemBuilder: (_, index) {
                     
                     if (assets[index] == null){ 
-                      return const Center(child: Text("Image unavailable", style: kNormalStyle,),);
+                      return const Center(child: Text("Image unavailable.\n Might be deleted", style: kNormalStyle,),);
                     }
                     else {      
                 
                       /// Update next @Feed.numNextUpdate medias
-                      if(index % modIdxUpdate == 0) {
+                      if(index % modIdxUpdate == 0 && index != 0) {
                         SbroImage.updateAssets(index, numNextUpdate);
                       }
                 

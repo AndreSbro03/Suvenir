@@ -6,11 +6,18 @@ import 'package:gallery_tok/libraries/globals.dart';
 import 'package:photo_manager/photo_manager.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({super.key, this.assetsList, this.startingIdx = 0, this.feedController});
+  const HomePage({
+    super.key, 
+    this.assetsList, 
+    this.feedController, 
+    this.isTrashFeed = false
+  });
 
   final List<AssetEntity?>? assetsList;
-  final int startingIdx;
   final PageController? feedController;
+  
+  /// If true the footbar instead of the like and trash button will have a restore and delete button
+  final bool isTrashFeed;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +28,7 @@ class HomePage extends StatelessWidget {
           /// Level 0: (background) 
           ///   The feed once the permission are granted and the medias are loaded.
           ///   Circular progress indicator instead.
-          Feed(assetsList: assetsList, startingIdx: startingIdx, feedController: feedController,),
+          Feed(assetsList: assetsList, feedController: feedController,),
           /// Level 1: (Appbar and Footbar)
           Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -32,7 +39,7 @@ class HomePage extends StatelessWidget {
         
               /// Footbar:
               ///   consist in a list of icons.
-              Footbar(assetsList: assetsList),
+              Footbar(assetsList: assetsList, isTrashFeed: isTrashFeed),
             ],
           )
       

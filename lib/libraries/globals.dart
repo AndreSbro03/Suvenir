@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:gallery_tok/libraries/db.dart';
+import 'package:gallery_tok/db/liked_db.dart';
+import 'package:gallery_tok/db/trash_db.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:video_player/video_player.dart';
 
@@ -34,7 +35,8 @@ VideoPlayerController? vpController;
 
 bool deleteImageForReal = false;
 
-LikedDatabase likedMedias = LikedDatabase();
+LikeDatabase likeAssetsDb = LikeDatabase(tableName: 'like');
+TrashDatabase trashAssetsDb = TrashDatabase(tableName: 'trash');
 
 double getWidth(context) {
   return MediaQuery.sizeOf(context).width;
@@ -42,4 +44,9 @@ double getWidth(context) {
 
 double getHeight(context) {
   return MediaQuery.sizeOf(context).height;
+}
+
+String getCorrDate() {
+  DateTime now = DateTime.now();
+  return now.toString().split(' ').first;
 }
