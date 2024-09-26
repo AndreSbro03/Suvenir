@@ -52,7 +52,7 @@ class SbroImage{
       /// Add the asset to the database
       /// database add {'id' = out.id, 'date' = now, 'oldPath' = oldPath}
       TrashedAsset ta = TrashedAsset(
-        id: int.parse(out.id), 
+        id: out.id, 
         date: getCorrDate(), 
         oldPath: oldPath
       );
@@ -130,10 +130,18 @@ class SbroImage{
   }
 
   static Future<List<AssetEntity?>> getAllAssesInDatabase(AssetsDb db) async {
-    List<int> mediaIds = await db.readAllMediaIds();
+    List<String> mediaIds = await db.readAllMediaIds();
     List<AssetEntity?> out = [];
-    for (int id in mediaIds) {
-      out.add(await AssetEntity.fromId(id.toString()));
+    for (String id in mediaIds) {
+      AssetEntity? ae = await AssetEntity.fromId(id);
+      
+      // If ae is null we remove that from the database
+      if(ae == null){
+        db.removeMedia(id);
+      }
+      else{
+        out.add(ae);
+      }
     }
     return out;
   }

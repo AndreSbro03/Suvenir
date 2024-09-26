@@ -27,7 +27,7 @@ class _LikeButtonState extends State<LikeButton> {
   void isMediaLiked() async{
       isReadyToLike = false;
       if(corrIndx != null && assetsList[corrIndx!] != null){
-        int id = int.parse(assetsList[corrIndx!]!.id);
+        String id = assetsList[corrIndx!]!.id;
         isLiked = await likeAssetsDb.existMedia(id);
         setState(() { isReadyToLike = true;});
       }
@@ -58,7 +58,7 @@ class _LikeButtonState extends State<LikeButton> {
           if(isReadyToLike){
             AssetEntity? currAsset = assetsList[corrIndx!];
             if(isLiked) {
-              likeAssetsDb.removeMedia(int.parse(currAsset!.id));
+              likeAssetsDb.removeMedia(currAsset!.id);
             }
             else{
               likeAssetsDb.addMedia(currAsset);

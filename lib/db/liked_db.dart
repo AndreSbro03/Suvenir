@@ -31,7 +31,7 @@ class LikeDatabase extends AssetsDb{
     print(asset.id);
     final Database db = await database;
 
-    if(await existMedia(int.parse(asset.id))){
+    if(await existMedia(asset.id)){
       print("[WARN] Media already in the database. Ignoring ...");
       return -1;
     }

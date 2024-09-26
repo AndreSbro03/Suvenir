@@ -2,14 +2,14 @@ import 'package:gallery_tok/db/assets_db.dart';
 import 'package:sqflite/sqflite.dart';
 
 class TrashedAsset {
-  final int id;
+  final String id;
   final String date;
   final String oldPath;
 
   TrashedAsset({required this.id, required this.date, required this.oldPath});
 
   static TrashedAsset fromJson(Map<String, Object?> json) => TrashedAsset(
-      id: json[TrashedAssetFields.id] as int,
+      id: json[TrashedAssetFields.id] as String,
       date: json[TrashedAssetFields.date] as String,
       oldPath: json[TrashedAssetFields.oldPath] as String,
   );

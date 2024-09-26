@@ -16,8 +16,8 @@ abstract class AssetsDb {
 
   Future<Database> initDb(String name);
 
-  Future<bool> existMedia(int? id) async {
-    if(id == null) return false;
+  Future<bool> existMedia(String id) async {
+    if(id.isEmpty) return false;
     final Database db = await database;
 
     final List<Map<String, Object?>> result = await db.query(
@@ -30,15 +30,15 @@ abstract class AssetsDb {
     return count > 0;
   }
 
-  Future<List<int>> readAllMediaIds() async {
+  Future<List<String>> readAllMediaIds() async {
     final Database db = await database;
 
     final List<Map<String, Object?>> result = await db.query(tableName);
 
-    return result.map((json) => int.parse(json['id'].toString())).toList();
+    return result.map((json) => json['id'].toString()).toList();
   }
 
-  Future<int> removeMedia(int id) async {
+  Future<int> removeMedia(String id) async {
 
     final Database db = await database;
     return await db.delete(
