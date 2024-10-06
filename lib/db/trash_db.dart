@@ -42,7 +42,7 @@ class TrashDatabase extends AssetsDb{
     final dbPath = await getDatabasesPath();
     final String path = "$dbPath/$name";
 
-    print(path);
+    print("[INFO] Trash db path: $path");
 
     return await openDatabase(path, version: 1, onCreate: _createDB);
   }
@@ -63,7 +63,6 @@ class TrashDatabase extends AssetsDb{
   Future<int> addMedia(TrashedAsset? trashedAsset) async {
     if(trashedAsset == null) return -1;
 
-    print(trashedAsset.id);
     final Database db = await database;
 
     if(await existMedia(trashedAsset.id)){
@@ -73,6 +72,32 @@ class TrashDatabase extends AssetsDb{
 
     final int id = await db.insert(tableName, trashedAsset.toJson());
     return id;
+  }
+
+  Future<String> _getTrashedAssetField(String id, String assetField) async {
+
+    final Database db = await database;
+
+    final List<Map<String, Object?>> result = await db.query(
+      tableName,
+      columns: [(assetField)],
+      where: "${TrashedAssetFields.id} = $id"
+    );
+
+    String out = result.first[assetField].toString();
+
+    return out;
+
+  }
+
+  Future<String> getAssetDeletionTime(String id) async {
+    if(id.isEmpty) return '';
+    return await _getTrashedAssetField(id, TrashedAssetFields.date);   
+  }
+
+  Future<String> getAssetOldPath(String id) async {
+    if(id.isEmpty) return '';
+    return await _getTrashedAssetField(id, TrashedAssetFields.oldPath);   
   }
 
 }

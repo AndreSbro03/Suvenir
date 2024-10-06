@@ -1,24 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:gallery_tok/account.dart';
-import 'package:gallery_tok/feed/feed.dart';
 import 'package:gallery_tok/libraries/globals.dart';
 import 'package:gallery_tok/libraries/image.dart';
 import 'package:gallery_tok/bars/like_button.dart';
 import 'package:gallery_tok/libraries/permission.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'package:video_player/video_player.dart';
 
 class Footbar extends StatelessWidget {
-  const Footbar({super.key, this.assetsList, this.isTrashFeed = false});
+  const Footbar({
+    super.key, 
+    required this.assets, 
+    this.isTrashFeed = false, 
+    required this.reload,
+    this.vp,
+    });
 
-  final List<AssetEntity?>? assetsList;
+  final List<AssetEntity?> assets;
+  final VideoPlayerController? vp;
   final bool isTrashFeed;
+  final Function reload;
 
   static const fbHight = 60.0;
 
   @override
   Widget build(BuildContext context) {
-
-    List<AssetEntity?> _assetsList = (assetsList == null) ? assets : assetsList!;
 
     return Align(
         alignment: FractionalOffset.bottomCenter,
@@ -31,23 +37,34 @@ class Footbar extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               // Like Button
-              isTrashFeed ?
-                const Text("ciao", style: kNormalStyle,) :
-                LikeButton(assetsList: assetsList,),
+               isTrashFeed ?
+                IconButton(
+                  icon: const Icon(Icons.restore_from_trash_rounded, size: kIconSize, color: kIconColor,), 
+                  onPressed: () {
+
+
+
+
+
+
+                    
+                  },
+                ) :
+              LikeButton(assets: assets,),
               
               // Share Button
               IconButton(
                 icon: const Icon(Icons.share_outlined, size: kIconSize, color: kIconColor,), 
                 onPressed: () async {
                   //if(!(await _getStorageAccess())) return;
-                  if(corrIndx != null) SbroImage.shareAsset(_assetsList[corrIndx!]);
+                  if(corrIndx != null) SbroImage.shareAsset(assets[corrIndx!]);
                 },      
               ),
               // Home Button
               IconButton(
                 icon: Icon(
-                  /// If assetsList is null that means that we are in the home page
-                  (assetsList == null) ? Icons.home_rounded : Icons.home_outlined, 
+                  /// If assest is origianAssets then we are in the home page
+                  (assets == originalAssets) ? Icons.home_rounded : Icons.home_outlined, 
                   size: kIconSize, color: kIconColor,), 
                 onPressed: () {
                   print("[INFO] Retourning to the HomePage!");
@@ -58,20 +75,39 @@ class Footbar extends StatelessWidget {
               IconButton(
                 icon: const Icon(Icons.account_circle_outlined, size: kIconSize, color: kIconColor,), 
                 onPressed: () {
-                  if(vpController != null){
-                    vpController!.pause();
+                  if(vp != null){
+                    vp!.pause();
                   }
-                  /// TODO: do this shaisse better
-                  /// Notify the feed to put the pause icon
-                  Feed.realoadFeed.value = true;
+
                   Navigator.of(context).push(
                     MaterialPageRoute(builder: (_) => const Account())
                   );
+
+                  reload();
                 },
               ),
-              // Delete Button
+
+              /// Delete Button:
+              /// if pressed we remove forever the current asset from device and we remove the id of the asset from the 
+              /// trashed db.
               isTrashFeed ? 
-              const Text("mamma", style: kNormalStyle) :
+              IconButton(
+                  icon: const Icon(Icons.delete_forever_rounded, size: kIconSize, color: kIconColor,), 
+                  onPressed: () async {
+                    if(corrIndx != null && assets[corrIndx!] != null){
+                        /// TODO: ask to confirm
+                        String id = assets[corrIndx!]!.id;
+                        SbroImage.deleteAsset(assets[corrIndx!]);
+                        trashAssetsDb.removeMedia(id);
+                        assets[corrIndx!] = null;
+                        reload();
+                    }
+                    else{
+                      print("[ERR] Trying to remove asset null!");
+                    }
+                  },
+
+                ) :
               IconButton(
                 icon: const Icon(Icons.delete_outline, size: kIconSize, color: kIconColor,), 
                 onPressed: () async {
@@ -79,10 +115,10 @@ class Footbar extends StatelessWidget {
                   /// Request permission
                   if(await SbroPermission.isStoragePermissionGranted()){
 
-                    SbroImage.moveToTrash(_assetsList[corrIndx!]!);
+                    SbroImage.moveToTrash(assets[corrIndx!]!);
                     /// Update the homePageFeed
-                    _assetsList[corrIndx!] = null;
-                    homeFeedController.nextPage(duration: const Duration(milliseconds: Feed.scrollDurationMilliseconds), curve: Curves.easeInOut);
+                    assets[corrIndx!] = null;
+                    reload();
                   }
                   else{
                     print("[INFO] Permission denied");

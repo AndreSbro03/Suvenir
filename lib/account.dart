@@ -69,10 +69,14 @@ class _AccountState extends State<Account> {
                   children: [
                     
                     /// Liked medias
-                    AssetsGrid(assetsList: likedAssets),
+                    AssetsGrid(assetsList: likedAssets, reloadAccount: (){
+                      _loadAssets(); setState(() {});
+                    },),
 
                     /// Trash medias
-                    AssetsGrid(assetsList: trahedAssets, isTrashFeed: true,),
+                    AssetsGrid(assetsList: trahedAssets, isTrashFeed: true, reloadAccount: (){
+                      _loadAssets(); setState(() {});
+                    }),
                     
                   ],
                 ),
@@ -91,11 +95,13 @@ class AssetsGrid extends StatelessWidget {
   const AssetsGrid({
     super.key,
     required this.assetsList,
-    this.isTrashFeed = false,
+    this.isTrashFeed = false, 
+    required this.reloadAccount,
   });
 
   final List<AssetEntity?> assetsList;
   final bool isTrashFeed;
+  final Function reloadAccount;
 
   @override
   Widget build(BuildContext context) {
@@ -120,11 +126,11 @@ class AssetsGrid extends StatelessWidget {
                 
                 Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => HomePage(
-                    assetsList: assetsList, 
+                    assets: assetsList, 
                     feedController: pc, 
                     isTrashFeed: isTrashFeed,
                   ))
-                );
+                ).then( (_) => reloadAccount);
                 
               },
               );

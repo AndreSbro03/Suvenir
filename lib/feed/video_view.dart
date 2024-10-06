@@ -17,18 +17,16 @@ class VideoView extends StatefulWidget {
 class _VideoViewState extends State<VideoView> {
 
   late final Future<File?> videoFile;
-  late final VideoPlayerController _videoPlayerController;
+  late final VideoPlayerController vp;
   bool initialized = false;
 
   _initVideo() async {
     final videoFile = await widget.video.file;
-    _videoPlayerController = VideoPlayerController.file(videoFile!)
+    vp = VideoPlayerController.file(videoFile!)
       ..play()
       ..setLooping(true)
       ..initialize().then(
       (_) => setState(() => initialized = true));
-    /// Copy the video player into the global one so everywhere we can controll the current video
-    vpController = _videoPlayerController;
   }
 
   @override
@@ -39,7 +37,7 @@ class _VideoViewState extends State<VideoView> {
 
   @override
   void dispose() {
-    _videoPlayerController.dispose();
+    vp.dispose();
     super.dispose();
   }
 
@@ -50,21 +48,21 @@ class _VideoViewState extends State<VideoView> {
       children: [
         Center(child: 
           AspectRatio(
-            aspectRatio: _videoPlayerController.value.aspectRatio,
-            child: VideoPlayer(_videoPlayerController),
+            aspectRatio: vp.value.aspectRatio,
+            child: VideoPlayer(vp),
           )
         ),
         Center(
           child: IconButton(
             onPressed: () {
             setState(() {
-              _videoPlayerController.value.isPlaying
-                    ? _videoPlayerController.pause()
-                    : _videoPlayerController.play();
+              vp.value.isPlaying
+                    ? vp.pause()
+                    : vp.play();
               });
             },
             icon: Icon(
-              _videoPlayerController.value.isPlaying ? null : Icons.play_arrow,
+              vp.value.isPlaying ? null : Icons.play_arrow,
               size: kIconSize * 3.0,
               color: kContrColor,
             ),

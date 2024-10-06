@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:gallery_tok/feed/feed.dart';
 import 'package:gallery_tok/libraries/globals.dart';
 import 'package:gallery_tok/libraries/image.dart';
+import 'package:photo_manager/photo_manager.dart';
 
 /// Welcome to the app settings page. Here for now you can only chose what folders do you 
 /// want to see in the app.
 class Settings extends StatefulWidget {
-  const Settings({super.key});
+  const Settings({super.key, required this.assets});
 
+  final List<AssetEntity?> assets;
   static Map<String, bool> validPathsMap = {};
 
   @override
@@ -126,24 +128,17 @@ class _SettingsState extends State<Settings> {
                 color: kPrimaryColor,
                 onTap: (){
 
-                  /// Return to the first media of the feed
-                  homeFeedController.jumpToPage(0);
-                  corrIndx = 0;
-
                   /// Create new feed
-                  assets.clear();
-                  assets.addAll(originalAssets);
-                  assets.shuffle();
+                  widget.assets.clear();
+                  widget.assets.addAll(originalAssets);
+                  widget.assets.shuffle();
 
                   /// Make sure the first @Feed.numNextUpdate medias are valid.
-                  SbroImage.updateAssets(0, Feed.numNextUpdate);
-                  print(assets.length);
-
-                  /// Notify the feed that the assets are beign modified
-                  Feed.realoadFeed.value = true;                  
+                  SbroImage.updateAssets(widget.assets, 0, Feed.numNextUpdate);
+                  print(widget.assets.length);                             
 
                   /// Retrun to feed
-                  Navigator.of(context).pop();
+                  Navigator.of(context).pop(true);
                 },
               ),
             )

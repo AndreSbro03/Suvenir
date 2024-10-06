@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:gallery_tok/db/liked_db.dart';
 import 'package:gallery_tok/db/trash_db.dart';
 import 'package:photo_manager/photo_manager.dart';
-import 'package:video_player/video_player.dart';
 
 const String appName = "SbroApp";
 const TextStyle kTitleStyle = TextStyle( 
@@ -25,14 +24,9 @@ const double kIconSize = 25.0;
 const Color kIconColor = kContrColor;
 
 List<AssetEntity?> originalAssets = [];
-List<AssetEntity?> assets = [];
 int? corrIndx;
 
 bool initializeApp = true;
-
-PageController homeFeedController = PageController();
-VideoPlayerController? vpController;
-
 bool deleteImageForReal = false;
 
 LikeDatabase likeAssetsDb = LikeDatabase(tableName: 'like');

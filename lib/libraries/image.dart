@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:gallery_tok/db/assets_db.dart';
 import 'package:gallery_tok/db/trash_db.dart';
-import 'package:gallery_tok/feed/feed.dart';
 import 'package:gallery_tok/libraries/globals.dart';
 import 'package:gallery_tok/libraries/permission.dart';
 import 'package:gallery_tok/settings.dart';
@@ -14,8 +13,8 @@ class SbroImage{
 
   static Future<void> fetchAssets() async {
     int assetsCount =  await PhotoManager.getAssetCount();
-    assets.addAll(await PhotoManager.getAssetListRange(start: 0, end: assetsCount));
-    assets.shuffle();
+    originalAssets.addAll(await PhotoManager.getAssetListRange(start: 0, end: assetsCount));
+    originalAssets.shuffle();
   }
 
   static Future<String> getAssetAbsolutePath(AssetEntity? asset) async{
@@ -26,6 +25,7 @@ class SbroImage{
     return "";
   }
 
+  @deprecated
   static String getAssetRelativePath(AssetEntity? asset) {
     if(asset != null){
       if(asset.relativePath!.endsWith('/')){
@@ -62,23 +62,48 @@ class SbroImage{
     }
   }
 
+  
+ static Future<AssetEntity?> restoreAssetFromTrash(String id) async {
+    if(id.isEmpty) {
+      print("[WARN] Id is null, ignoring!");
+      return null;
+    }
+
+    AssetEntity? ae = await AssetEntity.fromId(id); 
+
+    if(ae == null) {
+      print("[ERR] Error loading asset!");
+      return null;
+    }
+
+    String oldPath = await trashAssetsDb.getAssetOldPath(id);
+    trashAssetsDb.removeMedia(id);
+    print("[INFO] Restoring Asset in $oldPath");
+    return moveAsset(ae, oldPath);  
+  }
+
+
   static Future<void> deleteAsset(AssetEntity? asset) async {
 
-    if(corrIndx == null || asset == null) {
+    if(asset == null) {
       print("Trying to delete un unavailable asset!");
       return;
     }
 
     try {
+      if(await SbroPermission.isStoragePermissionGranted()){
         asset.file.then(
           (file) {
             if(file == null) return;
             file.delete();         
           }
         );
+      } else{
+        throw Exception('Permission not granted!');
+      }
     } catch (e) {
       // Error in getting access to the file.
-      print("Error while deliting file");
+      print("[ERR] Error while deliting file: $e");
     }
   }
 
@@ -99,34 +124,40 @@ class SbroImage{
   static String getAssetFolder(AssetEntity? asset){
 
     if(asset == null) {
-      print("Trying to get the folder of an unavailable asset!");
+      print("[WARN] Trying to get the folder of an unavailable asset!");
       return "";
     }
     /// if the path is "Store/0/User/Picture/image.png" we take only "Picture"
-    List<String> path = getAssetRelativePath(asset).split('/');
-    //print(path);
+    String? path = asset.relativePath;
+    if(path == null){
+      print("[ERR] Something went wrong getting relative path!");
+      return "";
+    }
 
-    /// Removed the name of the file
-    path.removeLast();
+    List<String> folders = path.split('/');
+    folders.removeLast();
     /// Returned the last folder
-    return path.last;
+    return folders.last;
   }
 
+
   /// Guarantee that the next @numNextUpdate medias are all valid medias
-  static void updateAssets(index, numNextUpdate) {
-    bool modified = false;
+  static void updateAssets(List<AssetEntity?> assets , int index, int numNextUpdate) {
     for(int i = index; i < assets.length && i < (index + numNextUpdate);) {
       String folderName = SbroImage.getAssetFolder(assets[i]);
       //print(folderName);
       //print(Settings.validPathsMap[folderName]);
-      /// If the path isn't valid or is the trashed one we remove the asset
-      if(!(Settings.validPathsMap[folderName] ?? true) || folderName == trashPath){
+
+      /// If the assets is null we remove it
+      if(assets[i] == null){
         assets.removeAt(i);
-        modified = true;
       }
+      /// If the path isn't valid or is the trashed one we remove the asset
+      else if(!(Settings.validPathsMap[folderName] ?? true) || folderName == trashPath){
+        assets.removeAt(i);
+      }   
       else i++;
     }
-    if(modified) Feed.realoadFeed.value = true;
   }
 
   static Future<List<AssetEntity?>> getAllAssesInDatabase(AssetsDb db) async {

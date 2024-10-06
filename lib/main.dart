@@ -49,7 +49,6 @@ class _MyHomePageState extends State<MyHomePage> {
           print("[INFO] Loaded all images!");
 
           setState(() {
-            originalAssets.addAll(assets);
             // The app is ready to go
             readyToGo = true;
           });
@@ -86,8 +85,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return readyToGo ? 
-        HomePage(feedController: homeFeedController,) :
+
+     return readyToGo ? 
+        HomePage(assets: originalAssets) :
         const Center(child: SizedBox(
           width: 50,
           height: 50,
