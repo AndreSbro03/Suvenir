@@ -42,10 +42,15 @@ class Footbar extends StatelessWidget {
                   icon: const Icon(Icons.restore_from_trash_rounded, size: kIconSize, color: kIconColor,), 
                   onPressed: () {
 
-
-
-
-
+                    if(corrIndx != null && assets[corrIndx!] != null) {
+                      String id = assets[corrIndx!]!.id;  
+                      SbroImage.restoreAssetFromTrash(id);
+                      assets[corrIndx!] = null;
+                      reload();
+                    }
+                    else{
+                      print("[WARN] Trying to restore a null asset!");
+                    }
 
                     
                   },
@@ -103,7 +108,7 @@ class Footbar extends StatelessWidget {
                         reload();
                     }
                     else{
-                      print("[ERR] Trying to remove asset null!");
+                      print("[WARN] Trying to remove asset null!");
                     }
                   },
 

@@ -40,8 +40,8 @@ class SbroImage{
 
     if(await SbroPermission.isStoragePermissionGranted()){
 
-      String? oldPath = await getAssetAbsolutePath(asset);
-      
+      String? oldPath = getAssetFolder(asset);
+
       /// Move the asset
       AssetEntity? out = await moveAsset(asset, trashPath);
       if(out == null){
@@ -217,6 +217,7 @@ class SbroImage{
         break;
     }
     
+    fl.delete();
 
     return out;
 
