@@ -69,7 +69,7 @@ class Footbar extends StatelessWidget {
               IconButton(
                 icon: Icon(
                   /// If assest is origianAssets then we are in the home page
-                  (assets == originalAssets) ? Icons.home_rounded : Icons.home_outlined, 
+                  (assets.hashCode == mainFeedHash) ? Icons.home_rounded : Icons.home_outlined, 
                   size: kIconSize, color: kIconColor,), 
                 onPressed: () {
                   print("[INFO] Retourning to the HomePage!");

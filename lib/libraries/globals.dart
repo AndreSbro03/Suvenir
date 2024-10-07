@@ -41,6 +41,7 @@ const double kIconSize = 25.0;
 const Color kIconColor = kContrColor;
 
 List<AssetEntity?> originalAssets = [];
+late final int mainFeedHash;
 int? corrIndx;
 
 bool initializeApp = true;

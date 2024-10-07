@@ -11,6 +11,8 @@ import 'package:photo_manager/photo_manager.dart';
 void main() {
   //SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [SystemUiOverlay.top]);
 
+  /// Here we check if the trash db has some assets that need to be deleted
+
   runApp(const MyApp());
 }
 
@@ -38,6 +40,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
 
   bool readyToGo = false;
+  List<AssetEntity?> mainFeed = [];
 
   void _getMediaFromGallery() async {
     switch (await SbroPermission.getGalleryAccess()) {
@@ -79,19 +82,23 @@ class _MyHomePageState extends State<MyHomePage> {
       _getMediaFromGallery();
       _getPathList();
       initializeApp = false;
+      mainFeedHash = mainFeed.hashCode;
     }
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-
-     return readyToGo ? 
-        HomePage(assets: originalAssets) :
-        const Center(child: SizedBox(
-          width: 50,
-          height: 50,
-          child: CircularProgressIndicator()
-        ));
+    if(readyToGo){
+      mainFeed.addAll(originalAssets);
+      return HomePage(assets: mainFeed);
+    }
+    else {
+      return const Center(child: SizedBox(
+        width: 50,
+        height: 50,
+        child: CircularProgressIndicator()
+      ));
+    }
   }
 }

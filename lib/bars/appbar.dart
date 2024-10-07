@@ -5,11 +5,12 @@ import 'package:photo_manager/photo_manager.dart';
 
 class SbroAppBar extends StatelessWidget {
   const SbroAppBar({
-    super.key, required this.reload, required this.assets, 
+    super.key, required this.reload, required this.assets, required this.feedController, 
   });
 
   final VoidCallback reload;
   final List<AssetEntity?> assets;
+  final PageController feedController;
 
   @override
   Widget build(BuildContext context) {
@@ -31,14 +32,18 @@ class SbroAppBar extends StatelessWidget {
             IconButton(
               onPressed: () async {
                 /// If a video is going we stop it before going to the settings
+                /// TODO: Notify the feed to reload so we can show the Play icon in the video
                 /// if(vpController != null) vpController!.pause();
 
                 bool modified = await Navigator.of(context).push(
                    MaterialPageRoute(builder: (_) => Settings(assets: assets))
                 );
 
-                /// Notify the feed to reload so we can show the Play icon in the video
-                if(modified) reload();
+                /// If something has changed in the settings we reload the feed
+                if(modified) {
+                  feedController.jumpToPage(0);
+                  reload();
+                }
               }, 
               icon: const Icon(Icons.settings_outlined, size: kIconSize, color: kIconColor),
               )

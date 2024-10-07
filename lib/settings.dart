@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gallery_tok/feed/feed.dart';
 import 'package:gallery_tok/libraries/globals.dart';
-import 'package:gallery_tok/libraries/image.dart';
 import 'package:photo_manager/photo_manager.dart';
 
 /// Welcome to the app settings page. Here for now you can only chose what folders do you 
@@ -134,8 +132,8 @@ class _SettingsState extends State<Settings> {
                   widget.assets.shuffle();
 
                   /// Make sure the first @Feed.numNextUpdate medias are valid.
-                  SbroImage.updateAssets(widget.assets, 0, Feed.numNextUpdate);
-                  print(widget.assets.length);                             
+                  // SbroImage.updateAssets(widget.assets, 0, Feed.numNextUpdate);
+                  // print(widget.assets.length);                             
 
                   /// Retrun to feed
                   Navigator.of(context).pop(true);

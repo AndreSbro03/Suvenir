@@ -12,7 +12,7 @@ class Feed extends StatelessWidget {
   );
 
   final List<AssetEntity?> assets;
-  final PageController? feedController;
+  final PageController feedController;
 
   /// Every @modIdxUpdate medias the feed check if the next @numNextUpdate medias are valid. (Not in forbidden folders)
   static int modIdxUpdate = 15;
