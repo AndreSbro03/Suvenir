@@ -1,5 +1,5 @@
 name: gallery_tok
-description: "A new Flutter project."
+description: "The perfect app to relive your memories!"
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
@@ -82,17 +82,18 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
-  #         style: italic
-  #   - family: Trajan Pro
-  #     fonts:
-  #       - asset: fonts/TrajanPro.ttf
-  #       - asset: fonts/TrajanPro_Bold.ttf
-  #         weight: 700
+  fonts:
+    - family: PlaywriteDEGrund
+      fonts:
+        - asset: fonts/PlaywriteDEGrund-VariableFont_wght.ttf
+          #style: italic
+          #weight: 700
+    - family: Ubuntu
+      fonts:
+        - asset: fonts/Ubuntu/Ubuntu-Regular.ttf
+          style: italic
+          weight: 400
+
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package

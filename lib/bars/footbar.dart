@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gallery_tok/account.dart';
+import 'package:gallery_tok/account/account.dart';
 import 'package:gallery_tok/libraries/globals.dart';
 import 'package:gallery_tok/libraries/image.dart';
 import 'package:gallery_tok/bars/like_button.dart';

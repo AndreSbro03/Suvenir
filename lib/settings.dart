@@ -25,7 +25,7 @@ class _SettingsState extends State<Settings> {
 
     return Scaffold(
       appBar: AppBar(
-        title:  const Text("Select Folders", style: kSubTitleStyle,),
+        title:  const Text("Select Folders", style: kH2Style,),
         backgroundColor: kBackgroundColor,
         foregroundColor: kContrColor,
       ),
@@ -124,7 +124,7 @@ class _SettingsState extends State<Settings> {
               child: GestureDetectorTextButton(
                 w: getWidth(context) * 0.8,
                 h: getHeight(context) * 0.07,
-                text: const Text( "Apply", style: kSubTitleStyle,),
+                text: const Text( "Apply", style: kH2Style,),
                 color: kPrimaryColor,
                 onTap: (){
 

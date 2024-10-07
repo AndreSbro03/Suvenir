@@ -4,14 +4,31 @@ import 'package:gallery_tok/db/trash_db.dart';
 import 'package:photo_manager/photo_manager.dart';
 
 const String appName = "SbroApp";
-const TextStyle kTitleStyle = TextStyle( 
-  fontWeight: FontWeight.bold, color: kContrColor, fontSize: 30,);
+const TextStyle kH1Style = TextStyle( 
+  fontWeight: FontWeight.bold, 
+  color: kContrColor, 
+  fontFamily: "Ubuntu",
+  fontSize: 30,);
 
-const TextStyle kSubTitleStyle = TextStyle( 
-  fontWeight: FontWeight.bold, color: kContrColor, fontSize: 25,);
+const TextStyle kH2Style = TextStyle( 
+  fontWeight: FontWeight.bold, 
+  color: kContrColor, 
+  fontFamily: "Ubuntu",
+  fontSize: 25,);
+
+const TextStyle kDescriptionStyle = TextStyle( 
+  fontWeight: FontWeight.w400, 
+  fontStyle: FontStyle.italic,
+  color: kContrColor, 
+  fontFamily: "Ubuntu",
+  fontSize: 18,
+  );
 
 const TextStyle kNormalStyle = TextStyle( 
-  fontWeight: FontWeight.normal, color: kContrColor, fontSize: 15,);
+  fontWeight: FontWeight.normal, 
+  color: kContrColor, 
+  fontFamily: "Ubuntu",
+  fontSize: 15,);
 
 const Color kBackgroundColor = Color(0xFF040F0F);
 const Color kPrimaryColor = Colors.deepPurple;

@@ -8,7 +8,7 @@ class SbroAppBar extends StatelessWidget {
     super.key, required this.reload, required this.assets, 
   });
 
-  final Function reload;
+  final VoidCallback reload;
   final List<AssetEntity?> assets;
 
   @override
@@ -22,8 +22,10 @@ class SbroAppBar extends StatelessWidget {
             /// Title
             const Text(
               appName,
-              style: kTitleStyle,
+              style: kH1Style,
             ),
+
+            const Expanded(child: SizedBox()),
 
             /// Settings Button
             IconButton(
