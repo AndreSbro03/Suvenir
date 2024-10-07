@@ -24,8 +24,7 @@ class SbroImage{
     }
     return "";
   }
-
-  @deprecated
+  
   static String getAssetRelativePath(AssetEntity? asset) {
     if(asset != null){
       if(asset.relativePath!.endsWith('/')){
@@ -82,6 +81,9 @@ class SbroImage{
     return moveAsset(ae, oldPath);  
   }
 
+  static Future<void> deleteAssetFromId(String id) async {
+    await deleteAsset(await AssetEntity.fromId(id));
+  }
 
   static Future<void> deleteAsset(AssetEntity? asset) async {
 

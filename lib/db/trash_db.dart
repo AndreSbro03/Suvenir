@@ -1,4 +1,5 @@
 import 'package:gallery_tok/db/assets_db.dart';
+import 'package:gallery_tok/libraries/globals.dart';
 import 'package:sqflite/sqflite.dart';
 
 class TrashedAsset {
@@ -90,6 +91,18 @@ class TrashDatabase extends AssetsDb{
 
   }
 
+  Future<List<Map<String, Object?>>> _getAllTrashedAssetFields(String assetField) async {
+
+    final Database db = await database;
+
+    return await db.query(
+      tableName,
+      columns: [TrashedAssetFields.id, assetField],
+    );
+
+  }
+
+
   Future<String> getAssetDeletionTime(String id) async {
     if(id.isEmpty) return '';
     return await _getTrashedAssetField(id, TrashedAssetFields.date);   
@@ -98,6 +111,28 @@ class TrashDatabase extends AssetsDb{
   Future<String> getAssetOldPath(String id) async {
     if(id.isEmpty) return '';
     return await _getTrashedAssetField(id, TrashedAssetFields.oldPath);   
+  }
+
+
+
+  Future<List<String>> getAssetsOlderThan(int days) async {
+
+    /// get all assets in trash (id, date)
+    List<Map<String, Object?>> assetsData = await _getAllTrashedAssetFields(TrashedAssetFields.date);
+    
+    List<String> out = [];
+    String today = getCorrDate();
+    /// if date is passed by more than @param days days than we add the id to the list
+    for (Map<String, Object?> x in assetsData) {
+      String date = x[TrashedAssetFields.date].toString();
+      if(dateDistance(today, date) >= days){
+        String id = x[TrashedAssetFields.id].toString();
+        print(id);
+        out.add(id);
+      }
+    }
+
+    return out;
   }
 
 }

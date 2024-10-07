@@ -27,25 +27,26 @@ class UserStatsBox extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            const Text("Statistics", style: kH2Style,),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text("Total medias found on device: ", style: kDescriptionStyle,),
-                Text("$originalAssetsLen", style: kH1Style,),
+                const Text("Medias found on device: ", style: kDescriptionStyle,),
+                Text(shortNumber(originalAssetsLen), style: kH1Style,),
               ],
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text("Total medias liked: ", style: kDescriptionStyle,),
-                Text("$likedAssetsLen", style: kH1Style,),
+                const Text("Medias liked: ", style: kDescriptionStyle,),
+                Text(shortNumber(likedAssetsLen), style: kH1Style,),
               ],
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text("Total medias in the trash: ", style: kDescriptionStyle,),
-                Text("$trashedAssetsLen", style: kH1Style,),
+                const Text("Medias in the trash: ", style: kDescriptionStyle,),
+                Text(shortNumber(trashedAssetsLen), style: kH1Style,),
               ],
             ),
           ],

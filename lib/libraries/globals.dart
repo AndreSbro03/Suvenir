@@ -44,6 +44,8 @@ List<AssetEntity?> originalAssets = [];
 late final int mainFeedHash;
 int? corrIndx;
 
+int trashDays = 15;
+
 bool initializeApp = true;
 bool deleteImageForReal = false;
 
@@ -61,4 +63,26 @@ double getHeight(context) {
 String getCorrDate() {
   DateTime now = DateTime.now();
   return now.toString().split(' ').first;
+}
+
+int dateDistance(String d1, String d2){
+  DateTime dt1 = DateTime.parse(d1);
+  DateTime dt2 = DateTime.parse(d2);
+  return dt1.difference(dt2).abs().inDays;
+}
+
+const double oneThousand = 1000;
+const double oneMillion = 1000000;
+String shortNumber(int n){
+  if(n < 100*oneThousand){
+    return "$n";
+  }
+  else if(n < oneMillion){
+    int x = (n / oneThousand).truncate();
+    return "$x K";
+  }
+  else{
+    int x = (n / oneMillion).truncate();
+    return "$x M";
+  }
 }

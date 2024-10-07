@@ -10,9 +10,6 @@ import 'package:photo_manager/photo_manager.dart';
 /// Once the user has provide that we start the feed. 
 void main() {
   //SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [SystemUiOverlay.top]);
-
-  /// Here we check if the trash db has some assets that need to be deleted
-
   runApp(const MyApp());
 }
 
@@ -74,6 +71,15 @@ class _MyHomePageState extends State<MyHomePage> {
     print("[INFO] Getting paths: ${Settings.validPathsMap.keys}");
   }
 
+  void _cleanTrash() async {
+     /// Here we check if the trash db has some assets that need to be deleted
+      List<String> needToDelete = await trashAssetsDb.getAssetsOlderThan(trashDays);
+      for (String id in needToDelete) {
+        SbroImage.deleteAssetFromId(id);
+        trashAssetsDb.removeMedia(id);
+      }
+  }
+
   @override
   /// Code that will be run everytime we come back to this page.
   initState(){
@@ -81,8 +87,9 @@ class _MyHomePageState extends State<MyHomePage> {
     if(initializeApp){
       _getMediaFromGallery();
       _getPathList();
+      _cleanTrash();
+      mainFeedHash = mainFeed.hashCode;      
       initializeApp = false;
-      mainFeedHash = mainFeed.hashCode;
     }
     super.initState();
   }
