@@ -28,7 +28,8 @@ class SbroAppBar extends StatelessWidget {
 
             const Expanded(child: SizedBox()),
 
-            /// Settings Button
+            /// Settings Button only in the main feed
+            (assets.hashCode == mainFeedHash) ? 
             IconButton(
               onPressed: () async {
                 /// If a video is going we stop it before going to the settings
@@ -53,7 +54,11 @@ class SbroAppBar extends StatelessWidget {
                 }
               }, 
               icon: const Icon(Icons.settings_outlined, size: kIconSize, color: kIconColor),
-              )
+              ) : 
+              const SizedBox(
+                height: kIconSize,
+                width: kIconSize,
+              ),
           ],
         ),
       ),
