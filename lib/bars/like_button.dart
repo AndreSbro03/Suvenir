@@ -25,12 +25,12 @@ class _LikeButtonState extends State<LikeButton> {
 
   void isMediaLiked() async{
       isReadyToLike = false;
-      if(corrIndx != null && widget.assets[corrIndx!] != null){
+      if(corrIndx != null && widget.assets.isNotEmpty && widget.assets[corrIndx!] != null){
         String id = widget.assets[corrIndx!]!.id;
         /// Id media is in the database than is liked
         isLiked = await likeAssetsDb.existMedia(id);
+        setState(() { isReadyToLike = true;});
       }
-      setState(() { isReadyToLike = true;});
   }
 
   @override 

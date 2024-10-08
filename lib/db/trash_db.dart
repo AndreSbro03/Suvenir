@@ -113,12 +113,15 @@ class TrashDatabase extends AssetsDb{
     return await _getTrashedAssetField(id, TrashedAssetFields.oldPath);   
   }
 
-
+  /// Return a combination (id, date)
+  Future<List<Map<String, Object?>>> getAssetsTrashedDate() {
+    return _getAllTrashedAssetFields(TrashedAssetFields.date);
+  }
 
   Future<List<String>> getAssetsOlderThan(int days) async {
 
     /// get all assets in trash (id, date)
-    List<Map<String, Object?>> assetsData = await _getAllTrashedAssetFields(TrashedAssetFields.date);
+    List<Map<String, Object?>> assetsData = await getAssetsTrashedDate();
     
     List<String> out = [];
     String today = getCorrDate();

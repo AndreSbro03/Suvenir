@@ -162,6 +162,30 @@ class SbroImage{
     }
   }
 
+  /// Return all the assetsEntity in the trash and map them with the number of days until they are going to be
+  /// removed
+  static Future<List<Map<AssetEntity?, int>>> getAssetsTrashedDate() async {
+
+    List<Map<String, Object?>> dbData = await trashAssetsDb.getAssetsTrashedDate();
+    List<Map<AssetEntity?, int>> out = [];
+    
+    for (Map<String, Object?> map in dbData) {
+      String id = map[TrashedAssetFields.id].toString();
+      AssetEntity? ae = await AssetEntity.fromId(id);
+
+      // If ae is null we remove that from the database
+      if(ae == null){
+        trashAssetsDb.removeMedia(id);
+      }
+      else{
+        String d = map[TrashedAssetFields.date].toString();
+        int dateUntilRemove = trashDays - dateDistance(getCorrDate(), d);
+        out.add({ae : dateUntilRemove});
+      }
+    }
+    return out;
+  }
+
   static Future<List<AssetEntity?>> getAllAssesInDatabase(AssetsDb db) async {
     List<String> mediaIds = await db.readAllMediaIds();
     List<AssetEntity?> out = [];

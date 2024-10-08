@@ -35,6 +35,7 @@ class _FeedState extends State<Feed> {
         SizedBox(
           height: getHeight(context),
           child: 
+          widget.assets.isNotEmpty ?
           /// Here we make sure that if the assets list is modified we reload all the Feed
           GestureDetector(
             onLongPress: (){
@@ -51,6 +52,7 @@ class _FeedState extends State<Feed> {
               children: [
                 
                 PageView.builder(
+                    /// Attach the feedController to the PageView
                     controller: widget.feedController,
                     onPageChanged: (newIdx) {
                       corrIndx = newIdx;
@@ -87,13 +89,9 @@ class _FeedState extends State<Feed> {
                 _showInfo ? Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
-                    Container(
-                      color: kBackgroundColor,
-                      child: Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Text("Source: ${SbroImage.getAssetRelativePath(widget.assets[corrIndx??0])}", style: kNormalStyle,),
-                      )
-                      ),
+                    (corrIndx != null) ?
+                    InfoBox(asset: widget.assets[corrIndx!]) :
+                    const Text("[ERR] Current index is Nan!", style: kNormalStyle),
                     const SizedBox(
                       height: Footbar.fbHight,
                     )
@@ -102,9 +100,35 @@ class _FeedState extends State<Feed> {
                 const SizedBox(),
               ],
             ),
-          ),  
+          ) :
+          const Center(child: Text("No media avaiable!",style: kNormalStyle,),),
         )
       ]
     );
+  }
+}
+
+class InfoBox extends StatelessWidget {
+  const InfoBox({
+    super.key, required this.asset,
+
+  });
+  final AssetEntity? asset;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: kBackgroundColor,
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("Date: ${removeClockFromDate(asset!.createDateTime)}", style: kNormalStyle,),
+            Text("Source: ${SbroImage.getAssetRelativePath(asset)}", style: kNormalStyle,),
+          ],
+        ),
+      )
+      );
   }
 }

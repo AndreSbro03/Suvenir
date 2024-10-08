@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:gallery_tok/account/liked_grid.dart';
+import 'package:gallery_tok/account/trashed_grid.dart';
 import 'package:gallery_tok/account/user_stats.dart';
-import 'package:gallery_tok/homepage.dart';
 import 'package:gallery_tok/libraries/globals.dart';
 import 'package:gallery_tok/libraries/image.dart';
 import 'package:photo_manager/photo_manager.dart';
 
 class Account extends StatefulWidget {
   const Account({super.key});
+
+  static SliverGridDelegateWithFixedCrossAxisCount gridAspect = const SliverGridDelegateWithFixedCrossAxisCount(
+    crossAxisCount: 3, // number of items in each row
+    childAspectRatio: (3 / 4),
+    mainAxisSpacing: 5.0, // spacing between rows
+    crossAxisSpacing: 5.0, // spacing between columns
+  );
 
   @override
   State<Account> createState() => _AccountState();
@@ -16,6 +24,8 @@ class _AccountState extends State<Account> {
 
   List<AssetEntity?> likedAssets = [];
   List<AssetEntity?> trashedAssets = [];
+  List<int> daysLeft = [];
+      
   
   bool readyToGo = false;
   int _correntPage = 0;
@@ -24,7 +34,13 @@ class _AccountState extends State<Account> {
   void _loadAssets() async {
     readyToGo = false;
       likedAssets = await SbroImage.getAllAssesInDatabase(likeAssetsDb);
-      trashedAssets = await SbroImage.getAllAssesInDatabase(trashAssetsDb);
+      var trashDatesMap = await SbroImage.getAssetsTrashedDate();
+      /// Here we separete the map in the two arrays. Use first because there is only one K and one V
+      for (var map in trashDatesMap) {
+        trashedAssets.add(map.keys.first);
+        daysLeft.add(map.values.first);
+      }
+      //print(daysLeft.toString());
     readyToGo = true;
     setState(() {});
   }
@@ -94,12 +110,12 @@ class _AccountState extends State<Account> {
                     children: [
                       
                       /// Liked medias
-                      AssetsGrid(assetsList: likedAssets, reloadAccount: (){
+                      LikedGrid(assetsList: likedAssets, reloadAccount: (){
                         _loadAssets(); setState(() {});
                       },),
                   
                       /// Trash medias
-                      AssetsGrid(assetsList: trashedAssets, isTrashFeed: true, reloadAccount: (){
+                      TrashedGrid(assetsList: trashedAssets, daysLeft: daysLeft, reloadAccount: (){
                         _loadAssets(); setState(() {});
                       }),
                       
@@ -108,8 +124,7 @@ class _AccountState extends State<Account> {
                 ),
               ) 
               : 
-              const Center(child: CircularProgressIndicator()),            
-
+              loadingWidget(context),
           ]
         )
       )
@@ -157,70 +172,3 @@ class PageSelector extends StatelessWidget {
 }
 
 
-
-class AssetsGrid extends StatelessWidget {
-  const AssetsGrid({
-    super.key,
-    required this.assetsList,
-    this.isTrashFeed = false, 
-    required this.reloadAccount,
-  });
-
-  final List<AssetEntity?> assetsList;
-  final bool isTrashFeed;
-  final Function reloadAccount;
-
-  @override
-  Widget build(BuildContext context) {
-    if(assetsList.isNotEmpty){
-    return GridView.builder(
-      itemCount: assetsList.length,
-      shrinkWrap: true,
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3, // number of items in each row
-        childAspectRatio: (3 / 4),
-        mainAxisSpacing: 5.0, // spacing between rows
-        crossAxisSpacing: 5.0, // spacing between columns
-      ),
-      itemBuilder: (_, index) {
-        return FutureBuilder(
-        future: assetsList[index]!.thumbnailData,
-        
-        builder: (_, AsyncSnapshot snapshot) {
-          if(snapshot.hasData) {
-            Image img = Image.memory(snapshot.data);
-            return GestureDetector(
-              child: Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: kThirdColor),
-                  image: DecorationImage(image: img.image)
-                ),
-              ),
-              onTap: () {
-                corrIndx = 0;
-                PageController pc = PageController(initialPage: index);
-                
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => HomePage(
-                    assets: assetsList, 
-                    feedController: pc, 
-                    isTrashFeed: isTrashFeed,
-                  ))
-                ).then( (_) => reloadAccount);
-                
-              },
-              );
-          }
-          return Center(child: SizedBox(
-            height: getHeight(context) * 0.5,
-            width: getWidth(context) * 0.5,
-            child: const Center(child: CircularProgressIndicator())));
-        });
-      }
-    );
-  }
-  else{
-    return const Center(child: Text("No media avaiable!", style: kNormalStyle,));
-  }
-  }
-}

@@ -30,6 +30,12 @@ const TextStyle kNormalStyle = TextStyle(
   fontFamily: "Ubuntu",
   fontSize: 15,);
 
+TextStyle kErrorStyle = const TextStyle( 
+  fontWeight: FontWeight.normal, 
+  color: Colors.redAccent, 
+  fontFamily: "Ubuntu",
+  fontSize: 15,);
+
 const Color kBackgroundColor = Color(0xFF040F0F);
 const Color kPrimaryColor = Colors.deepPurple;
 const Color kSecondaryColor = Colors.amber;
@@ -60,9 +66,19 @@ double getHeight(context) {
   return MediaQuery.sizeOf(context).height;
 }
 
+Widget loadingWidget(context) {
+  return Center(child: SizedBox(
+    height: getHeight(context) * 0.5,
+    width: getWidth(context) * 0.5,
+    child: const Center(child: CircularProgressIndicator())));
+}
+
 String getCorrDate() {
-  DateTime now = DateTime.now();
-  return now.toString().split(' ').first;
+  return removeClockFromDate(DateTime.now());
+}
+
+String removeClockFromDate(DateTime d){
+  return d.toString().split(' ').first;
 }
 
 int dateDistance(String d1, String d2){

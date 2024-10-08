@@ -35,13 +35,20 @@ class SbroAppBar extends StatelessWidget {
                 /// TODO: Notify the feed to reload so we can show the Play icon in the video
                 /// if(vpController != null) vpController!.pause();
 
+                /// Here we check if the feedController is attached to a PageView and we save the result.
+                bool existsFeed = assets.isNotEmpty;
+
                 bool modified = await Navigator.of(context).push(
                    MaterialPageRoute(builder: (_) => Settings(assets: assets))
                 );
 
                 /// If something has changed in the settings we reload the feed
                 if(modified) {
-                  feedController.jumpToPage(0);
+                  /// If the feed doesn't exist we can't tell the feedController to jump to 
+                  /// a page becaouse the controller is not attached to any PageView.
+                  if(existsFeed){
+                    feedController.jumpToPage(0);
+                  }
                   reload();
                 }
               }, 
