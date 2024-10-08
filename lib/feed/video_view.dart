@@ -21,7 +21,7 @@ class _VideoViewState extends State<VideoView> {
   bool initialized = false;
 
   _initVideo() async {
-    final videoFile = await widget.video.file;
+    final File? videoFile = await widget.video.file;
     vp = VideoPlayerController.file(videoFile!)
       ..play()
       ..setLooping(true)
@@ -49,9 +49,19 @@ class _VideoViewState extends State<VideoView> {
         Center(child: 
           AspectRatio(
             aspectRatio: vp.value.aspectRatio,
-            child: VideoPlayer(vp),
-          )
-        ),
+            child: Stack(
+                alignment: Alignment.bottomCenter,
+                children: <Widget>[
+                  VideoPlayer(vp),
+                  VideoProgressIndicator(
+                    vp, 
+                    allowScrubbing: true, 
+                    colors: VideoProgressColors(playedColor: kContrColor),
+                  ),
+                ],
+              ),
+          ),
+        ),        
         Center(
           child: IconButton(
             onPressed: () {
