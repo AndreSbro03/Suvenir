@@ -28,10 +28,12 @@ class TrashedGrid extends StatelessWidget {
         itemBuilder: (_, index) {
           return FutureBuilder(
           /// First because there is only a key
-          future: assetsList[index]!.thumbnailData,
+          future: (assetsList[index] != null) ? 
+            assetsList[index]!.thumbnailData : 
+            null,
           
           builder: (_, AsyncSnapshot snapshot) {
-            if(snapshot.hasData) {
+            if(snapshot.hasData && snapshot.data != null) {
               Image img = Image.memory(snapshot.data);
               return GestureDetector(
                 child: Container(
@@ -44,7 +46,7 @@ class TrashedGrid extends StatelessWidget {
                   ),
                 ),
                 onTap: () {
-                  corrIndx = 0;
+                  corrIndx = index;
                   PageController pc = PageController(initialPage: index);
                   
                   Navigator.of(context).push(

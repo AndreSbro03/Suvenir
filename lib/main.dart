@@ -55,7 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
         break;
 
       case PermissionsTypes.permanentlyDenied: 
-          // TODO: pop a warning box saying "Go to settings and give the needed ..."
+          // TODO: pop a warning box saying "Go to settings and give the needed..."
           print("Permission to gallery is permanentlyDenied");
         break;
           

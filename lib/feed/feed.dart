@@ -17,7 +17,8 @@ class Feed extends StatefulWidget {
 
   /// Every @modIdxUpdate medias the feed check if the next @numNextUpdate medias are valid. (Not in forbidden folders)
   static int modIdxUpdate = 15;
-  static int numNextUpdate = modIdxUpdate + 5;
+  /// It is bigger so that I can be sure that every @modIdxUpdate the alghoritm has time to parse the next assets.
+  static int numNextUpdate = modIdxUpdate * 2; 
 
   @override
   State<Feed> createState() => _FeedState();
@@ -29,6 +30,8 @@ class _FeedState extends State<Feed> {
 
   @override
   Widget build(BuildContext context) {                 
+
+    print("[INFO] Total assets in feed: ${widget.assets.length}");
 
     return Column(
       children: [                 
@@ -57,7 +60,7 @@ class _FeedState extends State<Feed> {
                     onPageChanged: (newIdx) {
                       corrIndx = newIdx;
                       print(corrIndx);
-                      // Here you can insert code that notify all other widget that the media is changed
+                      /// Here you can insert code that notify all other widget that the media is changed
                       LikeButton.reloadLikeButton.value++;
                     },
                     scrollDirection: Axis.vertical,
@@ -65,7 +68,9 @@ class _FeedState extends State<Feed> {
                     itemBuilder: (_, index) {
                       
                       if (widget.assets[index] == null){ 
-                        return const Center(child: Text("Image unavailable.\n Might be deleted", style: kNormalStyle,),);
+                        return const Center(child: 
+                          Text("Image unavailable.\n Might be moved or deleted.", style: kNormalStyle, textAlign: TextAlign.center,),
+                        );
                       }
                       else {      
                   

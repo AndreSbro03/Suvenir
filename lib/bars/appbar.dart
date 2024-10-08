@@ -38,12 +38,12 @@ class SbroAppBar extends StatelessWidget {
                 /// Here we check if the feedController is attached to a PageView and we save the result.
                 bool existsFeed = assets.isNotEmpty;
 
-                bool modified = await Navigator.of(context).push(
+                bool? modified = await Navigator.of(context).push(
                    MaterialPageRoute(builder: (_) => Settings(assets: assets))
                 );
 
                 /// If something has changed in the settings we reload the feed
-                if(modified) {
+                if(modified != null && modified) {
                   /// If the feed doesn't exist we can't tell the feedController to jump to 
                   /// a page becaouse the controller is not attached to any PageView.
                   if(existsFeed){

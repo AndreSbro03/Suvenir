@@ -28,22 +28,21 @@ class _HomePageState extends State<HomePage> {
 
   late final PageController _feedController;
 
-
-
-  void reload(){
-    int until = Feed.numNextUpdate;
-    if(corrIndx != null){
-      until += corrIndx!;
+  void reload() async {
+    /// If the feed is the trashFeed we can't update the assets beacouse they are all in a non valid folder
+    if(!widget.isTrashFeed){
+      int until = Feed.numNextUpdate;
+      if(corrIndx != null){
+        until += corrIndx!;
+      }
+      await SbroImage.updateAssets(widget.assets, 0, until);
     }
-    SbroImage.updateAssets(widget.assets, 0, until);
     setState(() {});
   }
 
   @override 
   void initState(){
-    if(!widget.isTrashFeed){
-      reload();
-    }
+    reload();
     if(widget.feedController == null){
       _feedController = PageController();
     } else {

@@ -27,7 +27,7 @@ class LikedGrid extends StatelessWidget {
         future: assetsList[index]!.thumbnailData,
         
         builder: (_, AsyncSnapshot snapshot) {
-          if(snapshot.hasData) {
+           if(snapshot.hasData && snapshot.data != null) {
             Image img = Image.memory(snapshot.data);
             return GestureDetector(
               child: Container(
@@ -38,7 +38,7 @@ class LikedGrid extends StatelessWidget {
                 //child: Icon(Icons.favorite, size: kIconSize, color: kIconColor,),
               ),
               onTap: () {
-                corrIndx = 0;
+                corrIndx = index;
                 PageController pc = PageController(initialPage: index);
                 
                 Navigator.of(context).push(

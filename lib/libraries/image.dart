@@ -144,14 +144,14 @@ class SbroImage{
 
 
   /// Guarantee that the next @numNextUpdate medias are all valid medias
-  static void updateAssets(List<AssetEntity?> assets , int index, int numNextUpdate) {
+  static Future<void> updateAssets(List<AssetEntity?> assets , int index, int numNextUpdate) async {
     for(int i = index; i < assets.length && i < (index + numNextUpdate);) {
       String folderName = SbroImage.getAssetFolder(assets[i]);
       //print(folderName);
       //print(Settings.validPathsMap[folderName]);
 
-      /// If the assets is null we remove it
-      if(assets[i] == null){
+      /// If the assets is null or the assets has been deleted or moved we remove it
+      if(assets[i] == null || !(await assets[i]!.exists)){
         assets.removeAt(i);
       }
       /// If the path isn't valid or is the trashed one we remove the asset
