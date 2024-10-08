@@ -15,10 +15,9 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
-
+  //Test
   @override
   Widget build(BuildContext context) {
-
     double rapidButtonsZoneHeight = getHeight(context) * 0.1;
 
     return Scaffold(
