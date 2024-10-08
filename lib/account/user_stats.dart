@@ -6,12 +6,14 @@ class UserStatsBox extends StatelessWidget {
     super.key,
   required this.originalAssetsLen, 
   required this.likedAssetsLen, 
-  required this.trashedAssetsLen,
+  required this.trashedAssetsLen, 
+  required this.spaceSaved,
   });
 
   final int originalAssetsLen;
   final int likedAssetsLen;
   final int trashedAssetsLen;
+  final int spaceSaved;
 
   @override
   Widget build(BuildContext context) {
@@ -47,6 +49,13 @@ class UserStatsBox extends StatelessWidget {
               children: [
                 const Text("Medias in the trash: ", style: kDescriptionStyle,),
                 Text(shortNumber(trashedAssetsLen), style: kH1Style,),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text("Space saved: ", style: kDescriptionStyle,),
+                Text(shortNumber(spaceSaved), style: kH1Style,),
               ],
             ),
           ],

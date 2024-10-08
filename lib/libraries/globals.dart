@@ -87,8 +87,9 @@ int dateDistance(String d1, String d2){
   return dt1.difference(dt2).abs().inDays;
 }
 
-const double oneThousand = 1000;
-const double oneMillion = 1000000;
+const double oneThousand = 1e3;
+const double oneMillion = 1e6;
+const double oneBillion = 1e9;
 String shortNumber(int n){
   if(n < 100*oneThousand){
     return "$n";
@@ -97,8 +98,12 @@ String shortNumber(int n){
     int x = (n / oneThousand).truncate();
     return "$x K";
   }
-  else{
+  else if(n < oneBillion){
     int x = (n / oneMillion).truncate();
     return "$x M";
+  }
+  else{
+    int x = (n / oneBillion).truncate();
+    return "$x G";
   }
 }

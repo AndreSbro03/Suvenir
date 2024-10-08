@@ -3,6 +3,7 @@ import 'package:gallery_tok/db/assets_db.dart';
 import 'package:gallery_tok/db/trash_db.dart';
 import 'package:gallery_tok/libraries/globals.dart';
 import 'package:gallery_tok/libraries/permission.dart';
+import 'package:gallery_tok/libraries/statistics.dart';
 import 'package:gallery_tok/settings.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:share_plus/share_plus.dart';
@@ -85,6 +86,7 @@ class SbroImage{
     await deleteAsset(await AssetEntity.fromId(id));
   }
 
+  /// Delete the asset from the phone and add increment the cleared_space by the dimension of the asset
   static Future<void> deleteAsset(AssetEntity? asset) async {
 
     if(asset == null) {
@@ -92,11 +94,14 @@ class SbroImage{
       return;
     }
 
-    try {
+    try{
       if(await SbroPermission.isStoragePermissionGranted()){
         asset.file.then(
-          (file) {
+          (file) async {
             if(file == null) return;
+            
+            Statistics.instance.addSavedSpace(await file.length());
+
             file.delete();         
           }
         );

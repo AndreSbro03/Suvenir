@@ -4,6 +4,7 @@ import 'package:gallery_tok/account/trashed_grid.dart';
 import 'package:gallery_tok/account/user_stats.dart';
 import 'package:gallery_tok/libraries/globals.dart';
 import 'package:gallery_tok/libraries/image.dart';
+import 'package:gallery_tok/libraries/statistics.dart';
 import 'package:photo_manager/photo_manager.dart';
 
 class Account extends StatefulWidget {
@@ -25,6 +26,7 @@ class _AccountState extends State<Account> {
   List<AssetEntity?> likedAssets = [];
   List<AssetEntity?> trashedAssets = [];
   List<int> daysLeft = [];
+  int spaceSaved = 0;
       
   
   bool readyToGo = false;
@@ -41,6 +43,10 @@ class _AccountState extends State<Account> {
         daysLeft.add(map.values.first);
       }
       //print(daysLeft.toString());
+
+      /// Load space saved
+      spaceSaved = await Statistics.instance.getSavedSpace();
+
     readyToGo = true;
     setState(() {});
   }
@@ -73,7 +79,8 @@ class _AccountState extends State<Account> {
               child: UserStatsBox(
                 originalAssetsLen: originalAssets.length, 
                 likedAssetsLen: likedAssets.length, 
-                trashedAssetsLen: trashedAssets.length
+                trashedAssetsLen: trashedAssets.length,
+                spaceSaved: spaceSaved,
               ),
             ),
 
@@ -124,7 +131,7 @@ class _AccountState extends State<Account> {
                 ),
               ) 
               : 
-              loadingWidget(context),
+              Center(child: SizedBox(child: const Center(child: CircularProgressIndicator()))),
           ]
         )
       )
