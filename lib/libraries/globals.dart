@@ -42,6 +42,8 @@ const Color kSecondaryColor = Colors.amber;
 const Color kThirdColor = Color(0xFF2D3A3A);
 const Color kContrColor = Color(0xFFFCFFFC);
 
+const double kDefPadding = 10.0;
+
 // Icons
 const double kIconSize = 25.0;
 const Color kIconColor = kContrColor;

@@ -17,7 +17,7 @@ class VideoView extends StatefulWidget {
 class _VideoViewState extends State<VideoView> {
 
   late final Future<File?> videoFile;
-  late final VideoPlayerController vp;
+  late VideoPlayerController vp;
   bool initialized = false;
 
   _initVideo() async {
@@ -44,6 +44,8 @@ class _VideoViewState extends State<VideoView> {
   @override
   Widget build(BuildContext context) {
 
+    if(initialized) print("[INFO] ${vp.value.rotationCorrection}");
+
     return  initialized ? Stack(
       children: [
         Center(child: 
@@ -56,7 +58,7 @@ class _VideoViewState extends State<VideoView> {
                   VideoProgressIndicator(
                     vp, 
                     allowScrubbing: true, 
-                    colors: VideoProgressColors(playedColor: kContrColor),
+                    colors: const VideoProgressColors(playedColor: kContrColor),
                   ),
                 ],
               ),

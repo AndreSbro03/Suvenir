@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:gallery_tok/account/account.dart';
 import 'package:gallery_tok/homepage.dart';
 import 'package:gallery_tok/libraries/globals.dart';
+import 'package:gallery_tok/libraries/image.dart';
 import 'package:photo_manager/photo_manager.dart';
 
 class TrashedGrid extends StatelessWidget {
@@ -21,50 +22,87 @@ class TrashedGrid extends StatelessWidget {
   Widget build(BuildContext context) {
 
     if(assetsList.isNotEmpty || assetsList.length == daysLeft.length){
-      return GridView.builder(
-        itemCount: assetsList.length,
-        shrinkWrap: true,
-        gridDelegate: Account.gridAspect, 
-        itemBuilder: (_, index) {
-          return FutureBuilder(
-          /// First because there is only a key
-          future: (assetsList[index] != null) ? 
-            assetsList[index]!.thumbnailData : 
-            null,
-          
-          builder: (_, AsyncSnapshot snapshot) {
-            if(snapshot.hasData && snapshot.data != null) {
-              Image img = Image.memory(snapshot.data);
-              return GestureDetector(
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: kThirdColor),
-                    image: DecorationImage(image: img.image)
-                  ),
-                  child: Text("${daysLeft[index]} days left", style: 
-                    (daysLeft[index] <= 3) ? kErrorStyle : kNormalStyle,
-                  ),
+      return Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(kDefPadding),
+            child: GestureDetector(
+              onTap: () async {
+                List<String> ids = await trashAssetsDb.readAllMediaIds();
+                for (String id in ids) {
+                  trashAssetsDb.removeMedia(id);
+                  SbroImage.deleteAssetFromId(id);
+                  reloadAccount();
+                }                
+              },
+              child: Container(
+                height: 50,
+                width: getWidth(context),
+                decoration: BoxDecoration(
+                  color: kThirdColor,
+                  borderRadius: BorderRadius.circular(20),
                 ),
-                onTap: () {
-                  corrIndx = index;
-                  PageController pc = PageController(initialPage: index);
-                  
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => HomePage(
-                      assets: assetsList, 
-                      feedController: pc, 
-                      isTrashFeed: true,
-                    ))
-                  ).then( (_) => reloadAccount);
-                  
-                },
-                );
+                child: const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("Clear trash", style: kNormalStyle,),
+                    Icon(Icons.chevron_right_sharp, size: kIconSize, color: kIconColor,),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: kDefPadding),
+            child: GridView.builder(
+              itemCount: assetsList.length,
+              shrinkWrap: true,
+              gridDelegate: Account.gridAspect, 
+              itemBuilder: (_, index) {
+                return FutureBuilder(
+                /// First because there is only a key
+                future: (assetsList[index] != null) ? 
+                  assetsList[index]!.thumbnailData : 
+                  null,
+                
+                builder: (_, AsyncSnapshot snapshot) {
+                  if(snapshot.hasData && snapshot.data != null) {
+                    Image img = Image.memory(snapshot.data);
+                    return GestureDetector(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(color: kThirdColor),
+                          image: DecorationImage(image: img.image)
+                        ),
+                        child: Text("${daysLeft[index]} days left", style: 
+                          (daysLeft[index] <= 3) ? kErrorStyle : kNormalStyle,
+                        ),
+                      ),
+                      onTap: () async {
+                        corrIndx = index;
+                        PageController pc = PageController(initialPage: index);
+                        
+                        await Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => HomePage(
+                            assets: assetsList, 
+                            feedController: pc, 
+                            isTrashFeed: true,
+                          ))
+                        );
+
+                        reloadAccount();
+                        
+                      },
+                      );
+                  }
+                  return loadingWidget(context);
+                }
+              );
             }
-            return loadingWidget(context);
-          }
-        );
-      }
-    );
+                ),
+          ),
+        ],
+      );
   }
   else{
     if(assetsList.length != daysLeft.length) {
