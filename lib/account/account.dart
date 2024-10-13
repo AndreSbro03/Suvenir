@@ -23,11 +23,13 @@ class Account extends StatefulWidget {
 
 class _AccountState extends State<Account> {
 
+  /// TODO: pagina iniziale perchè se reload sul cestino non voglio finire sui like
+  /// TODO: reaload non toglie le immagini cancellate. Controlla.
+
   List<AssetEntity?> likedAssets = [];
   List<AssetEntity?> trashedAssets = [];
   List<int> daysLeft = [];
-  int spaceSaved = 0;
-      
+  int spaceSaved = 0;      
   
   bool readyToGo = false;
   int _correntPage = 0;
@@ -71,12 +73,12 @@ class _AccountState extends State<Account> {
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(10.0),
+        padding: const EdgeInsets.all(kDefPadding),
         child: Column(
           children: [
             /// UserStatsBox
             Padding(
-              padding: const EdgeInsets.only(left: 10, right: 10, bottom: 15),
+              padding: const EdgeInsets.only(left: kDefPadding, right: kDefPadding, bottom: kDefPadding),
               child: UserStatsBox(
                 originalAssetsLen: originalAssets.length, 
                 likedAssetsLen: likedAssets.length, 
@@ -84,13 +86,16 @@ class _AccountState extends State<Account> {
                 spaceSaved: spaceSaved,
               ),
             ),
-
-            const Divider(
-              color: kContrColor,
+      
+            const Padding(
+              padding: EdgeInsets.all(kDefPadding),
+              child: Divider(
+                color: kContrColor,
+              ),
             ),
-
+      
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 8.0),
+              padding: const EdgeInsets.all(kDefPadding),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
@@ -103,11 +108,11 @@ class _AccountState extends State<Account> {
                 ],
               ),
             ),
-
+      
             readyToGo ?
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 20.0),
+                  padding: const EdgeInsets.all(kDefPadding),
                   child: PageView(
                     controller: _pc,
                     onPageChanged: (value) {
@@ -132,7 +137,7 @@ class _AccountState extends State<Account> {
                 ),
               ) 
               : 
-              Center(child: SizedBox(child: const Center(child: CircularProgressIndicator()))),
+              const Center(child: SizedBox(child: Center(child: CircularProgressIndicator()))),
           ]
         )
       )

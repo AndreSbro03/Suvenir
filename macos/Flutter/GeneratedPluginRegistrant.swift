@@ -10,7 +10,7 @@ import path_provider_foundation
 import photo_manager
 import share_plus
 import shared_preferences_foundation
-import sqflite_darwin
+import sqflite
 import video_player_avfoundation
 
 func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {

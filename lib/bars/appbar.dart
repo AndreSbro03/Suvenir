@@ -48,6 +48,7 @@ class SbroAppBar extends StatelessWidget {
                   /// If the feed doesn't exist we can't tell the feedController to jump to 
                   /// a page becaouse the controller is not attached to any PageView.
                   if(existsFeed){
+                    corrIndx = 0;
                     feedController.jumpToPage(0);
                   }
                   reload();
