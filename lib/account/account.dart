@@ -31,7 +31,7 @@ class _AccountState extends State<Account> {
   
   bool readyToGo = false;
   int _correntPage = 0;
-  final PageController _pc = PageController();
+  late final PageController _pc;
 
   void _loadAssets() async {
     readyToGo = false;
@@ -54,6 +54,7 @@ class _AccountState extends State<Account> {
   @override 
   void initState(){
     _loadAssets();
+    _pc = PageController();
     super.initState();
   }
 
