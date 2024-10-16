@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:gallery_tok/bars/footbar.dart';
 import 'package:gallery_tok/libraries/globals.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:video_player/video_player.dart';
@@ -51,17 +52,16 @@ class _VideoViewState extends State<VideoView> {
         Center(child: 
           AspectRatio(
             aspectRatio: vp.value.aspectRatio,
-            child: Stack(
-                alignment: Alignment.bottomCenter,
-                children: <Widget>[
-                  VideoPlayer(vp),
-                  VideoProgressIndicator(
-                    vp, 
-                    allowScrubbing: true, 
-                    colors: const VideoProgressColors(playedColor: kContrColor),
-                  ),
-                ],
-              ),
+            child: VideoPlayer(vp),
+          ),
+        ),
+        Align(
+          //-1.0 +  (Footbar.fbHight / (getHeight(context) * 0.5))
+          alignment: Alignment(0, 1.0 - (Footbar.fbHight / (getHeight(context) * 0.5)) - 0.001),
+          child: VideoProgressIndicator(
+            vp, 
+            allowScrubbing: true, 
+            colors: const VideoProgressColors(playedColor: kContrColor),
           ),
         ),        
         Center(
