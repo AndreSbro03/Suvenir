@@ -56,7 +56,8 @@ class _VideoViewState extends State<VideoView> {
           ),
         ),
         Align(
-          //-1.0 +  (Footbar.fbHight / (getHeight(context) * 0.5))
+          // Frome the bottom up by the relative dimension of the Footbar and a bit more for margin.
+          // 1.0 - (Footbar.fbHight / (getHeight(context) * 0.5)) - 0.001
           alignment: Alignment(0, 1.0 - (Footbar.fbHight / (getHeight(context) * 0.5)) - 0.001),
           child: VideoProgressIndicator(
             vp, 

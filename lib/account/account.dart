@@ -7,6 +7,12 @@ import 'package:gallery_tok/libraries/image.dart';
 import 'package:gallery_tok/libraries/statistics.dart';
 import 'package:photo_manager/photo_manager.dart';
 
+enum Pages {
+  statistics,
+  likeGrid,
+  trashGrid,
+}
+
 class Account extends StatefulWidget {
   const Account({super.key});
 
@@ -75,37 +81,30 @@ class _AccountState extends State<Account> {
       body: Padding(
         padding: const EdgeInsets.all(kDefPadding),
         child: Column(
-          children: [
-            /// UserStatsBox
-            Padding(
-              padding: const EdgeInsets.only(left: kDefPadding, right: kDefPadding, bottom: kDefPadding),
-              child: UserStatsBox(
-                originalAssetsLen: originalAssets.length, 
-                likedAssetsLen: likedAssets.length, 
-                trashedAssetsLen: trashedAssets.length,
-                spaceSaved: spaceSaved,
-              ),
-            ),
-      
-            const Padding(
-              padding: EdgeInsets.all(kDefPadding),
-              child: Divider(
-                color: kContrColor,
-              ),
-            ),
+          children: [          
       
             Padding(
               padding: const EdgeInsets.all(kDefPadding),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
+                  /// GOTO statistics
+                  PageSelector(pc: _pc, correntPage: _correntPage, desirePage: Pages.statistics.index, 
+                    iconOnPage: Icons.analytics, iconNotOnPage: Icons.analytics_outlined,),
                   /// GOTO like grid view
-                  PageSelector(pc: _pc, correntPage: _correntPage, desirePage: 0, 
+                  PageSelector(pc: _pc, correntPage: _correntPage, desirePage: Pages.likeGrid.index, 
                     iconOnPage: Icons.favorite, iconNotOnPage: Icons.favorite_outline,),
                   /// GOTO trash grid view
-                  PageSelector(pc: _pc, correntPage: _correntPage, desirePage: 1,
+                  PageSelector(pc: _pc, correntPage: _correntPage, desirePage: Pages.trashGrid.index,
                     iconOnPage: Icons.delete, iconNotOnPage: Icons.delete_outline,),
                 ],
+              ),
+            ),
+
+            const Padding(
+              padding: EdgeInsets.all(kDefPadding),
+              child: Divider(
+                color: kContrColor,
               ),
             ),
       
@@ -121,6 +120,16 @@ class _AccountState extends State<Account> {
                       });
                     },
                     children: [
+                        /// UserStatsBox
+                        Padding(
+                          padding: const EdgeInsets.only(left: kDefPadding, right: kDefPadding, bottom: kDefPadding),
+                          child: UserStatsBox(
+                            originalAssetsLen: originalAssets.length, 
+                            likedAssetsLen: likedAssets.length, 
+                            trashedAssetsLen: trashedAssets.length,
+                            spaceSaved: spaceSaved,
+                          ),
+                        ),
                       
                       /// Liked medias
                       LikedGrid(assetsList: likedAssets, reloadAccount: (){
@@ -178,7 +187,7 @@ class PageSelector extends StatelessWidget {
         iconColor: const WidgetStatePropertyAll(kIconColor),
         iconSize: const WidgetStatePropertyAll(kIconSize),
         backgroundColor: const WidgetStatePropertyAll(kPrimaryColor),
-        minimumSize: WidgetStatePropertyAll(Size(getWidth(context) * 0.4, 50))
+        minimumSize: WidgetStatePropertyAll(Size(getWidth(context) * 0.25, 40))
       ),
     );
   }
