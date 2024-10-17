@@ -26,7 +26,9 @@ class TrashedGrid extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.all(kDefPadding),
-            child: GestureDetector(
+            child: 
+            /// Clear All Trash Button
+            GestureDetector(
               onTap: () async {
                 List<String> ids = await trashAssetsDb.readAllMediaIds();
                 for (String id in ids) {
@@ -52,54 +54,57 @@ class TrashedGrid extends StatelessWidget {
               ),
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: kDefPadding),
-            child: GridView.builder(
-              itemCount: assetsList.length,
-              shrinkWrap: true,
-              gridDelegate: Account.gridAspect, 
-              itemBuilder: (_, index) {
-                return FutureBuilder(
-                /// First because there is only a key
-                future: (assetsList[index] != null) ? 
-                  assetsList[index]!.thumbnailData : 
-                  null,
-                
-                builder: (_, AsyncSnapshot snapshot) {
-                  if(snapshot.hasData && snapshot.data != null) {
-                    Image img = Image.memory(snapshot.data);
-                    return GestureDetector(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(color: kThirdColor),
-                          image: DecorationImage(image: img.image)
+          /// Trashed Grid
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: kDefPadding),
+              child: GridView.builder(
+                itemCount: assetsList.length,
+                shrinkWrap: true,
+                gridDelegate: Account.gridAspect, 
+                itemBuilder: (_, index) {
+                  return FutureBuilder(
+                  /// First because there is only a key
+                  future: (assetsList[index] != null) ? 
+                    assetsList[index]!.thumbnailData : 
+                    null,
+                  
+                  builder: (_, AsyncSnapshot snapshot) {
+                    if(snapshot.hasData && snapshot.data != null) {
+                      Image img = Image.memory(snapshot.data);
+                      return GestureDetector(       
+                        onTap: () async {
+                          corrIndx = index;
+                          PageController pc = PageController(initialPage: index);
+                          
+                          await Navigator.of(context).push(
+                            MaterialPageRoute(builder: (_) => HomePage(
+                              assets: assetsList, 
+                              feedController: pc, 
+                              isTrashFeed: true,
+                            ))
+                          );
+                    
+                          reloadAccount();
+                          
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(color: kThirdColor),
+                            image: DecorationImage(image: img.image)
+                          ),
+                          child: Text("${daysLeft[index]} days left", style: 
+                            (daysLeft[index] <= 3) ? kErrorStyle : kNormalStyle,
+                          ),
                         ),
-                        child: Text("${daysLeft[index]} days left", style: 
-                          (daysLeft[index] <= 3) ? kErrorStyle : kNormalStyle,
-                        ),
-                      ),
-                      onTap: () async {
-                        corrIndx = index;
-                        PageController pc = PageController(initialPage: index);
-                        
-                        await Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => HomePage(
-                            assets: assetsList, 
-                            feedController: pc, 
-                            isTrashFeed: true,
-                          ))
                         );
-
-                        reloadAccount();
-                        
-                      },
-                      );
+                    }
+                    return loadingWidget(context);
                   }
-                  return loadingWidget(context);
-                }
-              );
-            }
-                ),
+                );
+              }
+                  ),
+            ),
           ),
         ],
       );

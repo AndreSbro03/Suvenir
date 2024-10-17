@@ -7,12 +7,6 @@ import 'package:gallery_tok/libraries/image.dart';
 import 'package:gallery_tok/libraries/statistics.dart';
 import 'package:photo_manager/photo_manager.dart';
 
-enum Pages {
-  statistics,
-  likeGrid,
-  trashGrid,
-}
-
 class Account extends StatefulWidget {
   const Account({super.key});
 
@@ -30,7 +24,6 @@ class Account extends StatefulWidget {
 class _AccountState extends State<Account> {
 
   /// TODO: pagina iniziale perchè se reload sul cestino non voglio finire sui like
-  /// TODO: reaload non toglie le immagini cancellate. Controlla.
 
   List<AssetEntity?> likedAssets = [];
   List<AssetEntity?> trashedAssets = [];
@@ -43,8 +36,17 @@ class _AccountState extends State<Account> {
 
   void _loadAssets() async {
     readyToGo = false;
+
+      print("[INFO] Loading assets!");
+
+      /// Clear old data
+      trashedAssets.clear();
+      daysLeft.clear();
+
+      /// Get all data
       likedAssets = await SbroImage.getAllAssesInDatabase(likeAssetsDb);
       var trashDatesMap = await SbroImage.getAssetsTrashedDate();
+      
       /// Here we separete the map in the two arrays. Use first because there is only one K and one V
       for (var map in trashDatesMap) {
         trashedAssets.add(map.keys.first);
@@ -89,13 +91,13 @@ class _AccountState extends State<Account> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   /// GOTO statistics
-                  PageSelector(pc: _pc, correntPage: _correntPage, desirePage: Pages.statistics.index, 
+                  PageSelector(pc: _pc, correntPage: _correntPage, pageIndex: 0, 
                     iconOnPage: Icons.analytics, iconNotOnPage: Icons.analytics_outlined,),
                   /// GOTO like grid view
-                  PageSelector(pc: _pc, correntPage: _correntPage, desirePage: Pages.likeGrid.index, 
+                  PageSelector(pc: _pc, correntPage: _correntPage, pageIndex: 1, 
                     iconOnPage: Icons.favorite, iconNotOnPage: Icons.favorite_outline,),
                   /// GOTO trash grid view
-                  PageSelector(pc: _pc, correntPage: _correntPage, desirePage: Pages.trashGrid.index,
+                  PageSelector(pc: _pc, correntPage: _correntPage, pageIndex: 2,
                     iconOnPage: Icons.delete, iconNotOnPage: Icons.delete_outline,),
                 ],
               ),
@@ -133,12 +135,12 @@ class _AccountState extends State<Account> {
                       
                       /// Liked medias
                       LikedGrid(assetsList: likedAssets, reloadAccount: (){
-                        _loadAssets(); setState(() {});
+                        _loadAssets();
                       },),
                   
                       /// Trash medias
                       TrashedGrid(assetsList: trashedAssets, daysLeft: daysLeft, reloadAccount: (){
-                        _loadAssets(); setState(() {});
+                        _loadAssets();
                       }),
                       
                     ],
@@ -159,7 +161,7 @@ class PageSelector extends StatelessWidget {
     super.key,
     required this.pc, 
     required this.correntPage, 
-    required this.desirePage, 
+    required this.pageIndex, 
     required this.iconOnPage, 
     required this.iconNotOnPage, 
   });
@@ -169,7 +171,7 @@ class PageSelector extends StatelessWidget {
   /// Corrent page
   final int correntPage;
   /// Destination page on click
-  final int desirePage;
+  final int pageIndex;
   /// Icons
   final IconData iconOnPage;
   final IconData iconNotOnPage;
@@ -178,10 +180,10 @@ class PageSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     return IconButton(
       onPressed: (){
-        pc.jumpToPage(desirePage);
+        pc.jumpToPage(pageIndex);
       }, 
       icon: Icon(
-        (correntPage == desirePage) ? iconOnPage : iconNotOnPage,
+        (correntPage == pageIndex) ? iconOnPage : iconNotOnPage,
       ), 
       style: ButtonStyle(
         iconColor: const WidgetStatePropertyAll(kIconColor),

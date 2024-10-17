@@ -39,16 +39,18 @@ class LikedGrid extends StatelessWidget {
                   ),
                   //child: Icon(Icons.favorite, size: kIconSize, color: kIconColor,),
                 ),
-                onTap: () {
+                onTap: () async {
                   corrIndx = index;
                   PageController pc = PageController(initialPage: index);
                   
-                  Navigator.of(context).push(
+                  await Navigator.of(context).push(
                     MaterialPageRoute(builder: (_) => HomePage(
                       assets: assetsList, 
                       feedController: pc, 
                     ))
-                  ).then( (_) => reloadAccount);
+                  );
+
+                  reloadAccount();
                   
                 },
                 );
