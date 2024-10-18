@@ -19,7 +19,7 @@ class LikedGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     if(assetsList.isNotEmpty){
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: kDefPadding),
+      padding: const EdgeInsets.all(kDefPadding),
       child: GridView.builder(
         itemCount: assetsList.length,
         shrinkWrap: true,

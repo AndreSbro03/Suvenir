@@ -82,7 +82,10 @@ class _FeedState extends State<Feed> {
                         AssetEntity ae = widget.assets[index]!;
                   
                         if(ae.type == AssetType.video) {
-                          return VideoView(video: ae);
+                          final GlobalKey<VideoViewState> videoViewKey = GlobalKey<VideoViewState>();
+                          /// Alising vw -> videoView
+                          lastVideoView = videoViewKey;
+                          return VideoView(key: videoViewKey, video: ae);
                         }
                         else { 
                           return ImageView(image: ae);

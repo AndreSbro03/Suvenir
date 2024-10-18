@@ -5,7 +5,6 @@ import 'package:gallery_tok/libraries/image.dart';
 import 'package:gallery_tok/bars/like_button.dart';
 import 'package:gallery_tok/libraries/permission.dart';
 import 'package:photo_manager/photo_manager.dart';
-import 'package:video_player/video_player.dart';
 
 class Footbar extends StatelessWidget {
   const Footbar({
@@ -13,11 +12,9 @@ class Footbar extends StatelessWidget {
     required this.assets, 
     this.isTrashFeed = false, 
     required this.reload,
-    this.vp,
     });
 
   final List<AssetEntity?> assets;
-  final VideoPlayerController? vp;
   final bool isTrashFeed;
   final Function reload;
 
@@ -80,15 +77,17 @@ class Footbar extends StatelessWidget {
               IconButton(
                 icon: const Icon(Icons.account_circle_outlined, size: kIconSize, color: kIconColor,), 
                 onPressed: () {
-                  if(vp != null){
-                    vp!.pause();
+                  /// Pause the video if there is one
+                  if(lastVideoView != null){
+                    lastVideoView!.currentState?.pauseVideo();
                   }
 
+                  /// Call the account page
                   Navigator.of(context).push(
                     MaterialPageRoute(builder: (_) => const Account())
                   );
 
-                  reload();
+                  // reload();
                 },
               ),
 

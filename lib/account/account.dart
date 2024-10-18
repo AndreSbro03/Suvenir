@@ -80,77 +80,74 @@ class _AccountState extends State<Account> {
           style: kH2Style,
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(kDefPadding),
-        child: Column(
-          children: [          
-      
-            Padding(
-              padding: const EdgeInsets.all(kDefPadding),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  /// GOTO statistics
-                  PageSelector(pc: _pc, correntPage: _correntPage, pageIndex: 0, 
-                    iconOnPage: Icons.analytics, iconNotOnPage: Icons.analytics_outlined,),
-                  /// GOTO like grid view
-                  PageSelector(pc: _pc, correntPage: _correntPage, pageIndex: 1, 
-                    iconOnPage: Icons.favorite, iconNotOnPage: Icons.favorite_outline,),
-                  /// GOTO trash grid view
-                  PageSelector(pc: _pc, correntPage: _correntPage, pageIndex: 2,
-                    iconOnPage: Icons.delete, iconNotOnPage: Icons.delete_outline,),
-                ],
-              ),
+      body: Column(
+        children: [          
+            
+          Padding(
+            padding: const EdgeInsets.all(kDefPadding),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                /// GOTO statistics
+                PageSelector(pc: _pc, correntPage: _correntPage, pageIndex: 0, 
+                  iconOnPage: Icons.analytics, iconNotOnPage: Icons.analytics_outlined,),
+                /// GOTO like grid view
+                PageSelector(pc: _pc, correntPage: _correntPage, pageIndex: 1, 
+                  iconOnPage: Icons.favorite, iconNotOnPage: Icons.favorite_outline,),
+                /// GOTO trash grid view
+                PageSelector(pc: _pc, correntPage: _correntPage, pageIndex: 2,
+                  iconOnPage: Icons.delete, iconNotOnPage: Icons.delete_outline,),
+              ],
             ),
-
-            const Padding(
-              padding: EdgeInsets.all(kDefPadding),
-              child: Divider(
-                color: kContrColor,
-              ),
-            ),
+          ),
       
-            readyToGo ?
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(kDefPadding),
-                  child: PageView(
-                    controller: _pc,
-                    onPageChanged: (value) {
-                      setState(() {
-                        _correntPage = value;
-                      });
-                    },
-                    children: [
-                        /// UserStatsBox
-                        Padding(
-                          padding: const EdgeInsets.only(left: kDefPadding, right: kDefPadding, bottom: kDefPadding),
-                          child: UserStatsBox(
-                            originalAssetsLen: originalAssets.length, 
-                            likedAssetsLen: likedAssets.length, 
-                            trashedAssetsLen: trashedAssets.length,
-                            spaceSaved: spaceSaved,
-                          ),
+          const Padding(
+            padding: EdgeInsets.all(kDefPadding),
+            child: Divider(
+              color: kContrColor,
+            ),
+          ),
+            
+          readyToGo ?
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(kDefPadding),
+                child: PageView(
+                  controller: _pc,
+                  onPageChanged: (value) {
+                    setState(() {
+                      _correntPage = value;
+                    });
+                  },
+                  children: [
+                      /// UserStatsBox
+                      Padding(
+                        padding: const EdgeInsets.only(left: kDefPadding, right: kDefPadding, bottom: kDefPadding),
+                        child: UserStatsBox(
+                          originalAssetsLen: originalAssets.length, 
+                          likedAssetsLen: likedAssets.length, 
+                          trashedAssetsLen: trashedAssets.length,
+                          spaceSaved: spaceSaved,
                         ),
-                      
-                      /// Liked medias
-                      LikedGrid(assetsList: likedAssets, reloadAccount: (){
-                        _loadAssets();
-                      },),
-                  
-                      /// Trash medias
-                      TrashedGrid(assetsList: trashedAssets, daysLeft: daysLeft, reloadAccount: (){
-                        _loadAssets();
-                      }),
-                      
-                    ],
-                  ),
+                      ),
+                    
+                    /// Liked medias
+                    LikedGrid(assetsList: likedAssets, reloadAccount: (){
+                      _loadAssets();
+                    },),
+                
+                    /// Trash medias
+                    TrashedGrid(assetsList: trashedAssets, daysLeft: daysLeft, reloadAccount: (){
+                      _loadAssets();
+                    }),
+                    
+                  ],
                 ),
-              ) 
-              : 
-              const Center(child: SizedBox(child: Center(child: CircularProgressIndicator()))),
-          ]
-        )
+              ),
+            ) 
+            : 
+            const Center(child: SizedBox(child: Center(child: CircularProgressIndicator()))),
+        ]
       )
     );
   }

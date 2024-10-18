@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:gallery_tok/db/liked_db.dart';
 import 'package:gallery_tok/db/trash_db.dart';
+import 'package:gallery_tok/feed/video_view.dart';
 import 'package:photo_manager/photo_manager.dart';
 
 const String appName = "SbroApp";
+
 const TextStyle kH1Style = TextStyle( 
   fontWeight: FontWeight.bold, 
   color: kContrColor, 
@@ -48,14 +50,13 @@ const double kDefPadding = 10.0;
 const double kIconSize = 25.0;
 const Color kIconColor = kContrColor;
 
+bool initializeApp = true;
 List<AssetEntity?> originalAssets = [];
 late final int mainFeedHash;
 int? corrIndx;
+GlobalKey<VideoViewState>? lastVideoView;
 
 int trashDays = 15;
-
-bool initializeApp = true;
-bool deleteImageForReal = false;
 
 LikeDatabase likeAssetsDb = LikeDatabase(tableName: 'like');
 TrashDatabase trashAssetsDb = TrashDatabase(tableName: 'trash');

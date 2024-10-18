@@ -7,22 +7,33 @@ import 'package:photo_manager/photo_manager.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoView extends StatefulWidget {
-  const VideoView({super.key, required this.video});
+  const VideoView({super.key, required this.video,});
 
   final AssetEntity video;
 
   @override
-  State<VideoView> createState() => _VideoViewState();
+  State<VideoView> createState() => VideoViewState();
 }
 
-class _VideoViewState extends State<VideoView> {
+class VideoViewState extends State<VideoView> {
 
   late final Future<File?> videoFile;
-  late VideoPlayerController vp;
   bool initialized = false;
+  late VideoPlayerController vp;
+
+  /// This method callable outside with: videoViewKey!.currentState?.pauseVideo(); pause the video and update
+  /// the icon button.
+  Future<void> pauseVideo() async {
+    if (initialized) {
+      print("[INFO] Pausing video!");
+      await vp.pause();
+      setState(() {});
+    }
+  }
 
   _initVideo() async {
     final File? videoFile = await widget.video.file;
+
     vp = VideoPlayerController.file(videoFile!)
       ..play()
       ..setLooping(true)
@@ -67,19 +78,21 @@ class _VideoViewState extends State<VideoView> {
         ),        
         Center(
           child: IconButton(
-            onPressed: () {
-            setState(() {
-              vp.value.isPlaying
-                    ? vp.pause()
-                    : vp.play();
-              });
-            },
-            icon: Icon(
-              vp.value.isPlaying ? null : Icons.play_arrow,
-              size: kIconSize * 3.0,
-              color: kContrColor,
-            ),
-          )
+              onPressed: () {
+              setState(() {
+                if(vp.value.isPlaying){
+                  vp.pause();
+                } else {
+                  vp.play();
+                }
+                });
+              },
+              icon: Icon(
+                vp.value.isPlaying ? null : Icons.play_arrow,
+                size: kIconSize * 3.0,
+                color: kContrColor,
+              ),
+            )
         ),
       ]
     ) :
