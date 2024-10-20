@@ -106,7 +106,7 @@ class _SettingsState extends State<Settings> {
                                 Settings.validPathsMap[corrPath] = !isCheck;
                             });
                           }
-                        ),                                          
+                        ),
                       ],
                     );
                   }
@@ -128,11 +128,7 @@ class _SettingsState extends State<Settings> {
                   /// Create new feed
                   widget.assets.clear();
                   widget.assets.addAll(originalAssets);
-                  widget.assets.shuffle();
-
-                  /// Make sure the first @Feed.numNextUpdate medias are valid.
-                  // SbroImage.updateAssets(widget.assets, 0, Feed.numNextUpdate);
-                  // print(widget.assets.length);                             
+                  widget.assets.shuffle();                            
 
                   /// Retrun to feed
                   Navigator.of(context).pop(true);

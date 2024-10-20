@@ -134,7 +134,7 @@ class SbroImage{
       print("[WARN] Trying to get the folder of an unavailable asset!");
       return "";
     }
-    /// if the path is "Store/0/User/Picture/image.png" we take only "Picture"
+    /// if the path is "Store/0/User/Picture/" we take only "Picture"
     String? path = asset.relativePath;
     if(path == null){
       print("[ERR] Something went wrong getting relative path!");
@@ -142,25 +142,28 @@ class SbroImage{
     }
 
     List<String> folders = path.split('/');
-    folders.removeLast();
+    //folders.removeLast();
     /// Returned the last folder
     return folders.last;
   }
 
 
   /// Guarantee that the next @numNextUpdate medias are all valid medias
+  /// TODO: do this shaisse in parallel
   static Future<void> updateAssets(List<AssetEntity?> assets , int index, int numNextUpdate) async {
     for(int i = index; i < assets.length && i < (index + numNextUpdate);) {
-      String folderName = SbroImage.getAssetFolder(assets[i]);
-      //print(folderName);
-      //print(Settings.validPathsMap[folderName]);
+      String folderName = getAssetFolder(assets[i]);
+      print(folderName);
+      print(Settings.validPathsMap[folderName]);
 
       /// If the assets is null or the assets has been deleted or moved we remove it
       if(assets[i] == null || !(await assets[i]!.exists)){
+        print("[INFO] Removed null!");
         assets.removeAt(i);
       }
       /// If the path isn't valid or is the trashed one we remove the asset
       else if(!(Settings.validPathsMap[folderName] ?? true) || folderName == trashPath){
+        print("[INFO] Removed invalid!");
         assets.removeAt(i);
       }   
       else i++;

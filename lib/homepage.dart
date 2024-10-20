@@ -27,18 +27,30 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
 
   late final PageController _feedController;
+  bool _isReady = false;
 
   void _loadFeed() async {
+
+    /// Set the loading screen
+    if(_isReady) {
+      setState(() {
+        _isReady = false;
+      });
+    }
+
     /// If the feed is the trashFeed we can't update the assets because they are all in a non valid folder
     if(!widget.isTrashFeed){
       int until = Feed.numNextUpdate;
       if(corrIndx != null){
         until += corrIndx!;
       }
-
+      print("[INFO] Reloading!");
       await SbroImage.updateAssets(widget.assets, 0, until);
     }
-    setState(() {});
+    
+    setState(() {
+      _isReady = true;
+    });
   }
 
   @override 
@@ -58,7 +70,9 @@ class _HomePageState extends State<HomePage> {
     
     return Scaffold(
       backgroundColor: kBackgroundColor,
-      body: Stack(
+      body: 
+      _isReady ?
+      Stack(
         children: [
           /// Level 0: (background) 
           ///   The feed once the permission are granted and the medias are loaded.
@@ -81,7 +95,8 @@ class _HomePageState extends State<HomePage> {
           /// Level 2: (Warnings Box)
       
         ]
-      ),
+      ) : 
+      loadingWidget(context),
     );
   }
 }

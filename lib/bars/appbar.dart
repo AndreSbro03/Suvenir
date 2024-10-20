@@ -43,7 +43,6 @@ class SbroAppBar extends StatelessWidget {
 
                 /// If something has changed in the settings we reload the feed
                 if(modified != null && modified) {
-                  print("[INFO] Reloading!");
                   /// Return to first item.
                   /// If the feed doesn't exist we can't tell the feedController to jump to 
                   /// a page becaouse the controller is not attached to any PageView.

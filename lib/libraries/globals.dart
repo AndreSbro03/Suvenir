@@ -50,6 +50,7 @@ const double kDefPadding = 10.0;
 const double kIconSize = 25.0;
 const Color kIconColor = kContrColor;
 
+/// Settings
 bool initializeApp = true;
 List<AssetEntity?> originalAssets = [];
 late final int mainFeedHash;

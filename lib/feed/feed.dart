@@ -16,9 +16,9 @@ class Feed extends StatefulWidget {
   final PageController feedController;
 
   /// Every @modIdxUpdate medias the feed check if the next @numNextUpdate medias are valid. (Not in forbidden folders)
-  static int modIdxUpdate = 15;
+  static int modIdxUpdate = 5;
   /// It is bigger so that I can be sure that every @modIdxUpdate the alghoritm has time to parse the next assets.
-  static int numNextUpdate = modIdxUpdate * 2; 
+  static int numNextUpdate = 10; 
 
   @override
   State<Feed> createState() => _FeedState();
