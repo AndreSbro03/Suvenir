@@ -153,17 +153,17 @@ class SbroImage{
   static Future<void> updateAssets(List<AssetEntity?> assets , int index, int numNextUpdate) async {
     for(int i = index; i < assets.length && i < (index + numNextUpdate);) {
       String folderName = getAssetFolder(assets[i]);
-      print(folderName);
-      print(Settings.validPathsMap[folderName]);
+      //print(folderName);
+      //print(Settings.validPathsMap[folderName]);
 
       /// If the assets is null or the assets has been deleted or moved we remove it
       if(assets[i] == null || !(await assets[i]!.exists)){
-        print("[INFO] Removed null!");
+        //print("[INFO] Removed null!");
         assets.removeAt(i);
       }
       /// If the path isn't valid or is the trashed one we remove the asset
       else if(!(Settings.validPathsMap[folderName] ?? true) || folderName == trashPath){
-        print("[INFO] Removed invalid!");
+        //print("[INFO] Removed invalid!");
         assets.removeAt(i);
       }   
       else i++;

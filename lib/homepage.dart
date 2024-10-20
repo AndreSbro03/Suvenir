@@ -32,11 +32,11 @@ class _HomePageState extends State<HomePage> {
   void _loadFeed() async {
 
     /// Set the loading screen
-    if(_isReady) {
-      setState(() {
-        _isReady = false;
-      });
-    }
+    // if(_isReady) {
+    //   setState(() {
+    //     _isReady = false;
+    //   });
+    // }
 
     /// If the feed is the trashFeed we can't update the assets because they are all in a non valid folder
     if(!widget.isTrashFeed){
@@ -55,6 +55,7 @@ class _HomePageState extends State<HomePage> {
 
   @override 
   void initState(){
+    print("[INFO] Init!");
     _loadFeed();
     if(widget.feedController == null){
       _feedController = PageController();

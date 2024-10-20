@@ -129,8 +129,7 @@ class Footbar extends StatelessWidget {
                       reload();
                       SbroImage.moveToTrash(ae);
                     }
-                  }
-                    
+                  }                
                   else{
                     print("[INFO] Permission denied");
                   }

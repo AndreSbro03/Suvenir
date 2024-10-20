@@ -95,21 +95,20 @@ class _FeedState extends State<Feed> {
                   valueListenable: showInfoBox, 
                   builder: (BuildContext context, bool showInfoBox, Widget? child) {
                     if(showInfoBox){
-                      return child!;
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          (corrIndx != null) ?
+                          InfoBox(asset: widget.assets[corrIndx!]) :
+                          const Text("[ERR] Current index is Nan!", style: kNormalStyle),
+                          const SizedBox(
+                            height: Footbar.fbHight,
+                          )
+                        ]
+                      );
                     }
                     return const SizedBox();
                   },
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        (corrIndx != null) ?
-                        InfoBox(asset: widget.assets[corrIndx!]) :
-                        const Text("[ERR] Current index is Nan!", style: kNormalStyle),
-                        const SizedBox(
-                          height: Footbar.fbHight,
-                        )
-                      ],
-                    ),
                 )
               ],
             ),
