@@ -119,14 +119,18 @@ class Footbar extends StatelessWidget {
                   /// Request permission
                   if(await SbroPermission.isStoragePermissionGranted()){
                     
+                    AssetEntity? ae = assets[corrIndx!];
+
                     /// We immediatly notify the feed to reload than we proceed to move the asset. Beacouse if 
                     /// we invert the two from the tap on the icon to the reload of the page there is a bit of 
                     /// time that seems lag.
-                    assets[corrIndx!] = null;
-                    reload();
-
-                    SbroImage.moveToTrash(assets[corrIndx!]!);
+                    if(ae != null){
+                      assets[corrIndx!] = null;
+                      reload();
+                      SbroImage.moveToTrash(ae);
+                    }
                   }
+                    
                   else{
                     print("[INFO] Permission denied");
                   }
