@@ -26,7 +26,7 @@ class Feed extends StatefulWidget {
 
 class _FeedState extends State<Feed> {
   
-  bool _showInfo = false;
+  ValueNotifier<bool> showInfoBox = ValueNotifier<bool>(false);
 
   @override
   Widget build(BuildContext context) {                 
@@ -42,14 +42,10 @@ class _FeedState extends State<Feed> {
           /// Here we make sure that if the assets list is modified we reload all the Feed
           GestureDetector(
             onLongPress: (){
-              setState(() {
-                _showInfo = true;
-              });
+              showInfoBox.value = true;
             },
             onLongPressUp: () {
-              setState(() {
-                _showInfo = false;
-              });
+              showInfoBox.value = false;
             },
             child: Stack(
               children: [
@@ -94,18 +90,27 @@ class _FeedState extends State<Feed> {
                     } 
                   }
                 ),
-                _showInfo ? Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    (corrIndx != null) ?
-                    InfoBox(asset: widget.assets[corrIndx!]) :
-                    const Text("[ERR] Current index is Nan!", style: kNormalStyle),
-                    const SizedBox(
-                      height: Footbar.fbHight,
-                    )
-                  ],
-                ) :
-                const SizedBox(),
+                /// Info box
+                ValueListenableBuilder(
+                  valueListenable: showInfoBox, 
+                  builder: (BuildContext context, bool showInfoBox, Widget? child) {
+                    if(showInfoBox){
+                      return child!;
+                    }
+                    return const SizedBox();
+                  },
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        (corrIndx != null) ?
+                        InfoBox(asset: widget.assets[corrIndx!]) :
+                        const Text("[ERR] Current index is Nan!", style: kNormalStyle),
+                        const SizedBox(
+                          height: Footbar.fbHight,
+                        )
+                      ],
+                    ),
+                )
               ],
             ),
           ) :

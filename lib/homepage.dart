@@ -28,19 +28,10 @@ class _HomePageState extends State<HomePage> {
 
   late final PageController _feedController;
 
-  void _loadFeed([bool restart = false]) async {
-    /// If the feed is the trashFeed we can't update the assets beacouse they are all in a non valid folder
+  void _loadFeed() async {
+    /// If the feed is the trashFeed we can't update the assets because they are all in a non valid folder
     if(!widget.isTrashFeed){
-
-      /// Return to first item.
-      /// If the feed doesn't exist we can't tell the feedController to jump to 
-      /// a page becaouse the controller is not attached to any PageView.
-      if(widget.feedController != null && restart) {
-        corrIndx = 0;
-        widget.feedController!.jumpToPage(0);
-      }
-
-      int until =  Feed.numNextUpdate;
+      int until = Feed.numNextUpdate;
       if(corrIndx != null){
         until += corrIndx!;
       }
