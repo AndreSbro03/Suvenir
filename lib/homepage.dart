@@ -27,16 +27,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
 
   late final PageController _feedController;
-  bool _isReady = false;
 
   void _loadFeed() async {
-
-    /// Set the loading screen
-    // if(_isReady) {
-    //   setState(() {
-    //     _isReady = false;
-    //   });
-    // }
 
     /// If the feed is the trashFeed we can't update the assets because they are all in a non valid folder
     if(!widget.isTrashFeed){
@@ -49,13 +41,11 @@ class _HomePageState extends State<HomePage> {
     }
     
     setState(() {
-      _isReady = true;
     });
   }
 
   @override 
   void initState(){
-    print("[INFO] Init!");
     _loadFeed();
     if(widget.feedController == null){
       _feedController = PageController();
@@ -72,7 +62,6 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       backgroundColor: kBackgroundColor,
       body: 
-      _isReady ?
       Stack(
         children: [
           /// Level 0: (background) 
@@ -96,8 +85,7 @@ class _HomePageState extends State<HomePage> {
           /// Level 2: (Warnings Box)
       
         ]
-      ) : 
-      loadingWidget(context),
+      ),
     );
   }
 }

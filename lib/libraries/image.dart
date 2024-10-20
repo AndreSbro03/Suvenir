@@ -134,7 +134,7 @@ class SbroImage{
       print("[WARN] Trying to get the folder of an unavailable asset!");
       return "";
     }
-    /// if the path is "Store/0/User/Picture/" we take only "Picture"
+    /// if the path is "Store/0/User/Picture(/)" we take only "Picture"
     String? path = asset.relativePath;
     if(path == null){
       print("[ERR] Something went wrong getting relative path!");
@@ -142,7 +142,10 @@ class SbroImage{
     }
 
     List<String> folders = path.split('/');
-    //folders.removeLast();
+
+    /// Sometimes path ends with / so we have to remove the last empty element
+    if(folders.last == '') folders.removeLast();
+    
     /// Returned the last folder
     return folders.last;
   }
