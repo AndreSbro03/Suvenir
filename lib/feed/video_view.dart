@@ -1,8 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:gallery_tok/bars/footbar.dart';
-import 'package:gallery_tok/libraries/globals.dart';
+import 'package:suvenir/bars/footbar.dart';
+import 'package:suvenir/libraries/globals.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:video_player/video_player.dart';
 

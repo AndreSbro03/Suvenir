@@ -1,10 +1,10 @@
 import 'dart:io';
-import 'package:gallery_tok/db/assets_db.dart';
-import 'package:gallery_tok/db/trash_db.dart';
-import 'package:gallery_tok/libraries/globals.dart';
-import 'package:gallery_tok/libraries/permission.dart';
-import 'package:gallery_tok/libraries/statistics.dart';
-import 'package:gallery_tok/settings.dart';
+import 'package:suvenir/db/assets_db.dart';
+import 'package:suvenir/db/trash_db.dart';
+import 'package:suvenir/libraries/globals.dart';
+import 'package:suvenir/libraries/permission.dart';
+import 'package:suvenir/libraries/statistics.dart';
+import 'package:suvenir/settings.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:share_plus/share_plus.dart';
 

@@ -1,8 +1,8 @@
 
 import 'package:flutter/material.dart';
-import 'package:gallery_tok/account/account.dart';
-import 'package:gallery_tok/homepage.dart';
-import 'package:gallery_tok/libraries/globals.dart';
+import 'package:suvenir/account/account.dart';
+import 'package:suvenir/homepage.dart';
+import 'package:suvenir/libraries/globals.dart';
 import 'package:photo_manager/photo_manager.dart';
 
 class LikedGrid extends StatelessWidget {

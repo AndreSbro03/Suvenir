@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:gallery_tok/libraries/globals.dart';
-import 'package:gallery_tok/settings.dart';
+import 'package:suvenir/libraries/globals.dart';
+import 'package:suvenir/settings.dart';
 import 'package:photo_manager/photo_manager.dart';
 
 class SbroAppBar extends StatelessWidget {

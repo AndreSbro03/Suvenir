@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:gallery_tok/bars/footbar.dart';
-import 'package:gallery_tok/libraries/globals.dart';
-import 'package:gallery_tok/feed/image_view.dart';
-import 'package:gallery_tok/feed/video_view.dart';
-import 'package:gallery_tok/libraries/image.dart';
-import 'package:gallery_tok/bars/like_button.dart';
+import 'package:suvenir/bars/footbar.dart';
+import 'package:suvenir/libraries/globals.dart';
+import 'package:suvenir/feed/image_view.dart';
+import 'package:suvenir/feed/video_view.dart';
+import 'package:suvenir/libraries/image.dart';
+import 'package:suvenir/bars/like_button.dart';
 import 'package:photo_manager/photo_manager.dart';
 
 class Feed extends StatefulWidget {

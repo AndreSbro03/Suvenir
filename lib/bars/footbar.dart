@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:gallery_tok/account/account.dart';
-import 'package:gallery_tok/libraries/globals.dart';
-import 'package:gallery_tok/libraries/image.dart';
-import 'package:gallery_tok/bars/like_button.dart';
-import 'package:gallery_tok/libraries/permission.dart';
+import 'package:suvenir/account/account.dart';
+import 'package:suvenir/libraries/globals.dart';
+import 'package:suvenir/libraries/image.dart';
+import 'package:suvenir/bars/like_button.dart';
+import 'package:suvenir/libraries/permission.dart';
 import 'package:photo_manager/photo_manager.dart';
 
 class Footbar extends StatelessWidget {

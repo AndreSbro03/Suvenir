@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:gallery_tok/homepage.dart';
-import 'package:gallery_tok/libraries/globals.dart';
-import 'package:gallery_tok/libraries/image.dart';
-import 'package:gallery_tok/libraries/permission.dart';
-import 'package:gallery_tok/settings.dart';
+import 'package:suvenir/homepage.dart';
+import 'package:suvenir/libraries/globals.dart';
+import 'package:suvenir/libraries/image.dart';
+import 'package:suvenir/libraries/permission.dart';
+import 'package:suvenir/settings.dart';
 import 'package:photo_manager/photo_manager.dart';
 
 /// Here we setup the application and require the gallery permission.

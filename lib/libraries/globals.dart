@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:gallery_tok/db/liked_db.dart';
-import 'package:gallery_tok/db/trash_db.dart';
-import 'package:gallery_tok/feed/video_view.dart';
+import 'package:suvenir/db/liked_db.dart';
+import 'package:suvenir/db/trash_db.dart';
+import 'package:suvenir/feed/video_view.dart';
 import 'package:photo_manager/photo_manager.dart';
 
 const String appName = "SbroApp";

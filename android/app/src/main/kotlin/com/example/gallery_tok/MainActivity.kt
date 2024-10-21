@@ -1,4 +1,4 @@
-package com.example.gallery_tok
+package com.suvenir
 
 import io.flutter.embedding.android.FlutterActivity
 

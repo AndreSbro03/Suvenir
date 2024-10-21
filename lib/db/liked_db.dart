@@ -1,4 +1,4 @@
-import 'package:gallery_tok/db/assets_db.dart';
+import 'package:suvenir/db/assets_db.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:sqflite/sqflite.dart';
 

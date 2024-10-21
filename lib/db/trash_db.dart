@@ -1,5 +1,5 @@
-import 'package:gallery_tok/db/assets_db.dart';
-import 'package:gallery_tok/libraries/globals.dart';
+import 'package:suvenir/db/assets_db.dart';
+import 'package:suvenir/libraries/globals.dart';
 import 'package:sqflite/sqflite.dart';
 
 class TrashedAsset {

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:gallery_tok/account/liked_grid.dart';
-import 'package:gallery_tok/account/trashed_grid.dart';
-import 'package:gallery_tok/account/user_stats.dart';
-import 'package:gallery_tok/libraries/globals.dart';
-import 'package:gallery_tok/libraries/image.dart';
-import 'package:gallery_tok/libraries/statistics.dart';
+import 'package:suvenir/account/liked_grid.dart';
+import 'package:suvenir/account/trashed_grid.dart';
+import 'package:suvenir/account/user_stats.dart';
+import 'package:suvenir/libraries/globals.dart';
+import 'package:suvenir/libraries/image.dart';
+import 'package:suvenir/libraries/statistics.dart';
 import 'package:photo_manager/photo_manager.dart';
 
 class Account extends StatefulWidget {
