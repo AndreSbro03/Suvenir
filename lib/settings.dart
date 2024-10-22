@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:suvenir/libraries/globals.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'package:suvenir/libraries/image.dart';
 import 'package:suvenir/libraries/styles.dart';
 
 /// Welcome to the app settings page. Here for now you can only chose what folders do you 
@@ -128,8 +129,10 @@ class _SettingsState extends State<Settings> {
 
                   /// Create new feed
                   widget.assets.clear();
-                  widget.assets.addAll(originalAssets);
-                  widget.assets.shuffle();                            
+                  widget.assets.addAll(SbroImage.getValidPathAssetsList(folders, Settings.validPathsMap));
+                  widget.assets.shuffle();  
+
+                  print("[INFO] New number of assets in feed: ${widget.assets.length}");                          
 
                   /// Retrun to feed
                   Navigator.of(context).pop(true);

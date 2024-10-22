@@ -7,6 +7,7 @@ import 'package:suvenir/libraries/statistics.dart';
 import 'package:suvenir/settings.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:mutex/mutex.dart';
 
 class SbroImage{
 
@@ -16,6 +17,71 @@ class SbroImage{
     int assetsCount =  await PhotoManager.getAssetCount();
     originalAssets.addAll(await PhotoManager.getAssetListRange(start: 0, end: assetsCount));
     originalAssets.shuffle();
+  }
+
+  static Future<Map<String, List<AssetEntity?>>> fetchAssetsByFolders(List<AssetPathEntity?> paths) async {
+
+    Map<String, List<AssetEntity?>> out = {};
+
+    final Mutex m = Mutex();
+
+    /// List of tasks to read each folder in parallel
+    List<Future<void>> tasks = [];
+
+    for (AssetPathEntity? path in paths) {
+      
+      if(path == null) continue;
+
+
+      /// Below the equivalent non parallel code of the for loop
+      ///    int assetsCount = await path.assetCountAsync;
+      ///    List<AssetEntity?> ael = await path.getAssetListRange(start: 0, end: assetsCount);
+      ///    out.addAll({path.name: ael});
+
+      /// Add the task
+      tasks.add(
+        path.assetCountAsync.then(
+          (assetCount) {
+            
+            print('[INFO] Nome cartella: ${path.name}, ID cartella: ${path.id}, Count: $assetCount');
+            
+            return path.getAssetListRange(start: 0, end: assetCount).then(
+              (ael) async {
+                await m.protect(() async {
+                  /// If two folders have the same name we want to concat the ael
+                  if(out.containsKey(path.name)){
+                    out[path.name]!.addAll(ael);
+                  } else {
+                    out.addAll({path.name: ael});
+                  }
+                });
+              },
+            );
+          },
+        ),
+      );
+
+    }
+
+    /// Wait all tasks
+    await Future.wait(tasks);
+
+    return out;
+  }
+
+  static List<AssetEntity?> getValidPathAssetsList(Map<String, List<AssetEntity?>> folders, Map<String, bool> validMap) {
+
+    List<AssetEntity?> out = [];
+
+    for (String folderName in folders.keys) {      
+      /// Filter the trashPath since is not in validMap 
+      print("[INFO] Folder name: $folderName");
+      if(validMap.containsKey(folderName) && validMap[folderName]!){
+        print("[INFO] Total assets: ${folders[folderName]!.length}");
+        out.addAll(folders[folderName]!);
+      }
+    }
+    return out;
   }
 
   static Future<String> getAssetAbsolutePath(AssetEntity? asset) async{

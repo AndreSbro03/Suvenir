@@ -6,6 +6,7 @@ import 'package:suvenir/libraries/permission.dart';
 import 'package:suvenir/settings.dart';
 import 'package:photo_manager/photo_manager.dart';
 
+
 /// Here we setup the application and require the gallery permission.
 /// Once the user has provide that we start the feed. 
 void main() {
@@ -39,12 +40,39 @@ class _MyHomePageState extends State<MyHomePage> {
   bool readyToGo = false;
   List<AssetEntity?> mainFeed = [];
 
+
+  /// If there are two folders one in the phone and one in a external disk with the same name the function PhotoManager.getAssetPathList() 
+  /// will take only the id of one of the two.
+  /// ```dart
+  ///     1 - Search all folders in the phone.
+  ///     2 - Remove the trashPath from the list.
+  ///     3 - Create the validity map and set all values true.
+  ///     4 - Return the List<AssetPathEntity?> founded.
+  /// ```
+  Future<List<AssetPathEntity?>> _getPathList() async {
+
+    /// hasAll : false make sure to remove the "Recent" folder that contains copy of other assets present in other folders
+    List<AssetPathEntity> apel = await PhotoManager.getAssetPathList(hasAll: false);
+      
+    Settings.validPathsMap = { for (var e in apel) e.name : true };
+    Settings.validPathsMap.remove(SbroImage.trashPath);
+
+    /// print("[INFO] Getting paths: ${Settings.validPathsMap.toString()}");
+
+    return apel;
+  }
+
   void _getMediaFromGallery() async {
     switch (await SbroPermission.getGalleryAccess()) {
 
       case PermissionsTypes.granted:
+          List<AssetPathEntity?> apel = await _getPathList();
+
           // I need to upload all media first
-          await SbroImage.fetchAssets();
+          folders = await SbroImage.fetchAssetsByFolders(apel);
+          originalAssets = SbroImage.getValidPathAssetsList(folders, Settings.validPathsMap);
+          //SbroImage.fetchAssets();
+          originalAssets.shuffle();
           corrIndx = 0;
           print("[INFO] Loaded all images!");
 
@@ -65,12 +93,6 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  _getPathList() async {
-    Settings.validPathsMap = { for (var e in await PhotoManager.getAssetPathList()) e.name : true };
-    Settings.validPathsMap.remove(SbroImage.trashPath);
-    print("[INFO] Getting paths: ${Settings.validPathsMap.toString()}");
-  }
-
   void _cleanTrash() async {
      /// Here we check if the trash db has some assets that need to be deleted
       List<String> needToDelete = await trashAssetsDb.getAssetsOlderThan(trashDays);
@@ -86,7 +108,6 @@ class _MyHomePageState extends State<MyHomePage> {
     /// Make sure only runs once
     if(initializeApp){
       _getMediaFromGallery();
-      _getPathList();
       _cleanTrash();
       mainFeedHash = mainFeed.hashCode;      
       initializeApp = false;
