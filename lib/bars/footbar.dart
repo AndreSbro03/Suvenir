@@ -5,6 +5,7 @@ import 'package:suvenir/libraries/image.dart';
 import 'package:suvenir/bars/like_button.dart';
 import 'package:suvenir/libraries/permission.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'package:suvenir/libraries/styles.dart';
 
 class Footbar extends StatelessWidget {
   const Footbar({

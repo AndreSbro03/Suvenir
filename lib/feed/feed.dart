@@ -6,6 +6,7 @@ import 'package:suvenir/feed/video_view.dart';
 import 'package:suvenir/libraries/image.dart';
 import 'package:suvenir/bars/like_button.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'package:suvenir/libraries/styles.dart';
 
 class Feed extends StatefulWidget {
   const Feed(
@@ -136,7 +137,8 @@ class InfoBox extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Date: ${removeClockFromDate(asset!.createDateTime)}", style: kNormalStyle,),
+            Text("Modified date: ${removeClockFromDate(asset!.modifiedDateTime)}", style: kNormalStyle,),
+            Text("Creation date: ${removeClockFromDate(asset!.createDateTime)}", style: kNormalStyle,),
             Text("Source: ${SbroImage.getAssetRelativePath(asset)}", style: kNormalStyle,),
           ],
         ),

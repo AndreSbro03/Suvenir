@@ -5,6 +5,7 @@ import 'package:suvenir/homepage.dart';
 import 'package:suvenir/libraries/globals.dart';
 import 'package:suvenir/libraries/image.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'package:suvenir/libraries/styles.dart';
 
 class TrashedGrid extends StatelessWidget {
   const TrashedGrid({

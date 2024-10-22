@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:suvenir/bars/footbar.dart';
 import 'package:suvenir/libraries/globals.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'package:suvenir/libraries/styles.dart';
 import 'package:video_player/video_player.dart';
 
 class VideoView extends StatefulWidget {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:suvenir/libraries/globals.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'package:suvenir/libraries/styles.dart';
 
 
 /// Like Button, if the Footbar.updateLikeButton change the ValueListenableBuilder update the button 

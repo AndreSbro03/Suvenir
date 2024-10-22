@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:suvenir/libraries/globals.dart';
+import 'package:suvenir/libraries/styles.dart';
 
 class UserStatsBox extends StatelessWidget {
   const UserStatsBox({
@@ -37,7 +38,7 @@ class UserStatsBox extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text("Medias found on device: ", style: kDescriptionStyle,),
+                    const Text("Medias on device: ", style: kDescriptionStyle,),
                     Text(shortNumber(originalAssetsLen), style: kH1Style,),
                   ],
                 ),

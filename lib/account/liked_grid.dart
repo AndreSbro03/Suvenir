@@ -4,6 +4,7 @@ import 'package:suvenir/account/account.dart';
 import 'package:suvenir/homepage.dart';
 import 'package:suvenir/libraries/globals.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'package:suvenir/libraries/styles.dart';
 
 class LikedGrid extends StatelessWidget {
   const LikedGrid({
