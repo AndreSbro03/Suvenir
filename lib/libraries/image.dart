@@ -16,7 +16,6 @@ class SbroImage{
   static Future<void> fetchAssets() async {
     int assetsCount =  await PhotoManager.getAssetCount();
     originalAssets.addAll(await PhotoManager.getAssetListRange(start: 0, end: assetsCount));
-    originalAssets.shuffle();
   }
 
   static Future<Map<String, List<AssetEntity?>>> fetchAssetsByFolders(List<AssetPathEntity?> paths) async {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:suvenir/homepage.dart';
 import 'package:suvenir/libraries/globals.dart';
 import 'package:suvenir/libraries/image.dart';
@@ -9,8 +10,14 @@ import 'package:photo_manager/photo_manager.dart';
 
 /// Here we setup the application and require the gallery permission.
 /// Once the user has provide that we start the feed. 
-void main() {
-  //SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [SystemUiOverlay.top]);
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  /// Disable auto rotation
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+  ]);
+  /// Remove bottom navigation bar
+  /// await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [SystemUiOverlay.top]);
   runApp(const MyApp());
 }
 
@@ -67,14 +74,23 @@ class _MyHomePageState extends State<MyHomePage> {
 
       case PermissionsTypes.granted:
           List<AssetPathEntity?> apel = await _getPathList();
+          
 
           // I need to upload all media first
+
+          /// Code to load fast all the asset and than parse them, problem with the filter setting because
+          /// if the parse is not finished it will cause an error
+            // await SbroImage.fetchAssets();
+            // originalAssets.shuffle();
+            // SbroImage.fetchAssetsByFolders(apel).then((out) => folders = out );
+
+          /// Parse directy, no error risk but solwer
           folders = await SbroImage.fetchAssetsByFolders(apel);
           originalAssets = SbroImage.getValidPathAssetsList(folders, Settings.validPathsMap);
-          //SbroImage.fetchAssets();
           originalAssets.shuffle();
+          
           corrIndx = 0;
-          print("[INFO] Loaded all images!");
+          print("[INFO] Loaded all ${originalAssets.length} images!");
 
           setState(() {
             // The app is ready to go

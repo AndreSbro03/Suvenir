@@ -99,9 +99,12 @@ class _FeedState extends State<Feed> {
                       return Column(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
-                          (corrIndx != null) ?
-                          InfoBox(asset: widget.assets[corrIndx!]) :
-                          const Text("[ERR] Current index is Nan!", style: kNormalStyle),
+
+                          if (corrIndx != null && widget.assets[corrIndx!] != null) 
+                            InfoBox(asset: widget.assets[corrIndx!]!) 
+                          else 
+                            const Text("[ERR] Current index is Nan!", style: kNormalStyle),
+
                           const SizedBox(
                             height: Footbar.fbHight,
                           )
@@ -126,20 +129,21 @@ class InfoBox extends StatelessWidget {
     super.key, required this.asset,
 
   });
-  final AssetEntity? asset;
+  final AssetEntity asset;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       color: kBackgroundColor,
       child: Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(2 * kDefPadding),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Modified date: ${removeClockFromDate(asset!.modifiedDateTime)}", style: kNormalStyle,),
-            Text("Creation date: ${removeClockFromDate(asset!.createDateTime)}", style: kNormalStyle,),
-            Text("Source: ${SbroImage.getAssetRelativePath(asset)}", style: kNormalStyle,),
+            Text("Modified date: ${removeClockFromDate(asset.modifiedDateTime)}", style: kNormalStyle,),
+            /// Cration date usually is wrong and is more recent than the modifiedDateTime
+            /// Text("Creation date: ${removeClockFromDate(asset!.createDateTime)}", style: kNormalStyle,),
+            Text("Source: ${asset.relativePath}", style: kNormalStyle,),
           ],
         ),
       )

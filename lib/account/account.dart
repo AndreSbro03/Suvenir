@@ -36,30 +36,34 @@ class _AccountState extends State<Account> {
   late final PageController _pc;
 
   void _loadAssets() async {
-    readyToGo = false;
+    setState(() {
+      readyToGo = false;
+    });
 
-      print("[INFO] Loading assets!");
+      List<Future<void>> tasks = [];
 
       /// Clear old data
       trashedAssets.clear();
       daysLeft.clear();
 
       /// Get all data
-      likedAssets = await SbroImage.getAllAssesInDatabase(likeAssetsDb);
-      var trashDatesMap = await SbroImage.getAssetsTrashedDate();
+      tasks.add(SbroImage.getAllAssesInDatabase(likeAssetsDb).then( (out) { likedAssets = out; }));
+      tasks.add(SbroImage.getAssetsTrashedDate().then( (trashDatesMap) { 
+        /// Here we separete the map in the two arrays. Use first because there is only one K and one V
+        for (var map in trashDatesMap) {
+          trashedAssets.add(map.keys.first);
+          daysLeft.add(map.values.first);
+        }
+       }));
       
-      /// Here we separete the map in the two arrays. Use first because there is only one K and one V
-      for (var map in trashDatesMap) {
-        trashedAssets.add(map.keys.first);
-        daysLeft.add(map.values.first);
-      }
-      //print(daysLeft.toString());
-
       /// Load space saved
-      spaceSaved = await Statistics.instance.getSavedSpace();
+      tasks.add(Statistics.instance.getSavedSpace().then( (out) { spaceSaved = out; }));
 
-    readyToGo = true;
-    setState(() {});
+      await Future.wait(tasks);
+    
+    setState(() {
+      readyToGo = true;
+    });
   }
 
   @override 
