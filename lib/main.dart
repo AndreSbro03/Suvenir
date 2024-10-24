@@ -61,7 +61,7 @@ class _MyHomePageState extends State<MyHomePage> {
     /// hasAll : false make sure to remove the "Recent" folder that contains copy of other assets present in other folders
     List<AssetPathEntity> apel = await PhotoManager.getAssetPathList(hasAll: false);
       
-    Settings.validPathsMap = { for (var e in apel) e.name : true };
+    Settings.validPathsMap = { for (var ape in apel) ape.name : true };
     Settings.validPathsMap.remove(SbroImage.trashPath);
 
     /// print("[INFO] Getting paths: ${Settings.validPathsMap.toString()}");

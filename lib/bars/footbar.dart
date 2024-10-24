@@ -42,9 +42,9 @@ class Footbar extends StatelessWidget {
 
                     if(corrIndx != null && assets[corrIndx!] != null) {
                       String id = assets[corrIndx!]!.id;  
-                      SbroImage.restoreAssetFromTrash(id);
                       assets[corrIndx!] = null;
                       reload();
+                      SbroImage.restoreAssetFromTrash(id);
                     }
                     else{
                       print("[WARN] Trying to restore a null asset!");

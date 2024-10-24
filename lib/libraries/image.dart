@@ -244,21 +244,33 @@ class SbroImage{
 
     List<Map<String, Object?>> dbData = await trashAssetsDb.getAssetsTrashedDate();
     List<Map<AssetEntity?, int>> out = [];
+
+    List<Future<void>> tasks = [];
+    Mutex m = Mutex();
     
     for (Map<String, Object?> map in dbData) {
       String id = map[TrashedAssetFields.id].toString();
-      AssetEntity? ae = await AssetEntity.fromId(id);
-
-      // If ae is null we remove that from the database
-      if(ae == null){
-        trashAssetsDb.removeMedia(id);
-      }
-      else{
-        String d = map[TrashedAssetFields.date].toString();
-        int dateUntilRemove = trashDays - dateDistance(getCorrDate(), d);
-        out.add({ae : dateUntilRemove});
-      }
+      tasks.add( AssetEntity.fromId(id).then(
+        (ae) async {
+          // If ae is null we remove that from the database
+          if(ae == null) {
+            await m.protect( () async {
+              trashAssetsDb.removeMedia(id);
+            });
+          }
+          else{
+            String d = map[TrashedAssetFields.date].toString();
+            int dateUntilRemove = trashDays - dateDistance(getCorrDate(), d);
+             await m.protect( () async {
+              out.add({ae : dateUntilRemove});
+            });
+          }
+        }
+      ));
     }
+
+    await Future.wait(tasks);
+    
     return out;
   }
 
