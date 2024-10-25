@@ -35,7 +35,11 @@ class VideoViewState extends State<VideoView> {
   _initVideo() async {
     final File? videoFile = await widget.video.file;
 
-    vp = VideoPlayerController.file(videoFile!)
+    vp = VideoPlayerController.file(videoFile!, videoPlayerOptions: VideoPlayerOptions(
+      /// With this option if the user is listening music from Spotify, for example, the video wont stop the
+      /// music but will play the audio on top of it.
+      mixWithOthers: true
+    ))
       ..play()
       ..setLooping(true)
       ..initialize().then(

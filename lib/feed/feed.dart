@@ -10,11 +10,12 @@ import 'package:suvenir/libraries/styles.dart';
 
 class Feed extends StatefulWidget {
   const Feed(
-    {super.key, required this.assets, required this.feedController,}
+    {super.key, required this.assets, required this.feedController, required this.showInfoBox,}
   );
 
   final List<AssetEntity?> assets;
   final PageController feedController;
+  final ValueNotifier<bool> showInfoBox;
 
   /// Every @modIdxUpdate medias the feed check if the next @numNextUpdate medias are valid. (Not in forbidden folders)
   static int modIdxUpdate = 5;
@@ -27,8 +28,6 @@ class Feed extends StatefulWidget {
 
 class _FeedState extends State<Feed> {
   
-  ValueNotifier<bool> showInfoBox = ValueNotifier<bool>(false);
-
   @override
   Widget build(BuildContext context) {                 
 
@@ -41,81 +40,75 @@ class _FeedState extends State<Feed> {
           child: 
           widget.assets.isNotEmpty ?
           /// Here we make sure that if the assets list is modified we reload all the Feed
-          GestureDetector(
-            onLongPress: (){
-              showInfoBox.value = true;
-            },
-            onLongPressUp: () {
-              showInfoBox.value = false;
-            },
-            child: Stack(
-              children: [
-                
-                PageView.builder(
-                    /// Attach the feedController to the PageView
-                    controller: widget.feedController,
-                    onPageChanged: (newIdx) {
-                      corrIndx = newIdx;
-                      print(corrIndx);
-                      /// Here you can insert code that notify all other widget that the media is changed
-                      LikeButton.reloadLikeButton.value++;
-                    },
-                    scrollDirection: Axis.vertical,
-                    itemCount: widget.assets.length,
-                    itemBuilder: (_, index) {
-                      
-                      if (widget.assets[index] == null){ 
-                        return const Center(child: 
-                          Text("Image unavailable.\n Might be moved or deleted.", style: kNormalStyle, textAlign: TextAlign.center,),
-                        );
-                      }
-                      else {      
-                  
-                        /// Update next @Feed.numNextUpdate medias
-                        if(index % Feed.modIdxUpdate == 0 && index != 0) {
-                          SbroImage.updateAssets(widget.assets, index, Feed.numNextUpdate);
-                        }
-                  
-                        AssetEntity ae = widget.assets[index]!;
-                  
-                        if(ae.type == AssetType.video) {
-                          final GlobalKey<VideoViewState> videoViewKey = GlobalKey<VideoViewState>();
-                          /// Alising vw -> videoView
-                          lastVideoView = videoViewKey;
-                          return VideoView(key: videoViewKey, video: ae);
-                        }
-                        else { 
-                          return ImageView(image: ae);
-                        }
-                
-                    } 
-                  }
-                ),
-                /// Info box
-                ValueListenableBuilder(
-                  valueListenable: showInfoBox, 
-                  builder: (BuildContext context, bool showInfoBox, Widget? child) {
-                    if(showInfoBox){
-                      return Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-
-                          if (corrIndx != null && widget.assets[corrIndx!] != null) 
-                            InfoBox(asset: widget.assets[corrIndx!]!) 
-                          else 
-                            const Text("[ERR] Current index is Nan!", style: kNormalStyle),
-
-                          const SizedBox(
-                            height: Footbar.fbHight,
-                          )
-                        ]
+          Stack(
+            children: [
+              
+              PageView.builder(
+                  /// Attach the feedController to the PageView
+                  controller: widget.feedController,
+                  onPageChanged: (newIdx) {
+                    corrIndx = newIdx;
+                    // print(corrIndx);
+                    /// On scroll we reset the infoBox 
+                    widget.showInfoBox.value = false;
+                    /// Here you can insert code that notify all other widget that the media is changed
+                    LikeButton.reloadLikeButton.value++;
+                  },
+                  scrollDirection: Axis.vertical,
+                  itemCount: widget.assets.length,
+                  itemBuilder: (_, index) {
+                    
+                    if (widget.assets[index] == null){ 
+                      return const Center(child: 
+                        Text("Image unavailable.\n Might be moved or deleted.", style: kNormalStyle, textAlign: TextAlign.center,),
                       );
                     }
-                    return const SizedBox();
-                  },
-                )
-              ],
-            ),
+                    else {      
+                
+                      /// Update next @Feed.numNextUpdate medias
+                      if(index % Feed.modIdxUpdate == 0 && index != 0) {
+                        SbroImage.updateAssets(widget.assets, index, Feed.numNextUpdate);
+                      }
+                
+                      AssetEntity ae = widget.assets[index]!;
+                
+                      if(ae.type == AssetType.video) {
+                        final GlobalKey<VideoViewState> videoViewKey = GlobalKey<VideoViewState>();
+                        /// Alising vw -> videoView
+                        lastVideoView = videoViewKey;
+                        return VideoView(key: videoViewKey, video: ae);
+                      }
+                      else { 
+                        return ImageView(image: ae);
+                      }
+              
+                  } 
+                }
+              ),
+              /// Info box
+              ValueListenableBuilder(
+                valueListenable: widget.showInfoBox, 
+                builder: (BuildContext context, bool showInfoBox, Widget? child) {
+                  if(showInfoBox){
+                    return Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+          
+                        if (corrIndx != null && widget.assets[corrIndx!] != null) 
+                          InfoBox(asset: widget.assets[corrIndx!]!) 
+                        else 
+                          const Text("[ERR] Current index is Nan!", style: kNormalStyle),
+          
+                        const SizedBox(
+                          height: Footbar.fbHight,
+                        )
+                      ]
+                    );
+                  }
+                  return const SizedBox();
+                },
+              )
+            ],
           ) :
           const Center(child: Text("No media avaiable!",style: kNormalStyle,),),
         )

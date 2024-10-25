@@ -6,12 +6,13 @@ import 'package:photo_manager/photo_manager.dart';
 
 class SbroAppBar extends StatelessWidget {
   const SbroAppBar({
-    super.key, required this.reload, required this.assets, required this.feedController, 
+    super.key, required this.reload, required this.assets, required this.feedController, required this.showInfoBox, 
   });
 
   final VoidCallback reload;
   final List<AssetEntity?> assets;
   final PageController feedController;
+  final ValueNotifier<bool> showInfoBox;
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +29,13 @@ class SbroAppBar extends StatelessWidget {
             ),
 
             const Expanded(child: SizedBox()),
+
+            IconButton(
+              onPressed: () {
+                showInfoBox.value = !showInfoBox.value;
+              },
+              icon: const Icon(Icons.info_outline, size: kIconSize, color: kIconColor,),
+            ),
 
             /// Settings Button only in the main feed
             (assets.hashCode == mainFeedHash) ? 

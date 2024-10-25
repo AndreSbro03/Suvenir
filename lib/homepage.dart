@@ -59,6 +59,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+
+    ValueNotifier<bool> showInfoBox = ValueNotifier<bool>(false); 
     
     return Scaffold(
       backgroundColor: kBackgroundColor,
@@ -68,14 +70,14 @@ class _HomePageState extends State<HomePage> {
           /// Level 0: (background) 
           ///   The feed once the permission are granted and the medias are loaded.
           ///   Circular progress indicator instead.
-          Feed(assets: widget.assets, feedController: _feedController,),
+          Feed(assets: widget.assets, feedController: _feedController, showInfoBox: showInfoBox,),
           /// Level 1: (Appbar and Footbar)
           Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               /// Appbar:
               ///   consist in the app title and the settings IconButton.
-              SbroAppBar(assets: widget.assets, reload: _loadFeed, feedController: _feedController, ),
+              SbroAppBar(assets: widget.assets, reload: _loadFeed, feedController: _feedController, showInfoBox: showInfoBox,),
         
               /// Footbar:
               ///   consist in a list of icons.
