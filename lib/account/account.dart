@@ -80,9 +80,15 @@ class _AccountState extends State<Account> {
       appBar: AppBar(
         foregroundColor: kContrColor,
         backgroundColor: Colors.transparent,
-        title: const Text(
-          "Account",
-          style: kH2Style,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              "Account",
+              style: kH2Style,
+            ),
+            IconButton(icon: const Icon(Icons.settings_outlined), onPressed: () {},),
+          ],
         ),
       ),
       body: Column(

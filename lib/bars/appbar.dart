@@ -37,17 +37,17 @@ class SbroAppBar extends StatelessWidget {
               icon: const Icon(Icons.info_outline, size: kIconSize, color: kIconColor,),
             ),
 
-            /// Settings Button only in the main feed
+            /// Filter Button only in the main feed
             (assets.hashCode == mainFeedHash) ? 
             IconButton(
               onPressed: () async {
-                /// If a video is going we stop it before going to the settings
+                /// If a video is going we stop it before going to the filter
                 if(lastVideoView != null) {
                   lastVideoView!.currentState?.pauseVideo();
                 }
 
                 bool? modified = await Navigator.of(context).push(
-                   MaterialPageRoute(builder: (_) => Settings(assets: assets))
+                   MaterialPageRoute(builder: (_) => Filter(assets: assets))
                 );
 
                 /// If something has changed in the settings we reload the feed
@@ -61,7 +61,7 @@ class SbroAppBar extends StatelessWidget {
                   reload();
                 }
               }, 
-              icon: const Icon(Icons.settings_outlined, size: kIconSize, color: kIconColor),
+              icon: Image.asset("assets/filter_100.png", width: kIconSize, height: kIconSize, color: kIconColor),
               ) : 
               const SizedBox(
                 height: kIconSize,

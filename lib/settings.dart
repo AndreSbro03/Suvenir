@@ -6,17 +6,17 @@ import 'package:suvenir/libraries/styles.dart';
 
 /// Welcome to the app settings page. Here for now you can only chose what folders do you 
 /// want to see in the app.
-class Settings extends StatefulWidget {
-  const Settings({super.key, required this.assets});
+class Filter extends StatefulWidget {
+  const Filter({super.key, required this.assets});
 
   final List<AssetEntity?> assets;
   static Map<String, bool> validPathsMap = {};
 
   @override
-  State<Settings> createState() => _SettingsState();
+  State<Filter> createState() => _FilterState();
 }
 
-class _SettingsState extends State<Settings> {
+class _FilterState extends State<Filter> {
 
   @override
   Widget build(BuildContext context) {
@@ -52,8 +52,8 @@ class _SettingsState extends State<Settings> {
                       color: kPrimaryColor,
                       onTap: () {
                         setState(() {
-                          Settings.validPathsMap.forEach((K, _) {
-                            Settings.validPathsMap[K] = true;
+                          Filter.validPathsMap.forEach((K, _) {
+                            Filter.validPathsMap[K] = true;
                           });
                         });
                       },
@@ -67,8 +67,8 @@ class _SettingsState extends State<Settings> {
                       color: kPrimaryColor,
                       onTap: () {
                         setState(() {
-                          Settings.validPathsMap.forEach((K, _) {
-                            Settings.validPathsMap[K] = false;
+                          Filter.validPathsMap.forEach((K, _) {
+                            Filter.validPathsMap[K] = false;
                           });
                         });
                       },
@@ -85,13 +85,13 @@ class _SettingsState extends State<Settings> {
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 30.0),
                 child: ListView.builder(
-                  itemCount: Settings.validPathsMap.length,
+                  itemCount: Filter.validPathsMap.length,
                   /*prototypeItem: ListTile(
                     title: Text(widget.paths.first.name),
                   ),*/
                   itemBuilder: (_, index) {
-                    String corrPath = Settings.validPathsMap.keys.elementAt(index);
-                    bool isCheck = Settings.validPathsMap[corrPath]!;
+                    String corrPath = Filter.validPathsMap.keys.elementAt(index);
+                    bool isCheck = Filter.validPathsMap[corrPath]!;
                     return Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -105,7 +105,7 @@ class _SettingsState extends State<Settings> {
                           activeColor: kSecondaryColor,
                           onChanged: (_) {
                             setState(() {
-                                Settings.validPathsMap[corrPath] = !isCheck;
+                                Filter.validPathsMap[corrPath] = !isCheck;
                             });
                           }
                         ),
@@ -129,7 +129,7 @@ class _SettingsState extends State<Settings> {
 
                   /// Create new feed
                   widget.assets.clear();
-                  widget.assets.addAll(SbroImage.getValidPathAssetsList(folders, Settings.validPathsMap));
+                  widget.assets.addAll(SbroImage.getValidPathAssetsList(folders, Filter.validPathsMap));
                   widget.assets.shuffle();  
 
                   print("[INFO] New number of assets in feed: ${widget.assets.length}");                          

@@ -61,8 +61,8 @@ class _MyHomePageState extends State<MyHomePage> {
     /// hasAll : false make sure to remove the "Recent" folder that contains copy of other assets present in other folders
     List<AssetPathEntity> apel = await PhotoManager.getAssetPathList(hasAll: false);
       
-    Settings.validPathsMap = { for (var ape in apel) ape.name : true };
-    Settings.validPathsMap.remove(SbroImage.trashPath);
+    Filter.validPathsMap = { for (var ape in apel) ape.name : true };
+    Filter.validPathsMap.remove(SbroImage.trashPath);
 
     /// print("[INFO] Getting paths: ${Settings.validPathsMap.toString()}");
 
@@ -86,7 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
           /// Parse directy, no error risk but solwer
           folders = await SbroImage.fetchAssetsByFolders(apel);
-          originalAssets = SbroImage.getValidPathAssetsList(folders, Settings.validPathsMap);
+          originalAssets = SbroImage.getValidPathAssetsList(folders, Filter.validPathsMap);
           originalAssets.shuffle();
           
           corrIndx = 0;
