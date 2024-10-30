@@ -7,6 +7,7 @@ import 'package:suvenir/libraries/image.dart';
 import 'package:suvenir/libraries/statistics.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:suvenir/libraries/styles.dart';
+import 'package:suvenir/settings.dart';
 
 class Account extends StatefulWidget {
   const Account({super.key});
@@ -24,8 +25,6 @@ class Account extends StatefulWidget {
 
 class _AccountState extends State<Account> {
 
-  /// TODO: pagina iniziale perchè se reload sul cestino non voglio finire sui like
-
   List<AssetEntity?> likedAssets = [];
   List<AssetEntity?> trashedAssets = [];
   List<int> daysLeft = [];
@@ -33,9 +32,13 @@ class _AccountState extends State<Account> {
   
   bool readyToGo = false;
   int _correntPage = 0;
-  late final PageController _pc;
+  late PageController _pc;
 
   void _loadAssets() async {
+    
+    /// First we restore the last page in the page controller
+    _pc = PageController(initialPage: _correntPage);
+    
     setState(() {
       readyToGo = false;
     });
@@ -60,7 +63,7 @@ class _AccountState extends State<Account> {
       tasks.add(Statistics.instance.getSavedSpace().then( (out) { spaceSaved = out; }));
 
       await Future.wait(tasks);
-    
+
     setState(() {
       readyToGo = true;
     });
@@ -69,7 +72,7 @@ class _AccountState extends State<Account> {
   @override 
   void initState(){
     _loadAssets();
-    _pc = PageController();
+    //_pc = PageController();
     super.initState();
   }
 
@@ -87,7 +90,10 @@ class _AccountState extends State<Account> {
               "Account",
               style: kH2Style,
             ),
-            IconButton(icon: const Icon(Icons.settings_outlined), onPressed: () {},),
+            IconButton(icon: const Icon(Icons.settings_outlined), onPressed: () async {
+                await Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const Settings()));
+            },),
           ],
         ),
       ),

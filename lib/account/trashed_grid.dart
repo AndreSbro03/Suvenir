@@ -71,6 +71,7 @@ class TrashedGrid extends StatelessWidget {
                       null,
                     
                     builder: (_, AsyncSnapshot snapshot) {
+                      /// TODO: since this function is the same on both trash and liked grid it should be unified and moved in account.
                       if(snapshot.hasData && snapshot.data != null) {
                         Image img = Image.memory(snapshot.data);
                         return GestureDetector(       
@@ -85,7 +86,7 @@ class TrashedGrid extends StatelessWidget {
                                 isTrashFeed: true,
                               ))
                             );
-                      
+                            
                             reloadAccount();
                             
                           },
