@@ -15,7 +15,6 @@ ValueNotifier<bool> isFoldersReady = ValueNotifier<bool>(false);
 
 /// Settings
 bool initializeApp = true;
-List<AssetEntity?> originalAssets = [];
 late final int mainFeedHash;
 int? corrIndx;
 GlobalKey<VideoViewState>? lastVideoView;

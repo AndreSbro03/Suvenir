@@ -28,7 +28,8 @@ class _AccountState extends State<Account> {
   List<AssetEntity?> likedAssets = [];
   List<AssetEntity?> trashedAssets = [];
   List<int> daysLeft = [];
-  int spaceSaved = 0;      
+  int spaceSaved = 0;    
+  int totalAssetOnDevice = 0;  
   
   bool readyToGo = false;
   int _correntPage = 0;
@@ -50,6 +51,7 @@ class _AccountState extends State<Account> {
       daysLeft.clear();
 
       /// Get all data
+      tasks.add(PhotoManager.getAssetCount().then( (count) => totalAssetOnDevice = count));
       tasks.add(SbroImage.getAllAssesInDatabase(likeAssetsDb).then( (out) { likedAssets = out; }));
       tasks.add(SbroImage.getAssetsTrashedDate().then( (trashDatesMap) { 
         /// Here we separete the map in the two arrays. Use first because there is only one K and one V
@@ -141,7 +143,7 @@ class _AccountState extends State<Account> {
                       Padding(
                         padding: const EdgeInsets.only(left: kDefPadding, right: kDefPadding, bottom: kDefPadding),
                         child: UserStatsBox(
-                          originalAssetsLen: originalAssets.length, 
+                          originalAssetsLen: totalAssetOnDevice, 
                           likedAssetsLen: likedAssets.length, 
                           trashedAssetsLen: trashedAssets.length,
                           spaceSaved: spaceSaved,

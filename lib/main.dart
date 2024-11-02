@@ -85,11 +85,10 @@ class _MyHomePageState extends State<MyHomePage> {
   Future<void> _getFoldersFromGallery(List<AssetPathEntity?> apel) async {
     /// Parse directy, no error risk but solwer
     folders = await SbroImage.fetchAssetsByFolders(apel);
-    originalAssets = SbroImage.getValidPathAssetsList(folders, Filter.validPathsMap);
-    originalAssets.shuffle();
+    /// originalAssets = SbroImage.getValidPathAssetsList(folders, Filter.validPathsMap);
+    /// originalAssets.shuffle();
     
-    corrIndx = 0;
-    print("[INFO] Loaded all ${originalAssets.length} images!");
+    /// print("[INFO] Loaded all ${originalAssets.length} images!");
   }
 
   void _quickLoadImage() async {
@@ -102,7 +101,8 @@ class _MyHomePageState extends State<MyHomePage> {
           /// assets in the phone. Than we initialize the folders.
         
           List<AssetEntity?> quickLoadedAssets;
-          if(await savedAssetsDb.countRows() > 0) {
+          List<String> invalidPath = await SavedData.instance.getInvalidPaths();
+          if(await savedAssetsDb.countRows() > 0 && invalidPath.isNotEmpty) {
             quickLoadedAssets = await SbroImage.getAllAssesInDatabase(savedAssetsDb);
             print("[INFO] Loading assets from db!");
           } 
@@ -113,6 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
           quickLoadedAssets.shuffle();
           mainFeed.addAll(quickLoadedAssets);
+          corrIndx = 0;
 
           _getFoldersFromGallery(apel).then( (_) {
             isFoldersReady.value = true;
