@@ -6,6 +6,7 @@ import 'package:suvenir/libraries/image.dart';
 import 'package:suvenir/libraries/permission.dart';
 import 'package:suvenir/filter.dart';
 import 'package:photo_manager/photo_manager.dart';
+import 'package:suvenir/libraries/saved_data.dart';
 
 
 /// Here we setup the application and require the gallery permission.
@@ -48,8 +49,6 @@ class _MyHomePageState extends State<MyHomePage> {
   List<AssetEntity?> mainFeed = [];
 
 
-  /// If there are two folders one in the phone and one in a external disk with the same name the function PhotoManager.getAssetPathList() 
-  /// will take only the id of one of the two.
   /// ```dart
   ///     1 - Search all folders in the phone.
   ///     2 - Remove the trashPath from the list.
@@ -60,37 +59,64 @@ class _MyHomePageState extends State<MyHomePage> {
 
     /// hasAll : false make sure to remove the "Recent" folder that contains copy of other assets present in other folders
     List<AssetPathEntity> apel = await PhotoManager.getAssetPathList(hasAll: false);
-      
-    Filter.validPathsMap = { for (var ape in apel) ape.name : true };
+
+    List<String> folderNames = apel.map((asset) => asset.name).toList();
+
+    // Convert to set to improve comparison
+    Set<String> folderNamesSet = Set.from(folderNames);
+    Set<String> invalidPathsSet = Set.from(await SavedData.instance.getInvalidPaths());
+
+    Map<String, bool> resultMap = {};
+
+    // If the item is in the invalidPathSet we want the value to be false
+    for (String item in folderNamesSet) {
+      resultMap[item] = !invalidPathsSet.contains(item);
+    }
+
     Filter.validPathsMap.remove(SbroImage.trashPath);
+
+    Filter.validPathsMap = resultMap;
 
     /// print("[INFO] Getting paths: ${Settings.validPathsMap.toString()}");
 
     return apel;
   }
 
-  void _getMediaFromGallery() async {
+  Future<void> _getFoldersFromGallery(List<AssetPathEntity?> apel) async {
+    /// Parse directy, no error risk but solwer
+    folders = await SbroImage.fetchAssetsByFolders(apel);
+    originalAssets = SbroImage.getValidPathAssetsList(folders, Filter.validPathsMap);
+    originalAssets.shuffle();
+    
+    corrIndx = 0;
+    print("[INFO] Loaded all ${originalAssets.length} images!");
+  }
+
+  void _quickLoadImage() async {
     switch (await SbroPermission.getGalleryAccess()) {
 
       case PermissionsTypes.granted:
           List<AssetPathEntity?> apel = await _getPathList();
-          
 
-          // I need to upload all media first
+          /// We check if the number of rows in the preload db is > 0. If so we proceed to load thoose assets. If not we load all 
+          /// assets in the phone. Than we initialize the folders.
+        
+          List<AssetEntity?> quickLoadedAssets;
+          if(await savedAssetsDb.countRows() > 0) {
+            quickLoadedAssets = await SbroImage.getAllAssesInDatabase(savedAssetsDb);
+            print("[INFO] Loading assets from db!");
+          } 
+          else {
+            quickLoadedAssets = await SbroImage.fetchAssets();
+            print("[INFO] Loading assets from phone!");
+          }
 
-          /// Code to load fast all the asset and than parse them, problem with the filter setting because
-          /// if the parse is not finished it will cause an error
-            // await SbroImage.fetchAssets();
-            // originalAssets.shuffle();
-            // SbroImage.fetchAssetsByFolders(apel).then((out) => folders = out );
+          quickLoadedAssets.shuffle();
+          mainFeed.addAll(quickLoadedAssets);
 
-          /// Parse directy, no error risk but solwer
-          folders = await SbroImage.fetchAssetsByFolders(apel);
-          originalAssets = SbroImage.getValidPathAssetsList(folders, Filter.validPathsMap);
-          originalAssets.shuffle();
-          
-          corrIndx = 0;
-          print("[INFO] Loaded all ${originalAssets.length} images!");
+          _getFoldersFromGallery(apel).then( (_) {
+            isFoldersReady.value = true;
+          });
 
           setState(() {
             // The app is ready to go
@@ -105,7 +131,7 @@ class _MyHomePageState extends State<MyHomePage> {
           
       default:
         // TODO: maybe add a warnig banner here to
-        _getMediaFromGallery();
+        _quickLoadImage();
     }
   }
 
@@ -123,7 +149,7 @@ class _MyHomePageState extends State<MyHomePage> {
   initState(){
     /// Make sure only runs once
     if(initializeApp){
-      _getMediaFromGallery();
+      _quickLoadImage();
       _cleanTrash();
       mainFeedHash = mainFeed.hashCode;      
       initializeApp = false;
@@ -134,7 +160,6 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     if(readyToGo){
-      mainFeed.addAll(originalAssets);
       return HomePage(assets: mainFeed);
     }
     else {

@@ -39,7 +39,7 @@ class UserStatsBox extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const Text("Medias on device: ", style: kDescriptionStyle,),
-                    Text(shortNumber(originalAssetsLen), style: kH1Style,),
+                    Text((originalAssetsLen > 0) ? shortNumber(originalAssetsLen) : "Loading", style: kH1Style,),
                   ],
                 ),
                 Row(

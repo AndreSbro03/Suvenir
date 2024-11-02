@@ -48,6 +48,18 @@ abstract class AssetsDb {
     );
   }
 
+  Future<int> countRows() async {
+    final Database db = await database;
+    final List<Map<String, Object?>> result = await db.query(tableName, columns: ["COUNT(*)"]);
+    return int.parse(result.first.values.first.toString());
+  }
+
+  Future<int> removeAllRows() async {
+    final Database db = await database;
+    final int result = await db.delete(tableName, where: "1 == 1");
+    return result;
+  }
+
   Future drop() async {
     final Database db = await database;
     db.delete(tableName);

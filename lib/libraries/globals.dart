@@ -10,6 +10,7 @@ const String appName = "SbroApp";
 /// K: 'nome cartella'
 /// V:  Ptr ad array contenente gli ae.
 Map<String, List<AssetEntity?>> folders = {};
+ValueNotifier<bool> isFoldersReady = ValueNotifier<bool>(false);
 
 
 /// Settings
@@ -22,6 +23,7 @@ GlobalKey<VideoViewState>? lastVideoView;
 int trashDays = 15;
 
 LikeDatabase likeAssetsDb = LikeDatabase(tableName: 'like');
+LikeDatabase savedAssetsDb = LikeDatabase(tableName: 'saved');
 TrashDatabase trashAssetsDb = TrashDatabase(tableName: 'trash');
 
 double getWidth(context) {

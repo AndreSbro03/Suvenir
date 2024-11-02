@@ -4,7 +4,7 @@ import 'package:suvenir/account/trashed_grid.dart';
 import 'package:suvenir/account/user_stats.dart';
 import 'package:suvenir/libraries/globals.dart';
 import 'package:suvenir/libraries/image.dart';
-import 'package:suvenir/libraries/statistics.dart';
+import 'package:suvenir/libraries/saved_data.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:suvenir/libraries/styles.dart';
 import 'package:suvenir/settings.dart';
@@ -60,7 +60,7 @@ class _AccountState extends State<Account> {
        }));
       
       /// Load space saved
-      tasks.add(Statistics.instance.getSavedSpace().then( (out) { spaceSaved = out; }));
+      tasks.add(SavedData.instance.getSavedSpace().then( (out) { spaceSaved = out; }));
 
       await Future.wait(tasks);
 

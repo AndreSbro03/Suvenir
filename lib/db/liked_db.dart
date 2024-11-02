@@ -40,4 +40,11 @@ class LikeDatabase extends AssetsDb{
     return id;
   }
 
+  /// Add all passed assets, ignoring erros for sigle ones.
+  void addMedias(List<AssetEntity?> assets) async {
+    for (AssetEntity? ae in assets) {
+      addMedia(ae);
+    }
+  } 
+
 }

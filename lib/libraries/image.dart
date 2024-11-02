@@ -4,7 +4,7 @@ import 'package:suvenir/db/assets_db.dart';
 import 'package:suvenir/db/trash_db.dart';
 import 'package:suvenir/libraries/globals.dart';
 import 'package:suvenir/libraries/permission.dart';
-import 'package:suvenir/libraries/statistics.dart';
+import 'package:suvenir/libraries/saved_data.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:mutex/mutex.dart';
@@ -14,9 +14,9 @@ class SbroImage{
   static const String trashPath = "$appName.trash";
   static const int dimFolderPartition = 512;
 
-  static Future<void> fetchAssets() async {
+  static Future<List<AssetEntity>> fetchAssets() async {
     int assetsCount =  await PhotoManager.getAssetCount();
-    originalAssets.addAll(await PhotoManager.getAssetListRange(start: 0, end: assetsCount));
+    return PhotoManager.getAssetListRange(start: 0, end: assetsCount);
   }
 
 
@@ -165,7 +165,7 @@ class SbroImage{
           (file) async {
             if(file == null) return;
             
-            Statistics.instance.addSavedSpace(await file.length());
+            SavedData.instance.addSavedSpace(await file.length());
 
             file.delete();         
           }
