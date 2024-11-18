@@ -57,7 +57,7 @@ class _FeedState extends State<Feed> {
                   scrollDirection: Axis.vertical,
                   itemCount: widget.assets.length,
                   itemBuilder: (_, index) {
-                    
+
                     if (widget.assets[index] == null){ 
                       return const Center(child: 
                         Text("Image unavailable.\n Might be moved or deleted.", style: kNormalStyle, textAlign: TextAlign.center,),

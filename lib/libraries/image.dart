@@ -8,17 +8,16 @@ import 'package:suvenir/libraries/saved_data.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:mutex/mutex.dart';
+import 'package:suvenir/libraries/trash.dart';
 
 class SbroImage{
 
-  static const String trashPath = "$appName.trash";
   static const int dimFolderPartition = 512;
 
   static Future<List<AssetEntity>> fetchAssets() async {
     int assetsCount =  await PhotoManager.getAssetCount();
     return PhotoManager.getAssetListRange(start: 0, end: assetsCount);
   }
-
 
   static Future<Map<String, List<AssetEntity?>>> fetchAssetsByFolders(List<AssetPathEntity?> paths) async {
 
@@ -101,56 +100,7 @@ class SbroImage{
     return "";
   }
 
-  static void moveToTrash(AssetEntity asset) async {
-
-    if(await SbroPermission.isStoragePermissionGranted()){
-
-      String? oldPath = getAssetFolder(asset);
-
-      /// Move the asset
-      AssetEntity? out = await moveAsset(asset, trashPath);
-      if(out == null){
-        print("[ERR] Something went wrong moving asset ${asset.title}");
-        return;
-      }
-
-      /// Add the asset to the database
-      /// database add {'id' = out.id, 'date' = now, 'oldPath' = oldPath}
-      TrashedAsset ta = TrashedAsset(
-        id: out.id, 
-        date: getCorrDate(), 
-        oldPath: oldPath
-      );
-
-      trashAssetsDb.addMedia(ta);
-
-    }
-  }
-
   
- static Future<AssetEntity?> restoreAssetFromTrash(String id) async {
-    if(id.isEmpty) {
-      print("[WARN] Id is null, ignoring!");
-      return null;
-    }
-
-    AssetEntity? ae = await AssetEntity.fromId(id); 
-
-    if(ae == null) {
-      print("[ERR] Error loading asset!");
-      return null;
-    }
-
-    String oldPath = await trashAssetsDb.getAssetOldPath(id);
-    trashAssetsDb.removeMedia(id);
-    print("[INFO] Restoring Asset in $oldPath");
-    return moveAsset(ae, oldPath);  
-  }
-
-  static Future<void> deleteAssetFromId(String id) async {
-    await deleteAsset(await AssetEntity.fromId(id));
-  }
-
   /// Delete the asset from the phone and add increment the cleared_space by the dimension of the asset
   static Future<void> deleteAsset(AssetEntity? asset) async {
 
@@ -219,7 +169,7 @@ class SbroImage{
   /// Guarantee that the next @numNextUpdate medias are all valid medias
   static Future<void> updateAssets(List<AssetEntity?> assets , int index, int numNextUpdate) async {
     for(int i = index; i < assets.length && i < (index + numNextUpdate);) {
-      /// String folderName = getAssetFolder(assets[i]);
+      String folderName = getAssetFolder(assets[i]);
       //print(folderName);
       //print(Settings.validPathsMap[folderName]);
 
@@ -228,12 +178,11 @@ class SbroImage{
         //print("[INFO] Removed null!");
         assets.removeAt(i);
       }
-      /// We don't check anymore for the validity of the path becaouse the assets are loaded only form valid path
-      /// If the path isn't valid or is the trashed one we remove the asset
-      /// else if(!(Settings.validPathsMap[folderName] ?? true) || folderName == trashPath){
-      ///  //print("[INFO] Removed invalid!");
-      ///   assets.removeAt(i);
-      /// }   
+      /// If the path is the trashed one we remove the asset
+      else if(folderName == Trash.trashPath){
+        //print("[INFO] Removed invalid!");
+        assets.removeAt(i);
+      }   
       else i++;
     }
   }
@@ -289,6 +238,10 @@ class SbroImage{
       }
     }
     return out;
+  }
+
+  static Future<void> deleteAssetFromId(String id) async {
+    await SbroImage.deleteAsset(await AssetEntity.fromId(id));
   }
 
   static Future<AssetEntity?> moveAsset(AssetEntity? asset, String newPath) async {

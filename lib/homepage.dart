@@ -49,7 +49,7 @@ class _HomePageState extends State<HomePage> {
   void initState(){
     _loadFeed();
     if(widget.feedController == null){
-      _feedController = PageController();
+      _feedController = PageController(keepPage: true);
     } else {
       _feedController = widget.feedController!;
     }

@@ -6,6 +6,7 @@ import 'package:suvenir/bars/like_button.dart';
 import 'package:suvenir/libraries/permission.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:suvenir/libraries/styles.dart';
+import 'package:suvenir/libraries/trash.dart';
 
 class Footbar extends StatelessWidget {
   const Footbar({
@@ -44,7 +45,7 @@ class Footbar extends StatelessWidget {
                       String id = assets[corrIndx!]!.id;  
                       assets[corrIndx!] = null;
                       reload();
-                      SbroImage.restoreAssetFromTrash(id);
+                      Trash.restoreAssetFromTrash(id);
                     }
                     else{
                       print("[WARN] Trying to restore a null asset!");
@@ -128,7 +129,7 @@ class Footbar extends StatelessWidget {
                     if(ae != null){
                       assets[corrIndx!] = null;
                       reload();
-                      SbroImage.moveToTrash(ae);
+                      Trash.moveToTrash(ae);
                     }
                   }                
                   else{

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:suvenir/libraries/globals.dart';
 import 'package:photo_manager/photo_manager.dart';
@@ -12,6 +14,7 @@ class Filter extends StatefulWidget {
 
   final List<AssetEntity?> assets;
   static Map<String, bool> validPathsMap = {};
+  static int savedAssets = 50;
 
   @override
   State<Filter> createState() => _FilterState();
@@ -131,11 +134,15 @@ class _FilterState extends State<Filter> {
                     widget.assets.clear();
                     widget.assets.addAll(SbroImage.getValidPathAssetsList(folders, Filter.validPathsMap));
                     widget.assets.shuffle();  
-    
-                    print("[INFO] New number of assets in feed: ${widget.assets.length}");   
 
-                    /// Save all feed in the db for next time loading
-                    savedAssetsDb.removeAllRows().then( (_) => savedAssetsDb.addMedias(widget.assets));    
+                    int feedLen = widget.assets.length;     
+                    print("[INFO] New number of assets in feed: $feedLen");   
+
+                    /// Save [Filter.savedAssets] random assets in the db for next time loading
+                    int end = min(feedLen, Filter.savedAssets);
+                    savedAssetsDb.removeAllRows().then( (_) => savedAssetsDb.addMedias(widget.assets.sublist(0, end)));    
+                    
+                    widget.assets.shuffle();  
 
                     /// Save current filter not validPath
                     List<String> resultList = Filter.validPathsMap.entries

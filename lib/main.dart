@@ -7,6 +7,7 @@ import 'package:suvenir/libraries/permission.dart';
 import 'package:suvenir/filter.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:suvenir/libraries/saved_data.dart';
+import 'package:suvenir/libraries/trash.dart';
 
 
 /// Here we setup the application and require the gallery permission.
@@ -17,6 +18,9 @@ void main() async {
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);
+
+  Trash.cleanTrash();
+
   /// Remove bottom navigation bar
   /// await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: [SystemUiOverlay.top]);
   runApp(const MyApp());
@@ -73,7 +77,7 @@ class _MyHomePageState extends State<MyHomePage> {
       resultMap[item] = !invalidPathsSet.contains(item);
     }
 
-    Filter.validPathsMap.remove(SbroImage.trashPath);
+    Filter.validPathsMap.remove(Trash.trashPath);
 
     Filter.validPathsMap = resultMap;
 
@@ -99,12 +103,15 @@ class _MyHomePageState extends State<MyHomePage> {
 
           /// We check if the number of rows in the preload db is > 0. If so we proceed to load thoose assets. If not we load all 
           /// assets in the phone. Than we initialize the folders.
-        
+          
+          bool loadedFromDb = false;
           List<AssetEntity?> quickLoadedAssets;
           List<String> invalidPath = await SavedData.instance.getInvalidPaths();
+
           if(await savedAssetsDb.countRows() > 0 && invalidPath.isNotEmpty) {
             quickLoadedAssets = await SbroImage.getAllAssesInDatabase(savedAssetsDb);
             print("[INFO] Loading assets from db!");
+            loadedFromDb = true;
           } 
           else {
             quickLoadedAssets = await SbroImage.fetchAssets();
@@ -116,7 +123,24 @@ class _MyHomePageState extends State<MyHomePage> {
           corrIndx = 0;
 
           _getFoldersFromGallery(apel).then( (_) {
+            
+            /// Notify that the folders are ready
             isFoldersReady.value = true;
+            print("[INFO] Loaded all folders!");
+
+            /// Load the rest of the feed if it was loaded from db
+            if(loadedFromDb){
+              List<AssetEntity?> restOfFeed = SbroImage.getValidPathAssetsList(folders, Filter.validPathsMap);
+              /// Remove duplicates
+              for(AssetEntity? ae in mainFeed){
+                restOfFeed.remove(ae);
+              }
+
+              mainFeed.addAll(restOfFeed);
+
+              print("[INFO] Updating feed from ${quickLoadedAssets.length} -> ${mainFeed.length}");
+              if(loadedFromDb) setState(() {});
+            }
           });
 
           setState(() {
@@ -136,14 +160,6 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  void _cleanTrash() async {
-     /// Here we check if the trash db has some assets that need to be deleted
-      List<String> needToDelete = await trashAssetsDb.getAssetsOlderThan(trashDays);
-      for (String id in needToDelete) {
-        SbroImage.deleteAssetFromId(id);
-        trashAssetsDb.removeMedia(id);
-      }
-  }
 
   @override
   /// Code that will be run everytime we come back to this page.
@@ -151,7 +167,6 @@ class _MyHomePageState extends State<MyHomePage> {
     /// Make sure only runs once
     if(initializeApp){
       _quickLoadImage();
-      _cleanTrash();
       mainFeedHash = mainFeed.hashCode;      
       initializeApp = false;
     }
