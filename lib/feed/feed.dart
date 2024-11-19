@@ -117,12 +117,33 @@ class _FeedState extends State<Feed> {
   }
 }
 
-class InfoBox extends StatelessWidget {
+class InfoBox extends StatefulWidget {
   const InfoBox({
     super.key, required this.asset,
 
   });
   final AssetEntity asset;
+
+  @override
+  State<InfoBox> createState() => _InfoBoxState();
+}
+
+class _InfoBoxState extends State<InfoBox> {
+
+  String? originalPath;
+
+  void getOriginalPath() async {
+    if(await trashAssetsDb.existMedia(widget.asset.id)){
+      originalPath = await trashAssetsDb.getAssetOldPath(widget.asset.id);
+      setState(() {});
+    }
+  }
+
+  @override
+  void initState() {
+    getOriginalPath();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -133,10 +154,11 @@ class InfoBox extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Modified date: ${removeClockFromDate(asset.modifiedDateTime)}", style: kNormalStyle,),
+            if(originalPath != null) Text("Original Path: $originalPath", style: kNormalStyle,),
+            Text("Modified date: ${removeClockFromDate(widget.asset.modifiedDateTime)}", style: kNormalStyle,),
             /// Cration date usually is wrong and is more recent than the modifiedDateTime
             /// Text("Creation date: ${removeClockFromDate(asset!.createDateTime)}", style: kNormalStyle,),
-            Text("Source: ${asset.relativePath}", style: kNormalStyle,),
+            Text("Source: ${widget.asset.relativePath}", style: kNormalStyle,),
           ],
         ),
       )
