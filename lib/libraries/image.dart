@@ -177,6 +177,10 @@ class SbroImage{
         //print("[INFO] Removed null!");
         assets.removeAt(i);
       }
+      /// If the assets is in the trash we remove it
+      else if (await trashAssetsDb.existMedia(assets[i]!.id)){
+        assets.removeAt(i);
+      }
       /// If the path is the trashed one we remove the asset
       // else if(folderName == Trash.trashPath){
       //   //print("[INFO] Removed invalid!");
