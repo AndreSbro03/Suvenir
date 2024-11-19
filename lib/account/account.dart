@@ -54,6 +54,10 @@ class _AccountState extends State<Account> {
       tasks.add(PhotoManager.getAssetCount().then( (count) => totalAssetOnDevice = count));
       tasks.add(SbroImage.getAllAssesInDatabase(likeAssetsDb).then( (out) { likedAssets = out; }));
       tasks.add(SbroImage.getAssetsTrashedDate().then( (trashDatesMap) { 
+
+        /// sort by days left
+        trashDatesMap.sort( (a, b) => a.values.first.compareTo(b.values.first));
+
         /// Here we separete the map in the two arrays. Use first because there is only one K and one V
         for (var map in trashDatesMap) {
           trashedAssets.add(map.keys.first);
