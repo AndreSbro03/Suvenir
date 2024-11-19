@@ -136,10 +136,15 @@ class _MyHomePageState extends State<MyHomePage> {
                 restOfFeed.remove(ae);
               }
 
+              restOfFeed.shuffle();
               mainFeed.addAll(restOfFeed);
 
               print("[INFO] Updating feed from ${quickLoadedAssets.length} -> ${mainFeed.length}");
               if(loadedFromDb) setState(() {});
+
+              /// Update the saved images for the next loading
+              savedAssetsDb.removeAllRows().then( (_) => savedAssetsDb.addRandomMedias(mainFeed, Filter.savedAssets));
+              
             }
           });
 

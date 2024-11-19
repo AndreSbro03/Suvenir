@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:suvenir/libraries/globals.dart';
 import 'package:photo_manager/photo_manager.dart';
@@ -139,11 +137,8 @@ class _FilterState extends State<Filter> {
                     print("[INFO] New number of assets in feed: $feedLen");   
 
                     /// Save [Filter.savedAssets] random assets in the db for next time loading
-                    int end = min(feedLen, Filter.savedAssets);
-                    savedAssetsDb.removeAllRows().then( (_) => savedAssetsDb.addMedias(widget.assets.sublist(0, end)));    
+                    savedAssetsDb.removeAllRows().then( (_) => savedAssetsDb.addRandomMedias(widget.assets, Filter.savedAssets));
                     
-                    widget.assets.shuffle();  
-
                     /// Save current filter not validPath
                     List<String> resultList = Filter.validPathsMap.entries
                         .where((entry) => !entry.value) // Filter only false value
