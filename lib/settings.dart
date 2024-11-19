@@ -63,7 +63,8 @@ class _SettingsState extends State<Settings> {
               description: 
 """If selected, when a media is delted, the app will move the media to the ${Trash.trashPath} folder. 
 The media will be recoverd to its original position when restored from the trash.
-All of this operations will change the creation date of the media and it will be moved by the gallery to the top of your Recent folder.""",
+All of this operations will change the creation date of the media and it will be moved by the gallery to the top of your Recent folder.
+Beta. """,
               selected: moveToTrashFolder??false,
               update: changeMoveToTrashFolder,
             ),

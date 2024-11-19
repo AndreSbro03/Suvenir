@@ -12,8 +12,11 @@ class Trash{
   static Future<int> moveToTrash(AssetEntity asset) async {
 
     if(await SbroPermission.isStoragePermissionGranted()){
-
-      String? oldPath = SbroImage.getAssetFolder(asset);
+      
+      // String? oldPath = SbroImage.getAssetFolder(asset);
+      /// Saving the absolute path beacouse if the media is in external storage we have to remember all 
+      /// path not just the last folder
+      String? oldPath = await SbroImage.getAssetAbsolutePathFolder(asset);
       AssetEntity? out = asset;
 
       /// Move the asset if required
@@ -53,23 +56,28 @@ class Trash{
     }
   }
 
- static Future<AssetEntity?> restoreAssetFromTrash(String id) async {
+ static Future<void> restoreAssetFromTrash(String id) async {
     if(id.isEmpty) {
       print("[WARN] Id is null, ignoring!");
-      return null;
+      return;
     }
 
     AssetEntity? ae = await AssetEntity.fromId(id); 
 
     if(ae == null) {
       print("[ERR] Error loading asset!");
-      return null;
+      return;
     }
 
-    String oldPath = await trashAssetsDb.getAssetOldPath(id);
     trashAssetsDb.removeMedia(id);
+    String oldPath = await trashAssetsDb.getAssetOldPath(id);
     print("[INFO] Restoring Asset in $oldPath");
-    return SbroImage.moveAsset(ae, oldPath);  
+
+    /// TODO: be sure that the way you save the path is coerent
+    /// If the path is changed we restore the image
+    if(oldPath != await SbroImage.getAssetAbsolutePathFolder(ae)) {
+      SbroImage.moveAsset(ae, oldPath);  
+    }
   }
 
 }

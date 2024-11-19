@@ -91,13 +91,14 @@ class TrashDatabase extends AssetsDb{
 
   }
 
-  Future<List<Map<String, Object?>>> _getAllTrashedAssetFields(String assetField) async {
+  Future<List<Map<String, Object?>>> _getAllTrashedAssetFields(String assetField, [String? orderBy]) async {
 
     final Database db = await database;
 
     return await db.query(
       tableName,
       columns: [TrashedAssetFields.id, assetField],
+      orderBy: orderBy,
     );
 
   }
@@ -113,9 +114,9 @@ class TrashDatabase extends AssetsDb{
     return await _getTrashedAssetField(id, TrashedAssetFields.oldPath);   
   }
 
-  /// Return a combination (id, date)
+  /// Return a combination (id, date) by date ascendent order 
   Future<List<Map<String, Object?>>> getAssetsTrashedDate() {
-    return _getAllTrashedAssetFields(TrashedAssetFields.date);
+    return _getAllTrashedAssetFields(TrashedAssetFields.date, "${TrashedAssetFields.date} asc");
   }
 
   Future<List<String>> getAssetsOlderThan(int days) async {

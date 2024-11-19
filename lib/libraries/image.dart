@@ -88,6 +88,16 @@ class SbroImage{
     }
     return "";
   }
+
+  static Future<String> getAssetAbsolutePathFolder(AssetEntity? asset) async{
+    String abPath = await getAssetAbsolutePath(asset);
+    if(abPath == "") return "";
+    List abPathList = abPath.split('/');
+    abPathList.removeLast();  
+    abPath = abPathList.join('/');
+    print("[INFO] Absolute path folder: $abPath");
+    return abPath;  
+  }
   
   static String getAssetRelativePath(AssetEntity? asset) {
     if(asset != null){
