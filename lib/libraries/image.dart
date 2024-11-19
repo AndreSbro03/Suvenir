@@ -8,7 +8,6 @@ import 'package:suvenir/libraries/saved_data.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:mutex/mutex.dart';
-import 'package:suvenir/libraries/trash.dart';
 
 class SbroImage{
 
@@ -169,7 +168,7 @@ class SbroImage{
   /// Guarantee that the next @numNextUpdate medias are all valid medias
   static Future<void> updateAssets(List<AssetEntity?> assets , int index, int numNextUpdate) async {
     for(int i = index; i < assets.length && i < (index + numNextUpdate);) {
-      String folderName = getAssetFolder(assets[i]);
+      ///String folderName = getAssetFolder(assets[i]);
       //print(folderName);
       //print(Settings.validPathsMap[folderName]);
 
@@ -179,10 +178,10 @@ class SbroImage{
         assets.removeAt(i);
       }
       /// If the path is the trashed one we remove the asset
-      else if(folderName == Trash.trashPath){
-        //print("[INFO] Removed invalid!");
-        assets.removeAt(i);
-      }   
+      // else if(folderName == Trash.trashPath){
+      //   //print("[INFO] Removed invalid!");
+      //   assets.removeAt(i);
+      // }   
       else i++;
     }
   }
@@ -263,8 +262,11 @@ class SbroImage{
     switch (asset.type) {
  
       case AssetType.image:
+        String path = await getAssetAbsolutePath(asset);
+        print("[INFO] Getting path: $path -> $newPath");
+        if(path == "") return null;
         out = await PhotoManager.editor.saveImageWithPath(
-          await getAssetAbsolutePath(asset), 
+          path,
           title: asset.title!,
           relativePath: newPath
         );

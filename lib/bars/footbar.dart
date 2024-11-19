@@ -3,7 +3,6 @@ import 'package:suvenir/account/account.dart';
 import 'package:suvenir/libraries/globals.dart';
 import 'package:suvenir/libraries/image.dart';
 import 'package:suvenir/bars/like_button.dart';
-import 'package:suvenir/libraries/permission.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:suvenir/libraries/styles.dart';
 import 'package:suvenir/libraries/trash.dart';
@@ -118,9 +117,6 @@ class Footbar extends StatelessWidget {
                 icon: const Icon(Icons.delete_outline, size: kIconSize, color: kIconColor,), 
                 onPressed: () async {
 
-                  /// Request permission
-                  if(await SbroPermission.isStoragePermissionGranted()){
-                    
                     AssetEntity? ae = assets[corrIndx!];
 
                     /// We immediatly notify the feed to reload than we proceed to move the asset. Beacouse if 
@@ -129,12 +125,10 @@ class Footbar extends StatelessWidget {
                     if(ae != null){
                       assets[corrIndx!] = null;
                       reload();
-                      Trash.moveToTrash(ae);
+                      if(await Trash.moveToTrash(ae) > 0){
+                        print("[INFO] Impossible to move the file to trash!");
+                      }
                     }
-                  }                
-                  else{
-                    print("[INFO] Permission denied");
-                  }
                 },
               ),
             ],

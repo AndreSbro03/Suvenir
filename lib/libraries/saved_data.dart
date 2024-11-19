@@ -3,14 +3,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 class SavedDataFields {
   static final List<String> values = [
     /// Add all fields
-    savedSpace, invalidPaths
+    savedSpace, invalidPaths, moveToTrashFolder,
   ];
 
   static const String savedSpace = 'savedSpace';
   /// We saved the invalidPath beacouse if is the firts time that a user is using the app the list of validPath would be empty and
   /// I cannot be sure if is empty becouse it was never set or becouse it is the first time using the app. If I use the invalid path
   /// the problem does not exist.
-  static const String invalidPaths= 'invalidPaths';
+  static const String invalidPaths = 'invalidPaths';
+  static const String moveToTrashFolder = 'moveToTrashFolder'; 
 
 }
 
@@ -56,6 +57,15 @@ class SavedData {
   Future<List<String>> getInvalidPaths() async {
     List<String> paths = await prefs.then((p) => p.getStringList(SavedDataFields.invalidPaths) ?? []);
     return paths;
+  }
+
+  Future<void> setMoveToTrashFolder(bool val) async {
+    await prefs.then((p) => p.setBool(SavedDataFields.moveToTrashFolder, val));
+  }
+
+  Future<bool> getMoveToTrashFolder() async {
+    bool val = await prefs.then((p) => p.getBool(SavedDataFields.moveToTrashFolder) ?? false);
+    return val;
   }
 
 }

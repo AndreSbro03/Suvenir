@@ -12,12 +12,26 @@ const TextStyle kH2Style = TextStyle(
   fontFamily: "Ubuntu",
   fontSize: 25,);
 
+const TextStyle kH3Style = TextStyle( 
+  fontWeight: FontWeight.bold, 
+  color: kContrColor, 
+  fontFamily: "Ubuntu",
+  fontSize: 15,);
+
 const TextStyle kDescriptionStyle = TextStyle( 
   fontWeight: FontWeight.w400, 
   fontStyle: FontStyle.italic,
   color: kContrColor, 
   fontFamily: "Ubuntu",
   fontSize: 18,
+  );
+
+const TextStyle kSmallDescriptionStyle = TextStyle( 
+  fontWeight: FontWeight.w400, 
+  fontStyle: FontStyle.italic,
+  color: kContrColor, 
+  fontFamily: "Ubuntu",
+  fontSize: 10,
   );
 
 const TextStyle kNormalStyle = TextStyle( 

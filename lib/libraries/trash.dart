@@ -3,22 +3,27 @@ import 'package:suvenir/db/trash_db.dart';
 import 'package:suvenir/libraries/globals.dart';
 import 'package:suvenir/libraries/image.dart';
 import 'package:suvenir/libraries/permission.dart';
+import 'package:suvenir/libraries/saved_data.dart';
 
 class Trash{
 
   static const String trashPath = "$appName.trash";
 
-  static void moveToTrash(AssetEntity asset) async {
+  static Future<int> moveToTrash(AssetEntity asset) async {
 
     if(await SbroPermission.isStoragePermissionGranted()){
 
       String? oldPath = SbroImage.getAssetFolder(asset);
+      AssetEntity? out = asset;
 
-      /// Move the asset
-      AssetEntity? out = await SbroImage.moveAsset(asset, trashPath);
-      if(out == null){
-        print("[ERR] Something went wrong moving asset ${asset.title}");
-        return;
+      /// Move the asset if required
+      if(await SavedData.instance.getMoveToTrashFolder()){
+        print("[INFO] Trying to move the media to ${Trash.trashPath}");
+        out = await SbroImage.moveAsset(asset, trashPath);
+        if(out == null){
+          print("[ERR] Something went wrong moving asset ${asset.title}");
+          return 1;
+        }
       }
 
       /// Add the asset to the database
@@ -30,8 +35,13 @@ class Trash{
       );
 
       trashAssetsDb.addMedia(ta);
-
+      return 0;
     }
+    else{
+      print("[ERR] Permission denied!");
+      return 2;
+    }
+
   }
 
   static void cleanTrash() async {
