@@ -111,22 +111,23 @@ class SbroImage{
 
   
   /// Delete the asset from the phone and add increment the cleared_space by the dimension of the asset
-  static Future<void> deleteAsset(AssetEntity? asset) async {
+  static Future<bool> deleteAsset(AssetEntity? asset) async {
 
     if(asset == null) {
       print("Trying to delete un unavailable asset!");
-      return;
+      return false;
     }
 
     try{
       if(await SbroPermission.isStoragePermissionGranted()){
         asset.file.then(
           (file) async {
-            if(file == null) return;
+            if(file == null) return false;
             
             SavedData.instance.addSavedSpace(await file.length());
 
-            file.delete();         
+            file.delete();
+            return true;         
           }
         );
       } else{
@@ -136,6 +137,7 @@ class SbroImage{
       // Error in getting access to the file.
       print("[ERR] Error while deliting file: $e");
     }
+    return false;
   }
 
   static Future<void> shareAsset(AssetEntity? asset) async {
@@ -253,8 +255,8 @@ class SbroImage{
     return out;
   }
 
-  static Future<void> deleteAssetFromId(String id) async {
-    await SbroImage.deleteAsset(await AssetEntity.fromId(id));
+  static Future<bool> deleteAssetFromId(String id) async {
+    return SbroImage.deleteAsset(await AssetEntity.fromId(id));
   }
 
   static Future<AssetEntity?> moveAsset(AssetEntity? asset, String newPath) async {
@@ -276,20 +278,18 @@ class SbroImage{
     switch (asset.type) {
  
       case AssetType.image:
-        String path = await getAssetAbsolutePath(asset);
-        print("[INFO] Getting path: $path -> $newPath");
-        if(path == "") return null;
+        print("[INFO] Getting path: ${fl.path} -> $newPath");
         out = await PhotoManager.editor.saveImageWithPath(
-          path,
-          title: asset.title!,
+          fl.path,
+          title: asset.title ?? "image",
           relativePath: newPath
         );
         break;
 
       case AssetType.video:
         out = await PhotoManager.editor.saveVideo(
-          await asset.file.then((file) => file!), 
-          title: asset.title!,
+          fl, 
+          title: asset.title ?? "video",
           relativePath: newPath
         );
         break;
@@ -299,24 +299,13 @@ class SbroImage{
         print("[WAR] This file type is not supported yet!");
         break;
     }
-    
-    fl.delete();
 
+    if(out != null) {
+      fl.delete();
+    }
+    
     return out;
 
-    /*
-    Move to app folder (Photo manager can't see them after)
-    final newDir = await getDirectory(newPath);
-
-    try {
-      await fl.rename(newDir);
-    }
-    on FileSystemException catch (e) {
-      // if rename fails, copy the source file and then delete it
-      final File newFile = await fl.copy("$newDir/${asset.title}");
-      await fl.delete();
-    }
-    */
   }
 
 }

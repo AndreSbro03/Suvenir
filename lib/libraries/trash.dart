@@ -16,7 +16,7 @@ class Trash{
       // String? oldPath = SbroImage.getAssetFolder(asset);
       /// Saving the absolute path beacouse if the media is in external storage we have to remember all 
       /// path not just the last folder
-      String? oldPath = await SbroImage.getAssetAbsolutePathFolder(asset);
+      String? oldPath = SbroImage.getAssetFolder(asset);
       AssetEntity? out = asset;
 
       /// Move the asset if required
@@ -51,8 +51,9 @@ class Trash{
     /// Here we check if the trash db has some assets that need to be deleted
     List<String> needToDelete = await trashAssetsDb.getAssetsOlderThan(trashDays);
     for (String id in needToDelete) {
-      SbroImage.deleteAssetFromId(id);
-      trashAssetsDb.removeMedia(id);
+      if(await SbroImage.deleteAssetFromId(id)){
+        trashAssetsDb.removeMedia(id);
+      }
     }
   }
 
@@ -75,7 +76,7 @@ class Trash{
 
     /// TODO: be sure that the way you save the path is coerent
     /// If the path is changed we restore the image
-    if(oldPath != await SbroImage.getAssetAbsolutePathFolder(ae)) {
+    if(oldPath != SbroImage.getAssetFolder(ae)) {
       SbroImage.moveAsset(ae, oldPath);  
     }
   }

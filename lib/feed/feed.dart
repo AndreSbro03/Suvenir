@@ -27,11 +27,11 @@ class Feed extends StatefulWidget {
 }
 
 class _FeedState extends State<Feed> {
+  bool scrollable = true;
+  Set<int> _activePointers = Set();
   
   @override
   Widget build(BuildContext context) {                 
-
-    print("[INFO] Total assets in feed: ${widget.assets.length}");
 
     return Column(
       children: [                 
@@ -46,6 +46,7 @@ class _FeedState extends State<Feed> {
               PageView.builder(
                   /// Attach the feedController to the PageView
                   controller: widget.feedController,
+                  physics: scrollable ? null : const NeverScrollableScrollPhysics(),
                   onPageChanged: (newIdx) {
                     corrIndx = newIdx;
                     // print(corrIndx);
@@ -57,7 +58,7 @@ class _FeedState extends State<Feed> {
                   scrollDirection: Axis.vertical,
                   itemCount: widget.assets.length,
                   itemBuilder: (_, index) {
-
+        
                     if (widget.assets[index] == null){ 
                       return const Center(child: 
                         Text("Image unavailable.\n Might be moved or deleted.", style: kNormalStyle, textAlign: TextAlign.center,),
@@ -79,7 +80,29 @@ class _FeedState extends State<Feed> {
                         return VideoView(key: videoViewKey, video: ae);
                       }
                       else { 
-                        return ImageView(image: ae);
+                        return Listener(
+                          onPointerDown: (event) {
+                            // When a finger is placed on the screen, add its pointer to the set
+                            _activePointers.add(event.pointer);
+                            if(_activePointers.length >= 2){ 
+                              setState(() {
+                                scrollable = false;
+                              });
+                            }
+                            print("[INFO] Pointer down. Active pointers: ${_activePointers.length}");
+                          },
+                          onPointerUp: (event) {
+                            // When a finger is lifted, remove its pointer from the set
+                            _activePointers.remove(event.pointer);
+                            if(_activePointers.length < 2){ 
+                              setState(() {
+                                scrollable = true;
+                              });
+                            }
+                            print("[INFO] Pointer up. Active pointers: ${_activePointers.length}");
+                          },
+                          child: ImageView(image: ae)
+                          );
                       }
               
                   } 
