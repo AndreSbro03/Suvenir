@@ -14,6 +14,9 @@ final class VpNode extends LinkedListEntry<VpNode> {
 
 class VideoPlayerManager {
 
+  static final VideoPlayerManager instance = VideoPlayerManager._init();
+  VideoPlayerManager._init();
+
   final int _maxVp = 3;
   final LinkedList<VpNode> _vps = LinkedList<VpNode>();
 
