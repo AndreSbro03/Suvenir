@@ -1,7 +1,7 @@
 import 'package:photo_manager/photo_manager.dart';
 import 'package:suvenir/db/trash_db.dart';
 import 'package:suvenir/libraries/globals.dart';
-import 'package:suvenir/libraries/image.dart';
+import 'package:suvenir/libraries/media_manager.dart';
 import 'package:suvenir/libraries/permission.dart';
 import 'package:suvenir/libraries/saved_data.dart';
 
@@ -16,13 +16,13 @@ class Trash{
       // String? oldPath = SbroImage.getAssetFolder(asset);
       /// Saving the absolute path beacouse if the media is in external storage we have to remember all 
       /// path not just the last folder
-      String? oldPath = SbroImage.getAssetFolder(asset);
+      String? oldPath = SbroMediaManager.getAssetFolder(asset);
       AssetEntity? out = asset;
 
       /// Move the asset if required
       if(await SavedData.instance.getMoveToTrashFolder()){
         print("[INFO] Trying to move the media to ${Trash.trashPath}");
-        out = await SbroImage.moveAsset(asset, trashPath);
+        out = await SbroMediaManager.moveAsset(asset, trashPath);
         if(out == null){
           print("[ERR] Something went wrong moving asset ${asset.title}");
           return 1;
@@ -51,7 +51,7 @@ class Trash{
     /// Here we check if the trash db has some assets that need to be deleted
     List<String> needToDelete = await trashAssetsDb.getAssetsOlderThan(trashDays);
     for (String id in needToDelete) {
-      if(await SbroImage.deleteAssetFromId(id)){
+      if(await SbroMediaManager.deleteAssetFromId(id)){
         trashAssetsDb.removeMedia(id);
       }
     }
@@ -70,14 +70,13 @@ class Trash{
       return;
     }
 
-    trashAssetsDb.removeMedia(id);
     String oldPath = await trashAssetsDb.getAssetOldPath(id);
     print("[INFO] Restoring Asset in $oldPath");
 
     /// TODO: be sure that the way you save the path is coerent
     /// If the path is changed we restore the image
-    if(oldPath != SbroImage.getAssetFolder(ae)) {
-      SbroImage.moveAsset(ae, oldPath);  
+    if(oldPath != SbroMediaManager.getAssetFolder(ae)) {
+      if(await SbroMediaManager.moveAsset(ae, oldPath) != null) trashAssetsDb.removeMedia(id);
     }
   }
 

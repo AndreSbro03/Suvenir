@@ -9,7 +9,7 @@ import 'package:photo_manager/photo_manager.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:mutex/mutex.dart';
 
-class SbroImage{
+class SbroMediaManager{
 
   static const int dimFolderPartition = 512;
 
@@ -37,7 +37,7 @@ class SbroImage{
             // Suddividi gli asset in partizioni
             List<Future<void>> subTasks = [];
             
-            print('[INFO] Nome cartella: ${path.name}, ID cartella: ${path.id}, Count: $assetCount');
+            print('[INFO] Folder name: ${path.name}, ID: ${path.id}, Count: $assetCount');
 
             for (int page = 0; page * dimFolderPartition < assetCount; page++) {
 
@@ -114,7 +114,7 @@ class SbroImage{
   static Future<bool> deleteAsset(AssetEntity? asset) async {
 
     if(asset == null) {
-      print("Trying to delete un unavailable asset!");
+      print("[ERR] Trying to delete un unavailable asset!");
       return false;
     }
 
@@ -131,7 +131,7 @@ class SbroImage{
           }
         );
       } else{
-        throw Exception('Permission not granted!');
+        throw Exception('[ERR] Permission not granted!');
       }
     } catch (e) {
       // Error in getting access to the file.
@@ -150,8 +150,8 @@ class SbroImage{
     print(corrPath);
     final result = await Share.shareXFiles([XFile(corrPath)]);
                       
-    if(result.status == ShareResultStatus.success) print("File condiviso con successo");
-    else print("Qualcosa è andato storto nella condivisione del file");
+    if(result.status == ShareResultStatus.success) print("[INFO] $corrPath file shared!");
+    else print("[ERR] Error sharing file $corrPath");
   }
 
   static String getAssetFolder(AssetEntity? asset){
@@ -177,8 +177,9 @@ class SbroImage{
   }
 
 
-  /// Guarantee that the next @numNextUpdate medias are all valid medias
-  static Future<void> updateAssets(List<AssetEntity?> assets , int index, int numNextUpdate) async {
+  /// Guarantee that the next @numNextUpdate medias are all valid medias. Return the number of image removed.
+  static Future<int> updateAssets(List<AssetEntity?> assets , int index, int numNextUpdate) async {
+    int out = 0;
     for(int i = index; i < assets.length && i < (index + numNextUpdate);) {
       ///String folderName = getAssetFolder(assets[i]);
       //print(folderName);
@@ -187,10 +188,12 @@ class SbroImage{
       /// If the assets is null or the assets has been deleted or moved we remove it
       if(assets[i] == null || !(await assets[i]!.exists)){
         //print("[INFO] Removed null!");
+        out++;
         assets.removeAt(i);
       }
       /// If the assets is in the trash we remove it
       else if (await trashAssetsDb.existMedia(assets[i]!.id)){
+        out++;
         assets.removeAt(i);
       }
       /// If the path is the trashed one we remove the asset
@@ -200,6 +203,7 @@ class SbroImage{
       // }   
       else i++;
     }
+    return out;
   }
 
   /// Return all the assetsEntity in the trash and map them with the number of days until they are going to be
@@ -256,10 +260,12 @@ class SbroImage{
   }
 
   static Future<bool> deleteAssetFromId(String id) async {
-    return SbroImage.deleteAsset(await AssetEntity.fromId(id));
+    return SbroMediaManager.deleteAsset(await AssetEntity.fromId(id));
   }
 
   static Future<AssetEntity?> moveAsset(AssetEntity? asset, String newPath) async {
+
+    print("[INFO] Requested transfer to $newPath");
 
     if(asset == null) {
       print("[WARN] The file passed was null, ignoring!");

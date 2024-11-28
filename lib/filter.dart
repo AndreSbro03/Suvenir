@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:suvenir/libraries/globals.dart';
 import 'package:photo_manager/photo_manager.dart';
-import 'package:suvenir/libraries/image.dart';
+import 'package:suvenir/libraries/media_manager.dart';
 import 'package:suvenir/libraries/saved_data.dart';
 import 'package:suvenir/libraries/styles.dart';
 
@@ -130,7 +130,7 @@ class _FilterState extends State<Filter> {
     
                     /// Create new feed
                     widget.assets.clear();
-                    widget.assets.addAll(SbroImage.getValidPathAssetsList(folders, Filter.validPathsMap));
+                    widget.assets.addAll(SbroMediaManager.getValidPathAssetsList(folders, Filter.validPathsMap));
                     widget.assets.shuffle();  
 
                     int feedLen = widget.assets.length;     

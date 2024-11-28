@@ -22,7 +22,7 @@ class VideoViewState extends State<VideoView> {
   bool initialized = false;
   late VideoPlayerController vp;
 
-  /// This method callable outside with: videoViewKey!.currentState?.pauseVideo(); pause the video and update
+  /// This method callable outside with: lastVideoView!.currentState?.pauseVideo(); pause the video and update
   /// the icon button.
   Future<void> pauseVideo() async {
     if (initialized) {

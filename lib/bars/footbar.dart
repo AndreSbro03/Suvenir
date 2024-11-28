@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:suvenir/account/account.dart';
 import 'package:suvenir/libraries/globals.dart';
-import 'package:suvenir/libraries/image.dart';
+import 'package:suvenir/libraries/media_manager.dart';
 import 'package:suvenir/bars/like_button.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:suvenir/libraries/styles.dart';
@@ -60,7 +60,7 @@ class Footbar extends StatelessWidget {
                 icon: const Icon(Icons.share_outlined, size: kIconSize, color: kIconColor,), 
                 onPressed: () async {
                   //if(!(await _getStorageAccess())) return;
-                  if(corrIndx != null) SbroImage.shareAsset(assets[corrIndx!]);
+                  if(corrIndx != null) SbroMediaManager.shareAsset(assets[corrIndx!]);
                 },      
               ),
               // Home Button
@@ -102,7 +102,7 @@ class Footbar extends StatelessWidget {
                     if(corrIndx != null && assets[corrIndx!] != null){
                         /// TODO: ask to confirm
                         String id = assets[corrIndx!]!.id;
-                        SbroImage.deleteAsset(assets[corrIndx!]);
+                        SbroMediaManager.deleteAsset(assets[corrIndx!]);
                         trashAssetsDb.removeMedia(id);
                         assets[corrIndx!] = null;
                         reload();

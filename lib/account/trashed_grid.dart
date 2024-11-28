@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:suvenir/account/account.dart';
 import 'package:suvenir/homepage.dart';
 import 'package:suvenir/libraries/globals.dart';
-import 'package:suvenir/libraries/image.dart';
+import 'package:suvenir/libraries/media_manager.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:suvenir/libraries/styles.dart';
 
@@ -34,9 +34,9 @@ class TrashedGrid extends StatelessWidget {
                   List<String> ids = await trashAssetsDb.readAllMediaIds();
                   for (String id in ids) {
                     trashAssetsDb.removeMedia(id);
-                    SbroImage.deleteAssetFromId(id);
-                    reloadAccount();
+                    SbroMediaManager.deleteAssetFromId(id);
                   }                
+                  reloadAccount();
                 },
                 child: Container(
                   height: 50,

@@ -3,7 +3,7 @@ import 'package:suvenir/account/liked_grid.dart';
 import 'package:suvenir/account/trashed_grid.dart';
 import 'package:suvenir/account/user_stats.dart';
 import 'package:suvenir/libraries/globals.dart';
-import 'package:suvenir/libraries/image.dart';
+import 'package:suvenir/libraries/media_manager.dart';
 import 'package:suvenir/libraries/saved_data.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:suvenir/libraries/styles.dart';
@@ -52,8 +52,8 @@ class _AccountState extends State<Account> {
 
       /// Get all data
       tasks.add(PhotoManager.getAssetCount().then( (count) => totalAssetOnDevice = count));
-      tasks.add(SbroImage.getAllAssesInDatabase(likeAssetsDb).then( (out) { likedAssets = out; }));
-      tasks.add(SbroImage.getAssetsTrashedDate().then( (trashDatesMap) { 
+      tasks.add(SbroMediaManager.getAllAssesInDatabase(likeAssetsDb).then( (out) { likedAssets = out; }));
+      tasks.add(SbroMediaManager.getAssetsTrashedDate().then( (trashDatesMap) { 
 
         /// Here we separete the map in the two arrays. Use first because there is only one K and one V
         for (var map in trashDatesMap) {
@@ -211,5 +211,3 @@ class PageSelector extends StatelessWidget {
     );
   }
 }
-
-

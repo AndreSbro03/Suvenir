@@ -5,7 +5,7 @@ import 'package:suvenir/feed/video_view.dart';
 import 'package:photo_manager/photo_manager.dart';
 
 /// TODO: tranform this file in a class for clarity
-const String appName = "SbroApp";
+const String appName = "Suvenir";
 
 /// K: 'nome cartella'
 /// V:  Ptr ad array contenente gli ae.
