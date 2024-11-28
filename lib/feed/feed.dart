@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:suvenir/bars/footbar.dart';
+import 'package:suvenir/homepage.dart';
 import 'package:suvenir/libraries/globals.dart';
 import 'package:suvenir/feed/image_view.dart';
 import 'package:suvenir/feed/video_view.dart';
-import 'package:suvenir/libraries/image.dart';
+import 'package:suvenir/libraries/media_manager.dart';
 import 'package:suvenir/bars/like_button.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:suvenir/libraries/styles.dart';
@@ -50,6 +51,7 @@ class _FeedState extends State<Feed> {
                   onPageChanged: (newIdx) {
                     corrIndx = newIdx;
                     // print(corrIndx);
+
                     /// On scroll we reset the infoBox 
                     widget.showInfoBox.value = false;
                     /// Here you can insert code that notify all other widget that the media is changed
@@ -68,7 +70,9 @@ class _FeedState extends State<Feed> {
                 
                       /// Update next @Feed.numNextUpdate medias
                       if(index % Feed.modIdxUpdate == 0 && index != 0) {
-                        SbroImage.updateAssets(widget.assets, index, Feed.numNextUpdate);
+                        SbroMediaManager.updateAssets(widget.assets, index, Feed.numNextUpdate).then( (removed) {
+                          if(removed > 0) HomePage.reloadFeed.value++;
+                        });
                       }
                 
                       AssetEntity ae = widget.assets[index]!;
@@ -120,7 +124,7 @@ class _FeedState extends State<Feed> {
                         if (corrIndx != null && widget.assets[corrIndx!] != null) 
                           InfoBox(asset: widget.assets[corrIndx!]!) 
                         else 
-                          const Text("[ERR] Current index is Nan!", style: kNormalStyle),
+                          const Text("Current index is Nan!", style: kNormalStyle),
           
                         const SizedBox(
                           height: Footbar.fbHight,

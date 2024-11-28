@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:suvenir/homepage.dart';
 import 'package:suvenir/libraries/globals.dart';
-import 'package:suvenir/libraries/image.dart';
+import 'package:suvenir/libraries/media_manager.dart';
 import 'package:suvenir/libraries/permission.dart';
 import 'package:suvenir/filter.dart';
 import 'package:photo_manager/photo_manager.dart';
@@ -50,9 +50,36 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
 
   bool readyToGo = false;
+
+  @override
+  /// Code that will be run everytime we come back to this page.
+  initState(){
+    /// Make sure only runs once
+    if(initializeApp){
+      _quickLoadImage();
+      mainFeedHash = mainFeed.hashCode;      
+      initializeApp = false;
+    }
+    super.initState();
+  }
+
   List<AssetEntity?> mainFeed = [];
 
+  @override
+  Widget build(BuildContext context) {
+    if(readyToGo){
+      return HomePage(assets: mainFeed);
+    }
+    else {
+      return const Center(child: SizedBox(
+        width: 50,
+        height: 50,
+        child: CircularProgressIndicator()
+      ));
+    }
+  }
 
+  
   /// ```dart
   ///     1 - Search all folders in the phone.
   ///     2 - Remove the trashPath from the list.
@@ -88,7 +115,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Future<void> _getFoldersFromGallery(List<AssetPathEntity?> apel) async {
     /// Parse directy, no error risk but solwer
-    folders = await SbroImage.fetchAssetsByFolders(apel);
+    folders = await SbroMediaManager.fetchAssetsByFolders(apel);
     /// originalAssets = SbroImage.getValidPathAssetsList(folders, Filter.validPathsMap);
     /// originalAssets.shuffle();
     
@@ -109,18 +136,23 @@ class _MyHomePageState extends State<MyHomePage> {
           List<String> invalidPath = await SavedData.instance.getInvalidPaths();
 
           if(await savedAssetsDb.countRows() > 0 && invalidPath.isNotEmpty) {
-            quickLoadedAssets = await SbroImage.getAllAssesInDatabase(savedAssetsDb);
+            quickLoadedAssets = await SbroMediaManager.getAllAssesInDatabase(savedAssetsDb);
             print("[INFO] Loading assets from db!");
             loadedFromDb = true;
           } 
           else {
-            quickLoadedAssets = await SbroImage.fetchAssets();
+            quickLoadedAssets = await SbroMediaManager.fetchAssets();
             print("[INFO] Loading assets from phone!");
           }
 
           quickLoadedAssets.shuffle();
           mainFeed.addAll(quickLoadedAssets);
           corrIndx = 0;
+
+          setState(() {
+            // The app is ready to go
+            readyToGo = true;
+          });
 
           _getFoldersFromGallery(apel).then( (_) {
             
@@ -130,7 +162,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
             /// Load the rest of the feed if it was loaded from db
             if(loadedFromDb){
-              List<AssetEntity?> restOfFeed = SbroImage.getValidPathAssetsList(folders, Filter.validPathsMap);
+              List<AssetEntity?> restOfFeed = SbroMediaManager.getValidPathAssetsList(folders, Filter.validPathsMap);
               /// Remove duplicates
               for(AssetEntity? ae in mainFeed){
                 restOfFeed.remove(ae);
@@ -140,18 +172,14 @@ class _MyHomePageState extends State<MyHomePage> {
               mainFeed.addAll(restOfFeed);
 
               print("[INFO] Updating feed from ${quickLoadedAssets.length} -> ${mainFeed.length}");
-              if(loadedFromDb) setState(() {});
+              /// Reload the homepage
+              HomePage.reloadFeed.value++;
+            }
 
               /// Update the saved images for the next loading
               savedAssetsDb.removeAllRows().then( (_) => savedAssetsDb.addRandomMedias(mainFeed, Filter.savedAssets));
-              
-            }
           });
-
-          setState(() {
-            // The app is ready to go
-            readyToGo = true;
-          });
+            
         break;
 
       case PermissionsTypes.permanentlyDenied: 
@@ -160,35 +188,10 @@ class _MyHomePageState extends State<MyHomePage> {
         break;
           
       default:
-        // TODO: maybe add a warnig banner here to
+        // TODO: maybe add a warning banner here to
         _quickLoadImage();
     }
   }
 
 
-  @override
-  /// Code that will be run everytime we come back to this page.
-  initState(){
-    /// Make sure only runs once
-    if(initializeApp){
-      _quickLoadImage();
-      mainFeedHash = mainFeed.hashCode;      
-      initializeApp = false;
-    }
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if(readyToGo){
-      return HomePage(assets: mainFeed);
-    }
-    else {
-      return const Center(child: SizedBox(
-        width: 50,
-        height: 50,
-        child: CircularProgressIndicator()
-      ));
-    }
-  }
 }
