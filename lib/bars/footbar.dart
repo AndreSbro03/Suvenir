@@ -22,6 +22,19 @@ class Footbar extends StatelessWidget {
 
   static const fbHight = 60.0;
 
+  bool _isAssetValid(){
+    return (corrIndx != null && assets[corrIndx!] != null);
+  }
+
+  String _popAssetFromFeed(){
+    String id = assets[corrIndx!]!.id;  
+    assets[corrIndx!] = null;
+    /// Pause a video if it is loading
+    VideoPlayerManager.instance.pauseAll();
+    reload();
+    return id;
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -40,18 +53,12 @@ class Footbar extends StatelessWidget {
                 IconButton(
                   icon: const Icon(Icons.restore_from_trash_rounded, size: kIconSize, color: kIconColor,), 
                   onPressed: () {
-
-                    if(corrIndx != null && assets[corrIndx!] != null) {
-                      String id = assets[corrIndx!]!.id;  
-                      assets[corrIndx!] = null;
-                      reload();
-                      Trash.restoreAssetFromTrash(id);
+                    if(_isAssetValid()) {
+                      Trash.restoreAssetFromTrash(_popAssetFromFeed());
                     }
                     else{
                       print("[WARN] Trying to restore a null asset!");
-                    }
-
-                    
+                    }                
                   },
                 ) :
               LikeButton(assets: assets,),
@@ -98,13 +105,10 @@ class Footbar extends StatelessWidget {
               IconButton(
                   icon: const Icon(Icons.delete_forever_rounded, size: kIconSize, color: kIconColor,), 
                   onPressed: () async {
-                    if(corrIndx != null && assets[corrIndx!] != null){
-                        /// TODO: ask to confirm
-                        String id = assets[corrIndx!]!.id;
-                        SbroMediaManager.deleteAsset(assets[corrIndx!]);
-                        trashAssetsDb.removeMedia(id);
-                        assets[corrIndx!] = null;
-                        reload();
+                    if(_isAssetValid()){
+                      String id = _popAssetFromFeed();
+                      SbroMediaManager.deleteAssetFromId(id);
+                      trashAssetsDb.removeMedia(id);
                     }
                     else{
                       print("[WARN] Trying to remove asset null!");
@@ -116,18 +120,16 @@ class Footbar extends StatelessWidget {
                 icon: const Icon(Icons.delete_outline, size: kIconSize, color: kIconColor,), 
                 onPressed: () async {
 
-                    AssetEntity? ae = assets[corrIndx!];
-
+                  if(_isAssetValid()){
+                    AssetEntity ae = assets[corrIndx!]!;
                     /// We immediatly notify the feed to reload than we proceed to move the asset. Because, if 
                     /// we invert the two, from the tap on the icon to the reload of the page there is a bit of 
                     /// time that seems lag.
-                    if(ae != null){
-                      assets[corrIndx!] = null;
-                      reload();
-                      if(await Trash.moveToTrash(ae) > 0){
-                        print("[INFO] Impossible to move the file to trash!");
-                      }
+                    _popAssetFromFeed();
+                    if(await Trash.moveToTrash(ae) > 0){
+                      print("[INFO] Impossible to move the file to trash!");
                     }
+                  }
                 },
               ),
             ],
@@ -135,6 +137,5 @@ class Footbar extends StatelessWidget {
         ),
     );
   }
-
 }
 

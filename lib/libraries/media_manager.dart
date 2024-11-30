@@ -1,5 +1,4 @@
 import 'dart:collection';
-import 'dart:io';
 import 'package:suvenir/db/assets_db.dart';
 import 'package:suvenir/libraries/globals.dart';
 import 'package:suvenir/libraries/permission.dart';
@@ -224,7 +223,8 @@ class SbroMediaManager{
     return SbroMediaManager.deleteAsset(await AssetEntity.fromId(id));
   }
 
-  static Future<AssetEntity?> moveAsset(AssetEntity? asset, String newPath) async {
+  /// TODO: since i can't make this function i'm removing it
+  /* static Future<File?> moveAsset(AssetEntity? asset, String newPath) async {
 
     print("[INFO] Requested transfer to $newPath");
 
@@ -240,39 +240,19 @@ class SbroMediaManager{
       return null;
     }
 
-    AssetEntity? out;
-    /// Move the Media to a specific folder in the memory
-    switch (asset.type) {
- 
-      case AssetType.image:
-        print("[INFO] Getting path: ${fl.path} -> $newPath");
-        out = await PhotoManager.editor.saveImageWithPath(
-          fl.path,
-          title: asset.title ?? "image",
-          relativePath: newPath
-        );
-        break;
+    String? folder = await createFolder(newPath);
+    if(folder == null) return null;
+    print("[INFO] Moving to $folder");
 
-      case AssetType.video:
-        out = await PhotoManager.editor.saveVideo(
-          fl, 
-          title: asset.title ?? "video",
-          relativePath: newPath
-        );
-        break;
-
-      case AssetType.audio:
-      case AssetType.other:
-        print("[WAR] This file type is not supported yet!");
-        break;
-    }
-
-    if(out != null) {
-      fl.delete();
+    try {
+      // prefer using rename as it is probably faster
+      return await fl.rename(folder + '/' + fl.path.split('/').last);
+    } on FileSystemException catch (e) {
+      // if rename fails, copy the source file and then delete it
+      final newFile = await fl.copy(newPath);
+      await fl.delete();
+      return newFile;
     }
     
-    return out;
-
-  }
-
+  }*/
 }

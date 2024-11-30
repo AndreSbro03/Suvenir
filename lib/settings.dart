@@ -4,6 +4,7 @@ import 'package:suvenir/istances/saved_data.dart';
 import 'package:suvenir/libraries/styles.dart';
 import 'package:suvenir/libraries/trash.dart';
 
+/// For now no settings
 class Settings extends StatefulWidget {
   const Settings({super.key});
 

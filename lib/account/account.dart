@@ -8,7 +8,6 @@ import 'package:suvenir/istances/saved_data.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:suvenir/libraries/styles.dart';
 import 'package:suvenir/libraries/trash.dart';
-import 'package:suvenir/settings.dart';
 
 class Account extends StatefulWidget {
   const Account({super.key});
@@ -87,17 +86,19 @@ class _AccountState extends State<Account> {
       appBar: AppBar(
         foregroundColor: kContrColor,
         backgroundColor: Colors.transparent,
-        title: Row(
+        title: const Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
+            Text(
               "Account",
               style: kH2Style,
             ),
-            IconButton(icon: const Icon(Icons.settings_outlined), onPressed: () async {
+            SizedBox(),
+            /*IconButton(icon: const Icon(Icons.settings_outlined), onPressed: () async {
                 await Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const Settings()));
             },),
+            */
           ],
         ),
       ),

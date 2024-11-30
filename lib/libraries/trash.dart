@@ -4,7 +4,6 @@ import 'package:suvenir/db/trash_db.dart';
 import 'package:suvenir/libraries/globals.dart';
 import 'package:suvenir/libraries/media_manager.dart';
 import 'package:suvenir/libraries/permission.dart';
-import 'package:suvenir/istances/saved_data.dart';
 
 /// Trash stay between the trash_db and the application 
 class Trash{
@@ -21,15 +20,16 @@ class Trash{
       String? oldPath = SbroMediaManager.getAssetFolder(asset);
       AssetEntity? out = asset;
 
-      /// Move the asset if required
-      if(await SavedData.instance.getMoveToTrashFolder()){
+      /// TODO: for now not move anything
+      /// Move the asset if required 
+      /* if(await SavedData.instance.getMoveToTrashFolder()){
         print("[INFO] Trying to move the media to ${Trash.trashPath}");
-        out = await SbroMediaManager.moveAsset(asset, trashPath);
-        if(out == null){
+        if(await SbroMediaManager.moveAsset(asset, trashPath) == null){
           print("[ERR] Something went wrong moving asset ${asset.title}");
           return 1;
         }
       }
+      */
 
       /// Add the asset to the database
       /// database add {'id' = out.id, 'date' = now, 'oldPath' = oldPath}
@@ -77,9 +77,10 @@ class Trash{
 
     /// TODO: be sure that the way you save the path is coerent
     /// If the path is changed we restore the image
-    if(oldPath != SbroMediaManager.getAssetFolder(ae)) {
+    /* if(oldPath != SbroMediaManager.getAssetFolder(ae)) {
       if(await SbroMediaManager.moveAsset(ae, oldPath) != null) trashAssetsDb.removeMedia(id);
     }
+    */
   }
   
   /// Return all the assetsEntity in the trash and map them with the number of days until they are going to be
