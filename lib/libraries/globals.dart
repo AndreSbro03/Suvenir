@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:suvenir/db/liked_db.dart';
 import 'package:suvenir/db/trash_db.dart';
-import 'package:suvenir/feed/video_view.dart';
 import 'package:photo_manager/photo_manager.dart';
 
 /// TODO: tranform this file in a class for clarity
@@ -17,7 +16,6 @@ ValueNotifier<bool> isFoldersReady = ValueNotifier<bool>(false);
 bool initializeApp = true;
 late final int mainFeedHash;
 int? corrIndx;
-GlobalKey<VideoViewState>? lastVideoView;
 
 int trashDays = 15;
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:suvenir/bars/footbar.dart';
+import 'package:suvenir/feed/video_player_manager.dart';
 import 'package:suvenir/homepage.dart';
 import 'package:suvenir/libraries/globals.dart';
 import 'package:suvenir/feed/image_view.dart';
@@ -50,7 +51,9 @@ class _FeedState extends State<Feed> {
                   physics: scrollable ? null : const NeverScrollableScrollPhysics(),
                   onPageChanged: (newIdx) {
                     corrIndx = newIdx;
-                    // print(corrIndx);
+                    /// Pause old videos exept the corrent one that will be played (if it is a video).
+                    String? idCorr = (widget.assets[newIdx] == null) ? null : widget.assets[newIdx]!.id;
+                    VideoPlayerManager.instance.keepPlayId(VideoPlayerManager.instance.pauseAll(idCorr));
 
                     /// On scroll we reset the infoBox 
                     widget.showInfoBox.value = false;
@@ -60,7 +63,7 @@ class _FeedState extends State<Feed> {
                   scrollDirection: Axis.vertical,
                   itemCount: widget.assets.length,
                   itemBuilder: (_, index) {
-        
+
                     if (widget.assets[index] == null){ 
                       return const Center(child: 
                         Text("Image unavailable.\n Might be moved or deleted.", style: kNormalStyle, textAlign: TextAlign.center,),
@@ -78,10 +81,7 @@ class _FeedState extends State<Feed> {
                       AssetEntity ae = widget.assets[index]!;
                 
                       if(ae.type == AssetType.video) {
-                        final GlobalKey<VideoViewState> videoViewKey = GlobalKey<VideoViewState>();
-                        /// Alising vw -> videoView
-                        lastVideoView = videoViewKey;
-                        return VideoView(key: videoViewKey, video: ae);
+                        return VideoView(video: ae);
                       }
                       else { 
                         return Listener(

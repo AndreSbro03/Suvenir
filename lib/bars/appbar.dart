@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:suvenir/feed/video_player_manager.dart';
 import 'package:suvenir/libraries/globals.dart';
 import 'package:suvenir/libraries/styles.dart';
 import 'package:suvenir/filter.dart';
@@ -42,9 +43,7 @@ class SbroAppBar extends StatelessWidget {
             IconButton(
               onPressed: () async {
                 /// If a video is going we stop it before going to the filter
-                if(lastVideoView != null) {
-                  lastVideoView!.currentState?.pauseVideo();
-                }
+                VideoPlayerManager.instance.pauseAll();
 
                 bool? modified = await Navigator.of(context).push(
                    MaterialPageRoute(builder: (_) => Filter(assets: assets))

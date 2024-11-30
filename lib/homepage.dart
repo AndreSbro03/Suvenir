@@ -81,10 +81,6 @@ class _HomePageState extends State<HomePage> {
           ValueListenableBuilder(
             valueListenable: HomePage.reloadFeed,
             builder: (context, value, _) {
-              /// Make sure to clean the last video cache
-              if(lastVideoView != null) {
-                lastVideoView!.currentState?.vp.dispose();
-              }
               print("[INFO] Feed reloaded!");
               return Feed(assets: widget.assets, feedController: _feedController, showInfoBox: showInfoBox,);
             },

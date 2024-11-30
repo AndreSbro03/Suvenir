@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:suvenir/bars/footbar.dart';
+import 'package:suvenir/feed/video_player_manager.dart';
 import 'package:suvenir/libraries/globals.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:suvenir/libraries/styles.dart';
@@ -13,37 +14,22 @@ class VideoView extends StatefulWidget {
   final AssetEntity video;
 
   @override
-  State<VideoView> createState() => VideoViewState();
+  State<VideoView> createState() => _VideoViewState();
 }
 
-class VideoViewState extends State<VideoView> {
+class _VideoViewState extends State<VideoView> {
 
   late final Future<File?> videoFile;
   bool initialized = false;
   late VideoPlayerController vp;
+  ValueNotifier<int> reloadPlayButton = ValueNotifier<int>(0);
 
-  /// This method callable outside with: lastVideoView!.currentState?.pauseVideo(); pause the video and update
-  /// the icon button.
-  Future<void> pauseVideo() async {
-    if (initialized) {
-      print("[INFO] Pausing video!");
-      await vp.pause();
-      setState(() {});
-    }
-  }
-
-  _initVideo() async {
-    final File? videoFile = await widget.video.file;
-
-    vp = VideoPlayerController.file(videoFile!, videoPlayerOptions: VideoPlayerOptions(
-      /// With this option if the user is listening music from Spotify, for example, the video wont stop the
-      /// music but will play the audio on top of it.
-      mixWithOthers: true
-    ))
-      ..play()
-      ..setLooping(true)
-      ..initialize().then(
-      (_) => setState(() => initialized = true));
+  void _initVideo() async {
+    VideoPlayerManager.instance.request(widget.video, reloadPlayButton).then((VpNode vpn) async{
+      vp = vpn.vp;
+      if(vpn.reload != null) reloadPlayButton = vpn.reload!;
+      setState(() => initialized = true);
+    });
   }
 
   @override
@@ -51,17 +37,9 @@ class VideoViewState extends State<VideoView> {
     _initVideo();
     super.initState();
   }
-
-  @override
-  void dispose() {
-    vp.dispose();
-    super.dispose();
-  }
-
+  
   @override
   Widget build(BuildContext context) {
-
-    if(initialized) print("[INFO] ${vp.value.rotationCorrection}");
 
     return  initialized ? Stack(
       children: [
@@ -82,22 +60,27 @@ class VideoViewState extends State<VideoView> {
           ),
         ),        
         Center(
-          child: IconButton(
-              onPressed: () {
-              setState(() {
-                if(vp.value.isPlaying){
-                  vp.pause();
-                } else {
-                  vp.play();
-                }
-                });
-              },
-              icon: Icon(
-                vp.value.isPlaying ? null : Icons.play_arrow,
-                size: kIconSize * 3.0,
-                color: kContrColor,
-              ),
-            )
+          child: ValueListenableBuilder(
+            valueListenable: reloadPlayButton,
+            builder: (context, int value, child) {
+              print("[INFO] Something change!");
+              return  IconButton(
+                onPressed: () async {
+                  if(vp.value.isPlaying){
+                    await vp.pause();
+                  } else {
+                    await vp.play();
+                  }
+                  reloadPlayButton.value++;
+                },
+                icon: Icon(
+                  vp.value.isPlaying ? null : Icons.play_arrow,
+                  size: kIconSize * 3.0,
+                  color: kContrColor,
+                ),
+              );              
+            },
+          )
         ),
       ]
     ) :

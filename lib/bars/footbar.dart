@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:suvenir/account/account.dart';
+import 'package:suvenir/feed/video_player_manager.dart';
 import 'package:suvenir/libraries/globals.dart';
 import 'package:suvenir/libraries/media_manager.dart';
 import 'package:suvenir/bars/like_button.dart';
@@ -79,9 +80,7 @@ class Footbar extends StatelessWidget {
                 icon: const Icon(Icons.account_circle_outlined, size: kIconSize, color: kIconColor,), 
                 onPressed: () {
                   /// Pause the video if there is one
-                  if(lastVideoView != null){
-                    lastVideoView!.currentState?.pauseVideo();
-                  }
+                  VideoPlayerManager.instance.pauseAll();
 
                   /// Call the account page
                   Navigator.of(context).push(
