@@ -1,13 +1,11 @@
 import 'dart:collection';
 import 'dart:io';
 import 'package:suvenir/db/assets_db.dart';
-import 'package:suvenir/db/trash_db.dart';
 import 'package:suvenir/libraries/globals.dart';
 import 'package:suvenir/libraries/permission.dart';
 import 'package:suvenir/istances/saved_data.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:mutex/mutex.dart';
 
 class SbroMediaManager{
 
@@ -202,42 +200,6 @@ class SbroMediaManager{
       // }   
       else i++;
     }
-    return out;
-  }
-
-  /// Return all the assetsEntity in the trash and map them with the number of days until they are going to be
-  /// removed
-  static Future<List<Map<AssetEntity?, int>>> getAssetsTrashedDate() async {
-
-    List<Map<String, Object?>> dbData = await trashAssetsDb.getAssetsTrashedDate();
-    List<Map<AssetEntity?, int>> out = [];
-
-    List<Future<void>> tasks = [];
-    Mutex m = Mutex();
-    
-    for (Map<String, Object?> map in dbData) {
-      String id = map[TrashedAssetFields.id].toString();
-      tasks.add( AssetEntity.fromId(id).then(
-        (ae) async {
-          // If ae is null we remove that from the database
-          if(ae == null) {
-            await m.protect( () async {
-              trashAssetsDb.removeMedia(id);
-            });
-          }
-          else{
-            String d = map[TrashedAssetFields.date].toString();
-            int dateUntilRemove = trashDays - dateDistance(getCorrDate(), d);
-             await m.protect( () async {
-              out.add({ae : dateUntilRemove});
-            });
-          }
-        }
-      ));
-    }
-
-    await Future.wait(tasks);
-    
     return out;
   }
 

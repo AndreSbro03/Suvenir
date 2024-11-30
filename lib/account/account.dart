@@ -7,6 +7,7 @@ import 'package:suvenir/libraries/media_manager.dart';
 import 'package:suvenir/istances/saved_data.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:suvenir/libraries/styles.dart';
+import 'package:suvenir/libraries/trash.dart';
 import 'package:suvenir/settings.dart';
 
 class Account extends StatefulWidget {
@@ -53,7 +54,7 @@ class _AccountState extends State<Account> {
       /// Get all data
       tasks.add(PhotoManager.getAssetCount().then( (count) => totalAssetOnDevice = count));
       tasks.add(SbroMediaManager.getAllAssesInDatabase(likeAssetsDb).then( (out) { likedAssets = out; }));
-      tasks.add(SbroMediaManager.getAssetsTrashedDate().then( (trashDatesMap) { 
+      tasks.add(Trash.getAssetsTrashedDate().then( (trashDatesMap) { 
 
         /// Here we separete the map in the two arrays. Use first because there is only one K and one V
         for (var map in trashDatesMap) {
