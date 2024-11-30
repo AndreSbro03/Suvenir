@@ -6,7 +6,7 @@ import 'package:suvenir/libraries/media_manager.dart';
 import 'package:suvenir/libraries/permission.dart';
 import 'package:suvenir/filter.dart';
 import 'package:photo_manager/photo_manager.dart';
-import 'package:suvenir/libraries/saved_data.dart';
+import 'package:suvenir/istances/saved_data.dart';
 import 'package:suvenir/libraries/trash.dart';
 
 

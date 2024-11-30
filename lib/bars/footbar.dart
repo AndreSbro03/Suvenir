@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:suvenir/account/account.dart';
-import 'package:suvenir/feed/video_player_manager.dart';
+import 'package:suvenir/istances/video_player_manager.dart';
 import 'package:suvenir/libraries/globals.dart';
 import 'package:suvenir/libraries/media_manager.dart';
 import 'package:suvenir/bars/like_button.dart';
@@ -118,8 +118,8 @@ class Footbar extends StatelessWidget {
 
                     AssetEntity? ae = assets[corrIndx!];
 
-                    /// We immediatly notify the feed to reload than we proceed to move the asset. Beacouse if 
-                    /// we invert the two from the tap on the icon to the reload of the page there is a bit of 
+                    /// We immediatly notify the feed to reload than we proceed to move the asset. Because, if 
+                    /// we invert the two, from the tap on the icon to the reload of the page there is a bit of 
                     /// time that seems lag.
                     if(ae != null){
                       assets[corrIndx!] = null;

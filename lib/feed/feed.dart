@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:suvenir/bars/footbar.dart';
-import 'package:suvenir/feed/video_player_manager.dart';
+import 'package:suvenir/istances/video_player_manager.dart';
 import 'package:suvenir/homepage.dart';
 import 'package:suvenir/libraries/globals.dart';
 import 'package:suvenir/feed/image_view.dart';
@@ -158,17 +158,19 @@ class InfoBox extends StatefulWidget {
 class _InfoBoxState extends State<InfoBox> {
 
   String? originalPath;
+  String? addedDate;
 
-  void getOriginalPath() async {
+  void getTrashedData() async {
     if(await trashAssetsDb.existMedia(widget.asset.id)){
       originalPath = await trashAssetsDb.getAssetOldPath(widget.asset.id);
+      addedDate = await trashAssetsDb.getAssetDeletionTime(widget.asset.id);
       setState(() {});
     }
   }
 
   @override
   void initState() {
-    getOriginalPath();
+    getTrashedData();
     super.initState();
   }
 
@@ -181,7 +183,9 @@ class _InfoBoxState extends State<InfoBox> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if(originalPath != null) Text("Original Path: $originalPath", style: kNormalStyle,),
+            if(originalPath != null) Text("Original Path: $originalPath.", style: kNormalStyle,),
+            if(addedDate != null) Text("Added Date: $addedDate.", style: kNormalStyle,),
+
             Text("Modified date: ${removeClockFromDate(widget.asset.modifiedDateTime)}", style: kNormalStyle,),
             /// Cration date usually is wrong and is more recent than the modifiedDateTime
             /// Text("Creation date: ${removeClockFromDate(asset!.createDateTime)}", style: kNormalStyle,),

@@ -52,6 +52,7 @@ class TrashDatabase extends AssetsDb{
     const idType = 'INTEGER PRIMARY KEY';
     const textType = 'TEXT NOT NULL';
 
+    /// SQlite doesn't have the type DATE
     await db.execute('''
     CREATE TABLE $tableName ( 
       '${TrashedAssetFields.id}' $idType,
@@ -116,7 +117,7 @@ class TrashDatabase extends AssetsDb{
 
   /// Return a combination (id, date) by date ascendent order 
   Future<List<Map<String, Object?>>> getAssetsTrashedDate() {
-    return _getAllTrashedAssetFields(TrashedAssetFields.date, "${TrashedAssetFields.date} asc");
+    return _getAllTrashedAssetFields(TrashedAssetFields.date, "${TrashedAssetFields.date} ASC");
   }
 
   Future<List<String>> getAssetsOlderThan(int days) async {

@@ -4,7 +4,7 @@ import 'package:suvenir/db/assets_db.dart';
 import 'package:suvenir/db/trash_db.dart';
 import 'package:suvenir/libraries/globals.dart';
 import 'package:suvenir/libraries/permission.dart';
-import 'package:suvenir/libraries/saved_data.dart';
+import 'package:suvenir/istances/saved_data.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:mutex/mutex.dart';
@@ -71,7 +71,6 @@ class SbroMediaManager{
     List<AssetEntity?> out = [];
 
     for (String folderName in folders.keys) {      
-      /// Filter the trashPath since is not in validMap 
       /// print("[INFO] Folder name: $folderName");
       if(validMap.containsKey(folderName) && validMap[folderName]!){
         /// print("[INFO] Total assets: ${folders[folderName]!.length}");
@@ -142,7 +141,7 @@ class SbroMediaManager{
 
   static Future<void> shareAsset(AssetEntity? asset) async {
     if(asset == null) {
-      print("Trying to share an unavailable asset!");
+      print("[ERR] Trying to share an unavailable asset!");
       return;
     }
 

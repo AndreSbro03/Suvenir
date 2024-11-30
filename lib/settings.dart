@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:suvenir/libraries/globals.dart';
-import 'package:suvenir/libraries/saved_data.dart';
+import 'package:suvenir/istances/saved_data.dart';
 import 'package:suvenir/libraries/styles.dart';
 import 'package:suvenir/libraries/trash.dart';
 

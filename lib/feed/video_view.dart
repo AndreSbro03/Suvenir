@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:suvenir/bars/footbar.dart';
-import 'package:suvenir/feed/video_player_manager.dart';
+import 'package:suvenir/istances/video_player_manager.dart';
 import 'package:suvenir/libraries/globals.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:suvenir/libraries/styles.dart';

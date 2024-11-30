@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:suvenir/feed/video_player_manager.dart';
+import 'package:suvenir/istances/video_player_manager.dart';
 import 'package:suvenir/libraries/globals.dart';
 import 'package:suvenir/libraries/styles.dart';
 import 'package:suvenir/filter.dart';
@@ -62,10 +62,7 @@ class SbroAppBar extends StatelessWidget {
               }, 
               icon: Image.asset("assets/filter_100.png", width: kIconSize, height: kIconSize, color: kIconColor),
               ) : 
-              const SizedBox(
-                height: kIconSize,
-                width: kIconSize,
-              ),
+              const SizedBox(),
           ],
         ),
       ),

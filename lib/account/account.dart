@@ -4,7 +4,7 @@ import 'package:suvenir/account/trashed_grid.dart';
 import 'package:suvenir/account/user_stats.dart';
 import 'package:suvenir/libraries/globals.dart';
 import 'package:suvenir/libraries/media_manager.dart';
-import 'package:suvenir/libraries/saved_data.dart';
+import 'package:suvenir/istances/saved_data.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:suvenir/libraries/styles.dart';
 import 'package:suvenir/settings.dart';
