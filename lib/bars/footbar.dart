@@ -80,20 +80,26 @@ class Footbar extends StatelessWidget {
                   size: kIconSize, color: kIconColor,), 
                 onPressed: () {
                   print("[INFO] Retourning to the HomePage!");
+                  /// Unlock all the videoPlayer so that they can be disposed
+                  /// TODO: This generate some error check it.
+                  VideoPlayerManager.instance.unlockAll();
                   Navigator.of(context).popUntil((route) => route.isFirst);
                 },      
               ),
               // Account Button
               IconButton(
                 icon: const Icon(Icons.account_circle_outlined, size: kIconSize, color: kIconColor,), 
-                onPressed: () {
-                  /// Pause the video if there is one
+                onPressed: () async {
+                  /// Pause the video if there is one and block the vp from being deleted
                   VideoPlayerManager.instance.pauseAll();
+                  if(_isAssetValid()) VideoPlayerManager.instance.block(assets[corrIndx!]!.id);
 
                   /// Call the account page
-                  Navigator.of(context).push(
+                  await Navigator.of(context).push(
                     MaterialPageRoute(builder: (_) => const Account())
                   );
+
+                  if(_isAssetValid()) VideoPlayerManager.instance.unlock(assets[corrIndx!]!.id);
 
                   // reload();
                 },

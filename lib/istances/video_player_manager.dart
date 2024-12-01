@@ -24,19 +24,24 @@ class VideoPlayerManager {
   static final VideoPlayerManager instance = VideoPlayerManager._init();
   VideoPlayerManager._init();
 
-  final bool _printDebugInfo = false;
+  final bool _printDebugInfo = true;
   final int _maxVp = 3;
   final LinkedList<VpNode> _vps = LinkedList<VpNode>();
+  
+  /// All the blocked element will not be disposed untile they are unlocked. And they can be access again even if they are being removed
+  /// from _vps because the vp can be restored from the _blockedVps.
+  final List<String> _blockedIds = [];
+  final LinkedList<VpNode> _blockedVps = LinkedList<VpNode>();
+
   /// Id of the videoPlayer that is being creted. 
   String? _creatingVp;
 
   /// If an id is setted when a vp is created if the id of the video is equal to this variable value than the video will play.
   String? playVpId;
 
-
   /// Notify other function that a vp is being created updating _creatingVp.
   /// If already exist a vp for an AssetEntity in the vps:
-  ///   - Move the vp in head of vps.
+  ///   - Move the vp in head of vps if not blocked.
   ///   - Return it.
   /// If not:
   ///   - Create the new vp.
@@ -53,7 +58,8 @@ class VideoPlayerManager {
     VpNode? node = _search(video.id);
 
     if(node != null){
-      _move_to_head(node);
+      /// Mantain the FILO for the unlockAll function
+      if(!_isIdBlocked(video.id)) _move_to_head(node);
       if(_printDebugInfo) print("[INFO] Finded vp for video: ${video.id}");
     } 
     else {
@@ -61,7 +67,7 @@ class VideoPlayerManager {
       if(_printDebugInfo) print("[INFO] Generated vp for video: ${video.id}");
     }
 
-    if(_printDebugInfo) _printList();
+    if(_printDebugInfo) _printList(_vps);
     if(video.id == playVpId) node.vp.play();
     _creatingVp = null;
     return node;
@@ -121,11 +127,69 @@ class VideoPlayerManager {
     return exept;
   }
 
+  /// Search for the Node and move it to the _blockedVps list. Copy the id in the _blockedId array.
+  void block(String id){
+
+    /// Node already blocked
+    if(_isIdBlocked(id)) return;
+
+    VpNode? node = _search(id);
+    if(node == null){
+      if(_printDebugInfo) print("[WARN] Node $id not found in vps!");
+      return;
+    }
+
+    _blockedIds.add(id);
+    /// Move node to _blockedVps
+    node.unlink();
+    _blockedVps.addFirst(node);
+
+    if(_printDebugInfo) {
+      print("[INFO] Blocked $id");
+      _printList(_blockedVps);
+    }
+  }
+
+  /// If the id is in the _blockedId remove it and move the node to _vps (and dispose other vp if thera are too many).
+  void unlock(String id) {
+    /// Node not blocked
+    if(!_isIdBlocked(id)) return;
+
+    VpNode? node = _search(id);
+    if(node == null){
+      if(_printDebugInfo) print("[WARN] Node $id not found in vpsBlocked!");
+      return;
+    }
+
+    _blockedIds.remove(id);
+    /// Move node to head of vps
+    node.unlink();
+    _insert_head_node(node);
+
+    if(_printDebugInfo) {
+      print("[INFO] Unlocked $id");
+      _printList(_blockedVps);
+    }
+
+  }
+
+  /// Move all the nodes to _vps and clear the _blockedId. 
+  /// FILO if the user ask to block a node when restored the last access one (the first one the list) will be the last one added.
+  void unlockAll() {
+    final List<VpNode> blockedNodesCopy = List<VpNode>.from(_blockedVps);
+    for (VpNode node in blockedNodesCopy) {
+      /// Move node to head of vps
+      node.unlink();
+      _insert_head_node(node);
+    }
+    _blockedIds.clear();
+  }
+
   /// Print the list of vp
-  void _printList() {
-    print("[INFO] List _vps:");
+  void _printList(LinkedList<VpNode> ll) {
+    print("[INFO] List:");
     print("----------------------------");
-    for (VpNode node in _vps) {
+    for (VpNode node in ll) {
       print(node);
     }
     print("----------------------------");
@@ -148,24 +212,28 @@ class VideoPlayerManager {
     return vp;
   }
 
-  /// Search if there is a vp of a AssetEntity already created in the vps list. Return the element if exist
+  /// Search if there is a vp of a AssetEntity already created in the vps or blockedVps list. Return the element if exist
   /// else return null.
   VpNode? _search(String id) {
-    if(_vps.isEmpty) return null;
+    LinkedList<VpNode> searchIn = (_isIdBlocked(id)) ? _blockedVps : _vps;
     try {
-      return _vps.firstWhere((node) => node.id == id);
+      return searchIn.firstWhere((node) => node.id == id);
     } catch(e){
       /// Element not found.
       return null;
     }
   }
 
-  /// If the list is full free the tail, create the new node and add it to the head. Return the node.
+  /// Create the node and insert it to the head. Return the node
   VpNode _insert_head(String id, ValueNotifier<int>? vn, VideoPlayerController vp){
+    return _insert_head_node(VpNode(id, vn, vp));
+  }
+
+  /// If the list is full free the tail and add the node to the head. Return the node.
+  VpNode _insert_head_node(VpNode node){
     if(_vps.length >= _maxVp) _remove_tail();
-    VpNode vpn = VpNode(id, vn, vp);
-    _vps.addFirst(vpn);
-    return vpn;
+    _vps.addFirst(node);
+    return node;
   }
 
   /// Remove the last vp from vps and dispose the removed element.
@@ -177,10 +245,16 @@ class VideoPlayerManager {
     _vps.remove(tail);
   }
 
-  /// Move a node to the head of vps.
+  /// Move a node to the head of its list.
   void _move_to_head(VpNode node){
-    node.unlink();
-    _vps.addFirst(node);
+    if (node.list == null) return; // If the node doesn't have a list quit
+    final LinkedList<VpNode> ll = node.list!;
+    node.unlink(); 
+    ll.addFirst(node); 
+  }
+
+  bool _isIdBlocked(String id){
+    return _blockedIds.contains(id);
   }
 
 }

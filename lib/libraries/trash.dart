@@ -74,11 +74,12 @@ class Trash{
 
     String oldPath = await trashAssetsDb.getAssetOldPath(id);
     print("[INFO] Restoring Asset in $oldPath");
+    trashAssetsDb.removeMedia(id);
 
     /// TODO: be sure that the way you save the path is coerent
     /// If the path is changed we restore the image
     /* if(oldPath != SbroMediaManager.getAssetFolder(ae)) {
-      if(await SbroMediaManager.moveAsset(ae, oldPath) != null) trashAssetsDb.removeMedia(id);
+      if(await SbroMediaManager.moveAsset(ae, oldPath) != null) 
     }
     */
   }

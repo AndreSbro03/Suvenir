@@ -35,7 +35,7 @@ class _HomePageState extends State<HomePage> {
   void reloadFeedAssets([bool fromInit = false]) async {
 
     /// If the feed is the trashFeed we can't update the assets because they are all in a non valid folder
-    if(widget.id == FeedId.trash){
+    if(widget.id != FeedId.trash){
       int until = Feed.numNextUpdate;
       if(corrIndx != null){
         until += corrIndx!;

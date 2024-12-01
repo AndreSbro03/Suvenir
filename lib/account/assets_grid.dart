@@ -56,7 +56,7 @@ class AssetsGrid extends StatelessWidget {
                     onTap: () async {
                       corrIndx = index;
                       PageController pc = PageController(initialPage: index);
-                      
+                      print("[INFO] ASSETS LENG: ${assets.length}");
                       await Navigator.of(context).push(
                         MaterialPageRoute(builder: (_) => HomePage(
                           id: feedId,
