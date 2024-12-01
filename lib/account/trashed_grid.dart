@@ -1,7 +1,6 @@
 
 import 'package:flutter/material.dart';
-import 'package:suvenir/account/account.dart';
-import 'package:suvenir/homepage.dart';
+import 'package:suvenir/account/assets_grid.dart';
 import 'package:suvenir/libraries/globals.dart';
 import 'package:suvenir/libraries/media_manager.dart';
 import 'package:photo_manager/photo_manager.dart';
@@ -57,56 +56,10 @@ class TrashedGrid extends StatelessWidget {
             ),
             /// Trashed Grid
             Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: kDefPadding),
-                child: GridView.builder(
-                  itemCount: assetsList.length,
-                  shrinkWrap: true,
-                  gridDelegate: Account.gridAspect, 
-                  itemBuilder: (_, index) {
-                    return FutureBuilder(
-                    /// First because there is only a key
-                    future: (assetsList[index] != null) ? 
-                      assetsList[index]!.thumbnailData : 
-                      null,
-                    
-                    builder: (_, AsyncSnapshot snapshot) {
-                      /// TODO: since this function is the same on both trash and liked grid it should be unified and moved in account.
-                      if(snapshot.hasData && snapshot.data != null) {
-                        Image img = Image.memory(snapshot.data);
-                        return GestureDetector(       
-                          onTap: () async {
-                            corrIndx = index;
-                            PageController pc = PageController(initialPage: index);
-                            
-                            await Navigator.of(context).push(
-                              MaterialPageRoute(builder: (_) => HomePage(
-                                assets: assetsList, 
-                                feedController: pc, 
-                                isTrashFeed: true,
-                              ))
-                            );
-                            
-                            reloadAccount();
-                            
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(color: kThirdColor),
-                              image: DecorationImage(image: img.image)
-                            ),
-                            child: Text("${daysLeft[index]} days left", style: 
-                              (daysLeft[index] <= 3) ? kErrorStyle : kNormalStyle,
-                            ),
-                          ),
-                          );
-                      }
-                      return loadingWidget(context);
-                    }
-                  );
-                }
-                    ),
-              ),
+              child: AssetsGrid(assets: assetsList, isTrashFeed: true, reloadAccount: reloadAccount, 
+                childBuilder: (int index) { 
+                  return Text("${daysLeft[index]} days left", style: (daysLeft[index] <= 3) ? kErrorStyle : kNormalStyle,);
+                })
             ),
           ],
         ),

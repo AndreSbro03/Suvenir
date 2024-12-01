@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:suvenir/account/liked_grid.dart';
+import 'package:suvenir/account/assets_grid.dart';
 import 'package:suvenir/account/trashed_grid.dart';
 import 'package:suvenir/account/user_stats.dart';
 import 'package:suvenir/libraries/globals.dart';
@@ -11,13 +11,6 @@ import 'package:suvenir/libraries/trash.dart';
 
 class Account extends StatefulWidget {
   const Account({super.key});
-
-  static SliverGridDelegateWithFixedCrossAxisCount gridAspect = const SliverGridDelegateWithFixedCrossAxisCount(
-    crossAxisCount: 3, // number of items in each row
-    childAspectRatio: (3 / 4),
-    mainAxisSpacing: 5.0, // spacing between rows
-    crossAxisSpacing: 5.0, // spacing between columns
-  );
 
   @override
   State<Account> createState() => _AccountState();
@@ -142,26 +135,22 @@ class _AccountState extends State<Account> {
                     });
                   },
                   children: [
-                      /// UserStatsBox
-                      Padding(
-                        padding: const EdgeInsets.only(left: kDefPadding, right: kDefPadding, bottom: kDefPadding),
-                        child: UserStatsBox(
-                          originalAssetsLen: totalAssetOnDevice, 
-                          likedAssetsLen: likedAssets.length, 
-                          trashedAssetsLen: trashedAssets.length,
-                          spaceSaved: spaceSaved,
-                        ),
+                    /// UserStatsBox
+                    Padding(
+                      padding: const EdgeInsets.only(left: kDefPadding, right: kDefPadding, bottom: kDefPadding),
+                      child: UserStatsBox(
+                        originalAssetsLen: totalAssetOnDevice, 
+                        likedAssetsLen: likedAssets.length, 
+                        trashedAssetsLen: trashedAssets.length,
+                        spaceSaved: spaceSaved,
                       ),
+                    ),
                     
                     /// Liked medias
-                    LikedGrid(assetsList: likedAssets, reloadAccount: (){
-                      _loadAssets();
-                    },),
+                    AssetsGrid(assets: likedAssets, isTrashFeed: false, reloadAccount: _loadAssets),
                 
                     /// Trash medias
-                    TrashedGrid(assetsList: trashedAssets, daysLeft: daysLeft, reloadAccount: (){
-                      _loadAssets();
-                    }),
+                    TrashedGrid(assetsList: trashedAssets, daysLeft: daysLeft, reloadAccount: _loadAssets),
                     
                   ],
                 ),

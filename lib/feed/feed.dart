@@ -74,6 +74,7 @@ class _FeedState extends State<Feed> {
                       /// Update next @Feed.numNextUpdate medias
                       if(index % Feed.modIdxUpdate == 0 && index != 0) {
                         SbroMediaManager.updateAssets(widget.assets, index, Feed.numNextUpdate).then( (removed) {
+                          // TODO: fix this. A value notifier is not good.
                           if(removed > 0) HomePage.reloadFeed.value++;
                         });
                       }

@@ -50,6 +50,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
 
   bool readyToGo = false;
+  List<AssetEntity?> mainFeed = [];
 
   @override
   /// Code that will be run everytime we come back to this page.
@@ -63,7 +64,6 @@ class _MyHomePageState extends State<MyHomePage> {
     super.initState();
   }
 
-  List<AssetEntity?> mainFeed = [];
 
   @override
   Widget build(BuildContext context) {
