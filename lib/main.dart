@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:suvenir/homepage.dart';
+import 'package:suvenir/istances/feed_manager.dart';
 import 'package:suvenir/libraries/globals.dart';
 import 'package:suvenir/libraries/media_manager.dart';
 import 'package:suvenir/libraries/permission.dart';
@@ -68,7 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     if(readyToGo){
-      return HomePage(assets: mainFeed);
+      return HomePage(id: FeedId.main, assets: mainFeed);
     }
     else {
       return const Center(child: SizedBox(
@@ -173,7 +174,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
               print("[INFO] Updating feed from ${quickLoadedAssets.length} -> ${mainFeed.length}");
               /// Reload the homepage
-              HomePage.reloadFeed.value++;
+              FeedManager.instance.reloadFeed(FeedId.main);
             }
 
               /// Update the saved images for the next loading

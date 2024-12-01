@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:suvenir/account/assets_grid.dart';
 import 'package:suvenir/account/trashed_grid.dart';
 import 'package:suvenir/account/user_stats.dart';
+import 'package:suvenir/istances/feed_manager.dart';
 import 'package:suvenir/libraries/globals.dart';
 import 'package:suvenir/libraries/media_manager.dart';
 import 'package:suvenir/istances/saved_data.dart';
@@ -147,7 +148,7 @@ class _AccountState extends State<Account> {
                     ),
                     
                     /// Liked medias
-                    AssetsGrid(assets: likedAssets, isTrashFeed: false, reloadAccount: _loadAssets),
+                    AssetsGrid(feedId: FeedId.like, assets: likedAssets, reloadAccount: _loadAssets),
                 
                     /// Trash medias
                     TrashedGrid(assetsList: trashedAssets, daysLeft: daysLeft, reloadAccount: _loadAssets),

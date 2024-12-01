@@ -2,20 +2,21 @@
 import 'package:flutter/material.dart';
 import 'package:photo_manager/photo_manager.dart';
 import 'package:suvenir/homepage.dart';
+import 'package:suvenir/istances/feed_manager.dart';
 import 'package:suvenir/istances/video_player_manager.dart';
 import 'package:suvenir/libraries/globals.dart';
 import 'package:suvenir/libraries/styles.dart';
 
 class AssetsGrid extends StatelessWidget {
   const AssetsGrid({super.key, 
+    required this.feedId, 
     required this.assets, 
-    required this.isTrashFeed, 
     required this.reloadAccount,
     this.childBuilder, 
   });
 
+  final FeedId feedId;
   final List<AssetEntity?> assets;
-  final bool isTrashFeed;
   final Function reloadAccount;
   final Widget? Function(int)? childBuilder;
 
@@ -58,9 +59,9 @@ class AssetsGrid extends StatelessWidget {
                       
                       await Navigator.of(context).push(
                         MaterialPageRoute(builder: (_) => HomePage(
+                          id: feedId,
                           assets: assets, 
                           feedController: pc, 
-                          isTrashFeed: isTrashFeed,
                         ))
                       );
 

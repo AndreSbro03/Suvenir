@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:suvenir/account/account.dart';
+import 'package:suvenir/istances/feed_manager.dart';
 import 'package:suvenir/istances/video_player_manager.dart';
 import 'package:suvenir/libraries/globals.dart';
 import 'package:suvenir/libraries/media_manager.dart';
@@ -11,13 +12,13 @@ import 'package:suvenir/libraries/trash.dart';
 class Footbar extends StatelessWidget {
   const Footbar({
     super.key, 
+    required this.id,
     required this.assets, 
-    this.isTrashFeed = false, 
-    required this.reload,
+    required this.reload, 
     });
 
+  final FeedId id;
   final List<AssetEntity?> assets;
-  final bool isTrashFeed;
   final Function reload;
 
   static const fbHight = 60.0;
@@ -49,7 +50,7 @@ class Footbar extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               // Like Button
-               isTrashFeed ?
+                id == FeedId.trash ?
                 IconButton(
                   icon: const Icon(Icons.restore_from_trash_rounded, size: kIconSize, color: kIconColor,), 
                   onPressed: () {
@@ -101,7 +102,7 @@ class Footbar extends StatelessWidget {
               /// Delete Button:
               /// if pressed we remove forever the current asset from device and we remove the id of the asset from the 
               /// trashed db.
-              isTrashFeed ? 
+              id == FeedId.trash ? 
               IconButton(
                   icon: const Icon(Icons.delete_forever_rounded, size: kIconSize, color: kIconColor,), 
                   onPressed: () async {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:suvenir/bars/footbar.dart';
+import 'package:suvenir/istances/feed_manager.dart';
 import 'package:suvenir/istances/video_player_manager.dart';
-import 'package:suvenir/homepage.dart';
 import 'package:suvenir/libraries/globals.dart';
 import 'package:suvenir/feed/image_view.dart';
 import 'package:suvenir/feed/video_view.dart';
@@ -12,9 +12,10 @@ import 'package:suvenir/libraries/styles.dart';
 
 class Feed extends StatefulWidget {
   const Feed(
-    {super.key, required this.assets, required this.feedController, required this.showInfoBox,}
+    {super.key, required this.assets, required this.feedController, required this.showInfoBox, required this.id,}
   );
 
+  final FeedId id;
   final List<AssetEntity?> assets;
   final PageController feedController;
   final ValueNotifier<bool> showInfoBox;
@@ -74,8 +75,7 @@ class _FeedState extends State<Feed> {
                       /// Update next @Feed.numNextUpdate medias
                       if(index % Feed.modIdxUpdate == 0 && index != 0) {
                         SbroMediaManager.updateAssets(widget.assets, index, Feed.numNextUpdate).then( (removed) {
-                          // TODO: fix this. A value notifier is not good.
-                          if(removed > 0) HomePage.reloadFeed.value++;
+                          if(removed > 0) FeedManager.instance.reloadFeed(widget.id);
                         });
                       }
                 

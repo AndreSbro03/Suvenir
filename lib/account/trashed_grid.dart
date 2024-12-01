@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:suvenir/account/assets_grid.dart';
+import 'package:suvenir/istances/feed_manager.dart';
 import 'package:suvenir/libraries/globals.dart';
 import 'package:suvenir/libraries/media_manager.dart';
 import 'package:photo_manager/photo_manager.dart';
@@ -56,7 +57,7 @@ class TrashedGrid extends StatelessWidget {
             ),
             /// Trashed Grid
             Expanded(
-              child: AssetsGrid(assets: assetsList, isTrashFeed: true, reloadAccount: reloadAccount, 
+              child: AssetsGrid(feedId: FeedId.trash, assets: assetsList, reloadAccount: reloadAccount, 
                 childBuilder: (int index) { 
                   return Text("${daysLeft[index]} days left", style: (daysLeft[index] <= 3) ? kErrorStyle : kNormalStyle,);
                 })

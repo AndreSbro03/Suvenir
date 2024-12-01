@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:suvenir/bars/appbar.dart';
 import 'package:suvenir/feed/feed.dart';
 import 'package:suvenir/bars/footbar.dart';
+import 'package:suvenir/istances/feed_manager.dart';
 import 'package:suvenir/libraries/globals.dart';
 import 'package:suvenir/libraries/media_manager.dart';
 import 'package:photo_manager/photo_manager.dart';
@@ -14,15 +15,12 @@ class HomePage extends StatefulWidget {
     super.key, 
     required this.assets, 
     this.feedController, 
-    this.isTrashFeed = false,
+    required this.id,
   });
 
+  final FeedId id;
   final List<AssetEntity?> assets;
   final PageController? feedController;
-  static ValueNotifier<int> reloadFeed = ValueNotifier<int>(0);
-  
-  /// If true the footbar instead of the like and trash button will have a restore and delete button
-  final bool isTrashFeed;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -37,7 +35,7 @@ class _HomePageState extends State<HomePage> {
   void reloadFeedAssets([bool fromInit = false]) async {
 
     /// If the feed is the trashFeed we can't update the assets because they are all in a non valid folder
-    if(!widget.isTrashFeed){
+    if(widget.id == FeedId.trash){
       int until = Feed.numNextUpdate;
       if(corrIndx != null){
         until += corrIndx!;
@@ -51,7 +49,7 @@ class _HomePageState extends State<HomePage> {
       /// We need to disable the infoBox because the image might change
       showInfoBox.value = false;
       /// Reload only the feed.
-      HomePage.reloadFeed.value++;
+      FeedManager.instance.reloadFeed(widget.id);
     }
   }
 
@@ -79,10 +77,10 @@ class _HomePageState extends State<HomePage> {
           ///   The feed once the permission are granted and the medias are loaded.
           ///   Circular progress indicator instead.
           ValueListenableBuilder(
-            valueListenable: HomePage.reloadFeed,
+            valueListenable: FeedManager.instance.getReloadFeedListener(widget.id),
             builder: (context, value, _) {
               print("[INFO] Feed reloaded!");
-              return Feed(assets: widget.assets, feedController: _feedController, showInfoBox: showInfoBox,);
+              return Feed(id: widget.id, assets: widget.assets, feedController: _feedController, showInfoBox: showInfoBox,);
             },
             ),
           /// Level 1: (Appbar and Footbar)
@@ -95,7 +93,7 @@ class _HomePageState extends State<HomePage> {
         
               /// Footbar:
               ///   consist in a list of icons.
-              Footbar(assets: widget.assets, isTrashFeed: widget.isTrashFeed, reload: reloadFeedAssets,),
+              Footbar(id: widget.id, assets: widget.assets, reload: reloadFeedAssets,),
             ],
           )
       
