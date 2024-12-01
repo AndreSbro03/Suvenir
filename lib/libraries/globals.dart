@@ -14,7 +14,6 @@ ValueNotifier<bool> isFoldersReady = ValueNotifier<bool>(false);
 
 /// Settings
 bool initializeApp = true;
-late final int mainFeedHash;
 int? corrIndx;
 
 int trashDays = 15;

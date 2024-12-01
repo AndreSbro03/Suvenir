@@ -59,7 +59,6 @@ class _MyHomePageState extends State<MyHomePage> {
     /// Make sure only runs once
     if(initializeApp){
       _quickLoadImage();
-      mainFeedHash = mainFeed.hashCode;      
       initializeApp = false;
     }
     super.initState();

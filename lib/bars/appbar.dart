@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:suvenir/istances/feed_manager.dart';
 import 'package:suvenir/istances/video_player_manager.dart';
 import 'package:suvenir/libraries/globals.dart';
 import 'package:suvenir/libraries/styles.dart';
@@ -7,9 +8,15 @@ import 'package:photo_manager/photo_manager.dart';
 
 class SbroAppBar extends StatelessWidget {
   const SbroAppBar({
-    super.key, required this.reload, required this.assets, required this.feedController, required this.showInfoBox, 
+    super.key, 
+    required this.feedId, 
+    required this.reload, 
+    required this.assets, 
+    required this.feedController, 
+    required this.showInfoBox, 
   });
 
+  final FeedId feedId;
   final VoidCallback reload;
   final List<AssetEntity?> assets;
   final PageController feedController;
@@ -39,7 +46,7 @@ class SbroAppBar extends StatelessWidget {
             ),
 
             /// Filter Button only in the main feed
-            (assets.hashCode == mainFeedHash) ? 
+            (feedId == FeedId.main) ? 
             IconButton(
               onPressed: () async {
                 /// If a video is going we stop it before going to the filter

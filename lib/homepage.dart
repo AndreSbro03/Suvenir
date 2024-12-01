@@ -89,11 +89,11 @@ class _HomePageState extends State<HomePage> {
             children: [
               /// Appbar:
               ///   consist in the app title and the settings IconButton.
-              SbroAppBar(assets: widget.assets, reload: reloadFeedAssets, feedController: _feedController, showInfoBox: showInfoBox,),
+              SbroAppBar(feedId: widget.id, assets: widget.assets, reload: reloadFeedAssets, feedController: _feedController, showInfoBox: showInfoBox,),
         
               /// Footbar:
               ///   consist in a list of icons.
-              Footbar(id: widget.id, assets: widget.assets, reload: reloadFeedAssets,),
+              Footbar(feedID: widget.id, assets: widget.assets, reload: reloadFeedAssets,),
             ],
           )
       

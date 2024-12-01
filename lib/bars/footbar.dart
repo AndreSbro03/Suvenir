@@ -12,12 +12,12 @@ import 'package:suvenir/libraries/trash.dart';
 class Footbar extends StatelessWidget {
   const Footbar({
     super.key, 
-    required this.id,
+    required this.feedID,
     required this.assets, 
     required this.reload, 
     });
 
-  final FeedId id;
+  final FeedId feedID;
   final List<AssetEntity?> assets;
   final Function reload;
 
@@ -50,7 +50,7 @@ class Footbar extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               // Like Button
-                id == FeedId.trash ?
+                feedID == FeedId.trash ?
                 IconButton(
                   icon: const Icon(Icons.restore_from_trash_rounded, size: kIconSize, color: kIconColor,), 
                   onPressed: () {
@@ -76,7 +76,7 @@ class Footbar extends StatelessWidget {
               IconButton(
                 icon: Icon(
                   /// If assest is origianAssets then we are in the home page
-                  (assets.hashCode == mainFeedHash) ? Icons.home_rounded : Icons.home_outlined, 
+                  (feedID == FeedId.main) ? Icons.home_rounded : Icons.home_outlined, 
                   size: kIconSize, color: kIconColor,), 
                 onPressed: () {
                   print("[INFO] Retourning to the HomePage!");
@@ -102,7 +102,7 @@ class Footbar extends StatelessWidget {
               /// Delete Button:
               /// if pressed we remove forever the current asset from device and we remove the id of the asset from the 
               /// trashed db.
-              id == FeedId.trash ? 
+              feedID == FeedId.trash ? 
               IconButton(
                   icon: const Icon(Icons.delete_forever_rounded, size: kIconSize, color: kIconColor,), 
                   onPressed: () async {
