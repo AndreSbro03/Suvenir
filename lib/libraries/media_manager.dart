@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:math';
 import 'package:suvenir/db/assets_db.dart';
 import 'package:suvenir/istances/feed_manager.dart';
 import 'package:suvenir/libraries/globals.dart';
@@ -174,12 +175,16 @@ class SbroMediaManager{
   }
 
 
-  /// Guarantee that the next @numNextUpdate medias are all valid medias. Return the number of image removed.
+  /// Guarantee that the next and previews @numNextUpdate medias are all valid medias. Return the number of image removed.
   /// If the feed id is equal to FeedId.trash we don't remove assets if they are in the trash because all the assets
   /// are in the trash.
   static Future<int> updateAssets(List<AssetEntity?> assets , int index, int numNextUpdate, FeedId feedId) async {
     int out = 0;
-    for(int i = index; i < assets.length && i < (index + numNextUpdate);) {
+
+    /// Check that if we proceed the assets list is not empyt
+    if(assets.isEmpty) return 0;
+
+    for(int i = max(index - numNextUpdate, 0); i < assets.length && i < (index + numNextUpdate);) {
       ///String folderName = getAssetFolder(assets[i]);
       //print(folderName);
       //print(Settings.validPathsMap[folderName]);

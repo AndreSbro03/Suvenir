@@ -79,37 +79,38 @@ class VideoPlayerManager {
     node.vp.play().then( (_) { if(node.reload != null) node.reload!.value++;});
   }
   
- /// Play the vp in the node: 
- ///  - it exists
- ///  - it's being created
- ///  - will be created. 
- /// If argument is null than it stop trying to play a video.
- /// Keep try to play only the last id passed.
- /// Update reload value.
-  Future<void> keepPlayId(VpNode? node) async {
-
-    if(node == null) return;
-    /// If it's being created return
-    if (_creatingVp == node.id) return;
+  /// Play the vp correlated to the id if: 
+  ///  - it exists
+  ///  - it's being created
+  ///  - will be created. 
+  /// If argument is null than it stop trying to play a video.
+  /// Keep try to play only the last id passed.
+  /// Update reload value.
+  Future<void> keepPlayId(String? id) async {
 
     /// Ensure that if the VP will be created after this point, it will automatically be played.
-    playVpId = node.id;
+    playVpId = id;
 
-    play(node);
+    if (id == null) return;
+    if (_creatingVp == id) return;
+
+    /// Search for the video player by ID and play it
+    for (VpNode node in _vps) {
+      if (node.id == id) {
+        play(node);
+        return;
+      }
+    }
   }
 
-
   /// Ensure that all the vp in vps are paused. One can be excluded. Return the exept value.
-  VpNode? pauseAll([String? exept]) {
-    VpNode? out;
+  String? pauseAll([String? exept]) {
     for (VpNode node in _vps) {
       if(node.id != exept){
         node.vp.pause().then( (_) { if(node.reload != null) node.reload!.value++;});
-      } else {
-        out = node;
-      }
+      } 
     }
-    return out;
+    return exept;
   }
 
   /// Search for the Node and move it to the _blockedVps list. Copy the id in the _blockedId array.

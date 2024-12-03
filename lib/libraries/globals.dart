@@ -13,7 +13,7 @@ ValueNotifier<bool> isFoldersReady = ValueNotifier<bool>(false);
 
 
 /// Settings
-bool initializeApp = true;
+bool isAppInitialized = false;
 int? corrIndx;
 
 int trashDays = 15;

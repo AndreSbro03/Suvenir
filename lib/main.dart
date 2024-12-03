@@ -50,16 +50,14 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
 
-  bool readyToGo = false;
   List<AssetEntity?> mainFeed = [];
 
   @override
   /// Code that will be run everytime we come back to this page.
   initState(){
     /// Make sure only runs once
-    if(initializeApp){
+    if(!isAppInitialized){
       _quickLoadImage();
-      initializeApp = false;
     }
     super.initState();
   }
@@ -67,7 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    if(readyToGo){
+    if(isAppInitialized){
       return HomePage(id: FeedId.main, assets: mainFeed);
     }
     else {
@@ -150,7 +148,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
           setState(() {
             // The app is ready to go
-            readyToGo = true;
+            isAppInitialized = true;
           });
 
           List<AssetPathEntity?> apel = await _getPathList();

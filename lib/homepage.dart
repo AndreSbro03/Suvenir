@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:suvenir/bars/appbar.dart';
 import 'package:suvenir/feed/feed.dart';
@@ -30,29 +28,24 @@ class _HomePageState extends State<HomePage> {
 
   late final PageController _feedController;
   ValueNotifier<bool> showInfoBox = ValueNotifier<bool>(false); 
-  int lastUpdate = 0;
 
-  void reloadFeedAssets([bool fromInit = false]) async {
-
-    int until = Feed.numNextUpdate;
-    if(corrIndx != null){
-      until += corrIndx!;
-    }
-    print("[INFO] Reloading!");
-    await SbroMediaManager.updateAssets(widget.assets, max(lastUpdate - Feed.numNextUpdate, 0), until, widget.id);
-    lastUpdate = until;
+  void reloadFeedAssets() async {
     
-    if(!fromInit){
-      /// We need to disable the infoBox because the image might change
-      showInfoBox.value = false;
-      /// Reload only the feed.
+    /// We need to disable the infoBox because the image might change
+    showInfoBox.value = false;
+
+    print("[INFO] Reloading!");
+    int removed = await SbroMediaManager.updateAssets(widget.assets, corrIndx??0, Feed.numNextUpdate, widget.id);
+    
+    /// If nothing has changed we don't reload the feed
+    if(removed > 0){
       FeedManager.instance.reloadFeed(widget.id);
     }
   }
 
   @override 
   void initState(){
-    reloadFeedAssets(true);
+    reloadFeedAssets();
     if(widget.feedController == null){
       _feedController = PageController(keepPage: true);
     } else {
