@@ -34,16 +34,13 @@ class _HomePageState extends State<HomePage> {
 
   void reloadFeedAssets([bool fromInit = false]) async {
 
-    /// If the feed is the trashFeed we can't update the assets because they are all in a non valid folder
-    if(widget.id != FeedId.trash){
-      int until = Feed.numNextUpdate;
-      if(corrIndx != null){
-        until += corrIndx!;
-      }
-      print("[INFO] Reloading!");
-      await SbroMediaManager.updateAssets(widget.assets, max(lastUpdate - Feed.numNextUpdate, 0), until);
-      lastUpdate = until;
+    int until = Feed.numNextUpdate;
+    if(corrIndx != null){
+      until += corrIndx!;
     }
+    print("[INFO] Reloading!");
+    await SbroMediaManager.updateAssets(widget.assets, max(lastUpdate - Feed.numNextUpdate, 0), until, widget.id);
+    lastUpdate = until;
     
     if(!fromInit){
       /// We need to disable the infoBox because the image might change

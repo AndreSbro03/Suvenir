@@ -31,7 +31,7 @@ class Feed extends StatefulWidget {
 
 class _FeedState extends State<Feed> {
   bool scrollable = true;
-  Set<int> _activePointers = Set();
+  final Set<int> _activePointers = {};
   
   @override
   Widget build(BuildContext context) {                 
@@ -74,8 +74,8 @@ class _FeedState extends State<Feed> {
                 
                       /// Update next @Feed.numNextUpdate medias
                       if(index % Feed.modIdxUpdate == 0 && index != 0) {
-                        SbroMediaManager.updateAssets(widget.assets, index, Feed.numNextUpdate).then( (removed) {
-                          if(removed > 0) FeedManager.instance.reloadFeed(widget.id);
+                        SbroMediaManager.updateAssets(widget.assets, index, Feed.numNextUpdate, widget.id).then( (removed) {
+                          if(removed > 0) FeedManager.instance.reloadFeed(widget.id); 
                         });
                       }
                 
@@ -94,7 +94,7 @@ class _FeedState extends State<Feed> {
                                 scrollable = false;
                               });
                             }
-                            print("[INFO] Pointer down. Active pointers: ${_activePointers.length}");
+                            /// print("[INFO] Pointer down. Active pointers: ${_activePointers.length}");
                           },
                           onPointerUp: (event) {
                             // When a finger is lifted, remove its pointer from the set
@@ -104,7 +104,7 @@ class _FeedState extends State<Feed> {
                                 scrollable = true;
                               });
                             }
-                            print("[INFO] Pointer up. Active pointers: ${_activePointers.length}");
+                            /// print("[INFO] Pointer up. Active pointers: ${_activePointers.length}");
                           },
                           child: ImageView(image: ae)
                           );

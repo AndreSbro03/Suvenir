@@ -24,7 +24,7 @@ class VideoPlayerManager {
   static final VideoPlayerManager instance = VideoPlayerManager._init();
   VideoPlayerManager._init();
 
-  final bool _printDebugInfo = true;
+  final bool _printDebugInfo = false;
   final int _maxVp = 3;
   final LinkedList<VpNode> _vps = LinkedList<VpNode>();
   
@@ -73,58 +73,43 @@ class VideoPlayerManager {
     return node;
   }
 
-  /// Try to play the vp corralated to the id once if exist. Update reload value.
-  void play(String? id) {
-    if(id == null) return;
-
-    for (VpNode node in _vps) {
-        if(node.id == id) {
-          node.vp.play().then( (_) { if(node.reload != null) node.reload!.value++;});
-        return;
-      }
-    }
-
+  /// Play the vp and update the reload values
+  void play(VpNode? node) {
+    if(node == null) return;
+    node.vp.play().then( (_) { if(node.reload != null) node.reload!.value++;});
   }
   
- /// Play the vp correlated to the id if: 
+ /// Play the vp in the node: 
  ///  - it exists
  ///  - it's being created
  ///  - will be created. 
  /// If argument is null than it stop trying to play a video.
  /// Keep try to play only the last id passed.
  /// Update reload value.
-  Future<void> keepPlayId(String? id) async {
+  Future<void> keepPlayId(VpNode? node) async {
+
+    if(node == null) return;
+    /// If it's being created return
+    if (_creatingVp == node.id) return;
 
     /// Ensure that if the VP will be created after this point, it will automatically be played.
-    playVpId = id;
+    playVpId = node.id;
 
-    if (id == null) return;
-
-    if (_creatingVp == id) {
-      return;
-    }
-
-    /// Search for the video player by ID and play it
-    for (VpNode node in _vps) {
-      if (node.id == id) {
-        await node.vp.play();
-        if (node.reload != null) {
-          node.reload!.value++;
-        }
-        return;
-      }
-    }
+    play(node);
   }
 
 
   /// Ensure that all the vp in vps are paused. One can be excluded. Return the exept value.
-  String? pauseAll([String? exept]) {
+  VpNode? pauseAll([String? exept]) {
+    VpNode? out;
     for (VpNode node in _vps) {
       if(node.id != exept){
         node.vp.pause().then( (_) { if(node.reload != null) node.reload!.value++;});
-      } 
+      } else {
+        out = node;
+      }
     }
-    return exept;
+    return out;
   }
 
   /// Search for the Node and move it to the _blockedVps list. Copy the id in the _blockedId array.
@@ -174,13 +159,19 @@ class VideoPlayerManager {
   }
 
   /// Move all the nodes to _vps and clear the _blockedId. 
-  /// FILO if the user ask to block a node when restored the last access one (the first one the list) will be the last one added.
+  /// LIFO if the user ask to block a node when restored the last access one (the first one the list) will be the last one added.
   void unlockAll() {
-    final List<VpNode> blockedNodesCopy = List<VpNode>.from(_blockedVps);
-    for (VpNode node in blockedNodesCopy) {
-      /// Move node to head of vps
-      node.unlink();
-      _insert_head_node(node);
+    
+    for (VpNode? head = _blockedVps.first; head != null;) {
+      /// Copy the node
+      VpNode temp = head;
+
+      /// Change the head to the next element
+      head = head.next;
+
+      /// Move temp to the head of _vps
+      temp.unlink();
+      _insert_head_node(temp);
     }
     _blockedIds.clear();
   }

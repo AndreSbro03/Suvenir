@@ -1,5 +1,6 @@
 import 'dart:collection';
 import 'package:suvenir/db/assets_db.dart';
+import 'package:suvenir/istances/feed_manager.dart';
 import 'package:suvenir/libraries/globals.dart';
 import 'package:suvenir/libraries/permission.dart';
 import 'package:suvenir/istances/saved_data.dart';
@@ -174,7 +175,9 @@ class SbroMediaManager{
 
 
   /// Guarantee that the next @numNextUpdate medias are all valid medias. Return the number of image removed.
-  static Future<int> updateAssets(List<AssetEntity?> assets , int index, int numNextUpdate) async {
+  /// If the feed id is equal to FeedId.trash we don't remove assets if they are in the trash because all the assets
+  /// are in the trash.
+  static Future<int> updateAssets(List<AssetEntity?> assets , int index, int numNextUpdate, FeedId feedId) async {
     int out = 0;
     for(int i = index; i < assets.length && i < (index + numNextUpdate);) {
       ///String folderName = getAssetFolder(assets[i]);
@@ -188,7 +191,7 @@ class SbroMediaManager{
         assets.removeAt(i);
       }
       /// If the assets is in the trash we remove it
-      else if (await trashAssetsDb.existMedia(assets[i]!.id)){
+      else if (feedId != FeedId.trash && await trashAssetsDb.existMedia(assets[i]!.id)){
         out++;
         assets.removeAt(i);
       }

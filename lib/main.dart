@@ -126,7 +126,6 @@ class _MyHomePageState extends State<MyHomePage> {
     switch (await SbroPermission.getGalleryAccess()) {
 
       case PermissionsTypes.granted:
-          List<AssetPathEntity?> apel = await _getPathList();
 
           /// We check if the number of rows in the preload db is > 0. If so we proceed to load thoose assets. If not we load all 
           /// assets in the phone. Than we initialize the folders.
@@ -154,6 +153,7 @@ class _MyHomePageState extends State<MyHomePage> {
             readyToGo = true;
           });
 
+          List<AssetPathEntity?> apel = await _getPathList();
           _getFoldersFromGallery(apel).then( (_) {
             
             /// Notify that the folders are ready
