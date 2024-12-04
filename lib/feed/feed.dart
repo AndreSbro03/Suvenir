@@ -171,7 +171,7 @@ class _InfoBoxState extends State<InfoBox> {
 
   @override
   void initState() {
-    getTrashedData();
+    // getTrashedData();
     super.initState();
   }
 
@@ -184,9 +184,6 @@ class _InfoBoxState extends State<InfoBox> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if(originalPath != null) Text("Original Path: $originalPath.", style: kNormalStyle,),
-            if(addedDate != null) Text("Added Date: $addedDate.", style: kNormalStyle,),
-
             Text("Modified date: ${removeClockFromDate(widget.asset.modifiedDateTime)}", style: kNormalStyle,),
             /// Cration date usually is wrong and is more recent than the modifiedDateTime
             /// Text("Creation date: ${removeClockFromDate(asset!.createDateTime)}", style: kNormalStyle,),
