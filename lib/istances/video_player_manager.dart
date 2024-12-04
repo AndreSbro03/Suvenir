@@ -39,6 +39,11 @@ class VideoPlayerManager {
   /// If an id is setted when a vp is created if the id of the video is equal to this variable value than the video will play.
   String? playVpId;
 
+  /// Default valoume for all vp
+  bool _isMute = false;
+  double _volume = 1.0;
+
+
   /// Notify other function that a vp is being created updating _creatingVp.
   /// If already exist a vp for an AssetEntity in the vps:
   ///   - Move the vp in head of vps if not blocked.
@@ -159,6 +164,14 @@ class VideoPlayerManager {
 
   }
 
+  double get volume {
+    return _volume;
+  }
+
+  bool get isMute {
+    return _isMute;
+  }
+
   /// Move all the nodes to _vps and clear the _blockedId. 
   /// LIFO if the user ask to block a node when restored the last access one (the first one the list) will be the last one added.
   void unlockAll() {
@@ -175,6 +188,26 @@ class VideoPlayerManager {
       _insert_head_node(temp);
     }
     _blockedIds.clear();
+  }
+
+  /// Save the volume in the _volume variable so that all the future vp are going to be created with the new volume
+  /// and update all the vp already created.
+  void setVolume(double volume){
+    _volume = volume;
+    _isMute = (_volume == 0.0);
+    for (VpNode node in _vps) node.vp.setVolume(volume);
+    for (VpNode node in _vps) node.vp.setVolume(volume);
+  }
+
+  void muteAll(){
+    _isMute = true;
+    for (VpNode node in _vps) node.vp.setVolume(0.0);
+    for (VpNode node in _vps) node.vp.setVolume(0.0);
+  }
+
+  void unmuteAll([double? newVolume = 1.0]){
+    _isMute = false;
+    setVolume(newVolume??_volume);
   }
 
   /// Print the list of vp
@@ -196,6 +229,7 @@ class VideoPlayerManager {
       /// music but will play the audio on top of it.
       mixWithOthers: true
     ))
+    ..setVolume(_isMute ? 0.0 : _volume)
     ..setLooping(true);
       
     (playVpId == video.id) ? vp.play() : vp.pause();

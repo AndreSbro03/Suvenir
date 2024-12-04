@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:suvenir/bars/volume.dart';
 import 'package:suvenir/istances/feed_manager.dart';
 import 'package:suvenir/istances/video_player_manager.dart';
 import 'package:suvenir/libraries/globals.dart';
@@ -28,6 +29,7 @@ class SbroAppBar extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
         child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             /// Title
@@ -37,6 +39,8 @@ class SbroAppBar extends StatelessWidget {
             ),
 
             const Expanded(child: SizedBox()),
+
+            const VolumeIconButton(),
 
             IconButton(
               onPressed: () {
