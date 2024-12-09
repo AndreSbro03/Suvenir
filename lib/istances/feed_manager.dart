@@ -8,6 +8,8 @@ enum FeedId {
 
 class FeedController {
   final ValueNotifier<int> reloadFeed = ValueNotifier<int>(0);
+  final ValueNotifier<bool> showVolume = ValueNotifier<bool>(false);
+
 }
 
 class FeedManager {
@@ -27,14 +29,34 @@ class FeedManager {
     return newFc;    
   }
 
-  /// If the FeedController exist we upate is ValueNotifier
+  /// If the FeedController exist we upate is ValueNotifier reloadFeed value
   void reloadFeed(FeedId id){
     if(_fcs[id.index] != null) _fcs[id.index]!.reloadFeed.value++;
   } 
 
-  // Return the ValueNotifier associate with that Feed. If not exist create.
+  // Return the reloadFeed ValueNotifier associate with that Feed. If not exist create.
   ValueNotifier<int> getReloadFeedListener(FeedId id) {
     return _requestFeedController(id).reloadFeed;
+  }
+
+  /// If the FeedController exist we upate is ValueNotifier hideVolume value
+  void hideVolume(FeedId id){
+    if(_fcs[id.index] != null) _fcs[id.index]!.showVolume.value = false;
+  } 
+
+  /// If the FeedController exist we upate is ValueNotifier hideVolume value
+  void showVolume(FeedId id){
+    if(_fcs[id.index] != null) _fcs[id.index]!.showVolume.value = true;
+  } 
+
+  void changeShowVolumeStatus(FeedId id){
+    if(_fcs[id.index] != null) _fcs[id.index]!.showVolume.value =  !_fcs[id.index]!.showVolume.value;
+  } 
+
+
+  // Return the hideVolume ValueNotifier associate with that Feed. If not exist create.
+  ValueNotifier<bool> getShowVolumeListener(FeedId id) {
+    return _requestFeedController(id).showVolume;
   }
 
 

@@ -40,7 +40,7 @@ class SbroAppBar extends StatelessWidget {
 
             const Expanded(child: SizedBox()),
 
-            const VolumeIconButton(),
+            VolumeIconButton(feedId: feedId,),
 
             IconButton(
               onPressed: () {

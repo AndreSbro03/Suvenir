@@ -58,6 +58,7 @@ class _FeedState extends State<Feed> {
 
                     /// On scroll we reset the infoBox 
                     widget.showInfoBox.value = false;
+
                     /// Here you can insert code that notify all other widget that the media is changed
                     LikeButton.reloadLikeButton.value++;
                   },
@@ -94,6 +95,10 @@ class _FeedState extends State<Feed> {
                                 scrollable = false;
                               });
                             }
+
+                            /// If user touch the screen and we want disable something put it here
+                            FeedManager.instance.hideVolume(widget.id); /// Hide volume bar
+
                             /// print("[INFO] Pointer down. Active pointers: ${_activePointers.length}");
                           },
                           onPointerUp: (event) {

@@ -24,7 +24,7 @@ class VideoPlayerManager {
   static final VideoPlayerManager instance = VideoPlayerManager._init();
   VideoPlayerManager._init();
 
-  final bool _printDebugInfo = false;
+  final bool _printDebugInfo = true;
   final int _maxVp = 3;
   final LinkedList<VpNode> _vps = LinkedList<VpNode>();
   
@@ -221,7 +221,7 @@ class VideoPlayerManager {
   }
 
   /// Create a vp for a specific AssetEntity and return it. The Vp will start in pause if is id is different from the _playVpId.
-  Future<VideoPlayerController> _create_vp( AssetEntity video) async{
+  Future<VideoPlayerController> _create_vp(AssetEntity video) async{
     final File? videoFile = await video.file;
 
     VideoPlayerController vp = VideoPlayerController.file(videoFile!, videoPlayerOptions: VideoPlayerOptions(
@@ -231,7 +231,7 @@ class VideoPlayerManager {
     ))
     ..setVolume(_isMute ? 0.0 : _volume)
     ..setLooping(true);
-      
+
     (playVpId == video.id) ? vp.play() : vp.pause();
     await vp.initialize();
 
